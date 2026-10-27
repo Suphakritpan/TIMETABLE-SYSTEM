@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>เอกสารระบบตารางเรียน</title>
+<style>
+/* ธีมออฟฟิศ: ขาว + เงิน (สว่างอย่างเดียว) ค่าสีตรงกับ tokens.css ของแอป */
+:root{
+  --page:#eceef1;          /* พื้นหลังเงินอ่อน */
+  --paper:#ffffff;         /* กระดาษเนื้อหา */
+  --silver:#e5e7eb;        /* แถบข้าง / หัวตาราง */
+  --silver-2:#f3f4f6;      /* แถวสลับ / โค้ด */
+  --border:#cfd4db;
+  --text:#1f2937;
+  --text2:#4b5563;         /* 7.5:1 บนขาว */
+  --primary:#1f5fae;
+  --primary-bg:#e8f0fb;
+  --warn-bg:#fff4e0;--warn-bd:#f0b45a;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--page);color:var(--text);font:17px/1.8 Sarabun,"Noto Sans Thai",system-ui,sans-serif;display:grid;grid-template-columns:276px minmax(0,1fr)}
+
+/* แถบสารบัญซ้าย */
+nav.side{position:sticky;top:0;height:100vh;overflow:auto;background:linear-gradient(#f4f5f7,#e5e7eb);border-right:1px solid var(--border);padding:16px 12px}
+nav.side h1{font-size:1.05rem;margin:4px 8px 10px;line-height:1.4}
+nav.side input{width:100%;height:36px;padding:0 10px;margin:0 0 6px;border:1px solid #9ca3af;border-radius:4px;background:#fff;color:var(--text);font:inherit;font-size:.95rem}
+nav.side h2{font-size:.78rem;letter-spacing:.02em;color:var(--text2);margin:18px 8px 4px;font-weight:600}
+nav.side a{display:block;padding:5px 10px;border-radius:4px;color:var(--text);text-decoration:none;border-left:3px solid transparent;font-size:.95rem;line-height:1.5}
+nav.side a:hover{background:#fff}
+nav.side a[aria-current]{background:#fff;border-left-color:var(--primary);font-weight:600;color:var(--primary)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+/* พื้นที่อ่าน */
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:24px;padding:24px 28px 80px;align-items:start;max-width:1280px}
+article{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:32px 48px 40px;min-width:0}
+article>*:first-child{margin-top:0}
+article h1{font-size:2rem;line-height:1.35;margin:0 0 1.2rem;padding-bottom:.5rem;border-bottom:2px solid var(--silver)}
+article h2{font-size:1.45rem;line-height:1.4;margin:2.4rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+article h3{font-size:1.15rem;margin:1.8rem 0 .5rem}
+article h4{font-size:1rem;margin:1.4rem 0 .4rem;color:var(--text2)}
+article p,article li{max-width:75ch}
+article ul,article ol{padding-left:1.5rem}
+article li{margin:.2rem 0}
+article hr{border:0;border-top:1px solid var(--border);margin:2rem 0}
+a{color:var(--primary)}
+article strong{font-weight:600}
+
+/* ตาราง */
+.tbl{overflow:auto;margin:1.2rem 0;border:1px solid var(--border);border-radius:4px}
+table{border-collapse:collapse;width:100%;font-size:.93rem;line-height:1.6}
+th,td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;text-align:left}
+th{background:var(--silver);font-weight:600;white-space:nowrap;position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+thead:has(th:empty + th:empty){display:none} /* ตารางหัวว่าง (ตารางคู่ ชื่อ-ค่า) ซ่อนแถวหัวสีเทา */
+table td:first-child{font-weight:600}
+tbody tr:nth-child(even){background:#f8f9fb}
+td code{white-space:nowrap}
+
+code{background:var(--silver-2);border:1px solid #e1e4e8;padding:1px 5px;border-radius:3px;font:.86em/1.5 Consolas,"Cascadia Mono",monospace}
+pre{background:#f6f7f9;border:1px solid var(--border);padding:14px 16px;overflow:auto;border-radius:4px;line-height:1.55;font-size:.88rem;margin:1.2rem 0}
+pre code{background:none;border:0;padding:0}
+blockquote{margin:1.2rem 0;padding:10px 16px;border-left:4px solid var(--primary);background:var(--primary-bg);border-radius:0 4px 4px 0}
+blockquote p{margin:.3rem 0}
+img{max-width:100%;border:1px solid var(--border);border-radius:4px;background:#fff}
+
+/* ไดอะแกรม: ขนาดจริง + ซูม + ลากเลื่อน */
+.dg{margin:1.4rem 0;border:1px solid var(--border);border-radius:4px;background:#fff}
+.dg-bar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--silver);border-bottom:1px solid var(--border);font-size:.9rem}
+.dg-bar button{height:30px;min-width:32px;padding:0 10px;border:1px solid #9ca3af;border-radius:4px;background:#fff;color:var(--text);font:inherit;cursor:pointer}
+.dg-bar button:hover{background:var(--primary-bg)}
+.dg-bar .z{min-width:52px;text-align:center;color:var(--text2)}
+.dg-bar .hint{margin-left:auto;color:var(--text2);font-size:.82rem}
+.dg-view{overflow:hidden;height:min(460px,70vh);cursor:grab;padding:8px;touch-action:none}
+.dg-view.drag{cursor:grabbing;user-select:none}
+.dg-view svg{display:block;max-width:none!important}
+.dg-full .dg-view,.dg:fullscreen .dg-view{height:calc(100vh - 46px)}.dg:fullscreen{background:#fff}
+
+/* สารบัญในหน้า (ขวา) */
+aside.outline{position:sticky;top:16px;font-size:.88rem;line-height:1.5;max-height:calc(100vh - 32px);overflow:auto}
+aside.outline b{display:block;color:var(--text2);margin-bottom:6px;font-weight:600}
+aside.outline a{display:block;padding:3px 0 3px 10px;border-left:2px solid var(--border);color:var(--text2);text-decoration:none}
+aside.outline a:hover{color:var(--primary);border-left-color:var(--primary)}
+aside.outline a.l3{padding-left:22px;font-size:.84rem}
+
+.tip{position:fixed;z-index:50;max-width:380px;padding:8px 12px;background:#fff;color:var(--text);border:1px solid #9ca3af;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);font-size:.88rem;line-height:1.55;pointer-events:none;display:none}
+.tip b{display:block;font-size:.95rem;margin-bottom:2px}
+[data-tip]{cursor:help}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+.pager a{display:inline-block;padding:8px 14px;border:1px solid var(--border);border-radius:4px;text-decoration:none;background:var(--silver-2)}
+.pager a:hover{background:var(--primary-bg);border-color:var(--primary)}
+
+/* Skeleton loading: ส่วนเสริมจากสไตล์เดิม (ต้นฉบับไม่มี animation) เปิดให้ผู้ใช้ที่ตั้ง "ลดการเคลื่อนไหว" ไม่เห็นการวิบวับ */
+.sk,.mermaid:not([data-processed]):not(.sk-fail){background:linear-gradient(90deg,var(--silver) 25%,var(--silver-2) 37%,var(--silver) 63%);background-size:400% 100%;animation:sk-shimmer 1.4s ease infinite;border-radius:4px}
+@keyframes sk-shimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sk-h1{height:34px;width:55%;margin-bottom:22px}
+.sk-h2{height:24px;width:35%;margin:34px 0 14px}
+.sk-line{height:14px;margin:12px 0}
+.sk-table{height:150px;margin:20px 0}
+.sk-diagram,.mermaid:not([data-processed]):not(.sk-fail){height:260px;margin:22px 0;font-size:0;color:transparent;overflow:hidden}
+.sk-nav{height:12px;margin:14px 8px 8px;width:45%}
+.sk-link{height:16px;margin:10px 10px;width:78%}
+.sk-out{height:12px;margin:12px 0 12px 10px;width:80%}
+.w90{width:90%}.w85{width:85%}.w75{width:75%}.w60{width:60%}
+.mermaid.sk-fail{white-space:pre;font:.86em/1.5 Consolas,monospace;text-align:left;padding:12px;background:var(--silver-2)}
+@media (prefers-reduced-motion:reduce){.sk,.mermaid:not([data-processed]){animation:none}}
+@media (max-width:1180px){.wrap{grid-template-columns:minmax(0,1fr)}aside.outline{display:none}}
+@media (max-width:800px){body{grid-template-columns:1fr}nav.side{position:static;height:auto;max-height:45vh}.wrap{padding:12px}article{padding:20px 18px}}
+@media print{body{display:block;background:#fff}nav.side,aside.outline,.pager,.dg-bar{display:none}.wrap{padding:0;display:block}article{border:0;padding:0}.dg-view{max-height:none;overflow:visible}}
+</style>
+</head>
+<body>
+<nav class="side" aria-label="สารบัญเอกสาร">
+  <h1>เอกสารระบบตารางเรียน</h1>
+  <input id="q" type="search" placeholder="ค้นหาชื่อหรือเนื้อหา" aria-label="ค้นหา">
+  <div id="toc" role="status" aria-busy="true"><span class="sr">กำลังโหลดสารบัญ</span>
+    <div class="sk sk-nav"></div><div class="sk sk-link"></div><div class="sk sk-link w60"></div><div class="sk sk-link"></div><div class="sk sk-link w75"></div>
+    <div class="sk sk-nav"></div><div class="sk sk-link"></div><div class="sk sk-link w60"></div><div class="sk sk-link w75"></div>
+    <div class="sk sk-nav"></div><div class="sk sk-link"></div><div class="sk sk-link w60"></div>
+  </div>
+</nav>
+<div class="wrap">
+  <article id="out" tabindex="-1" aria-busy="true"><div role="status"><span class="sr">กำลังโหลดเนื้อหา</span>
+    <div class="sk sk-h1"></div><div class="sk sk-line w90"></div><div class="sk sk-line w75"></div>
+    <div class="sk sk-h2"></div><div class="sk sk-table"></div>
+    <div class="sk sk-line w85"></div><div class="sk sk-line w60"></div>
+    <div class="sk sk-h2"></div><div class="sk sk-diagram"></div>
+  </div></article>
+  <aside class="outline" id="outline" aria-label="หัวข้อในหน้านี้">
+    <div class="sk sk-out"></div><div class="sk sk-out w60"></div><div class="sk sk-out"></div><div class="sk sk-out w75"></div>
+  </aside>
+</div>
+<script src="vendor/marked.min.js"></script>
+<script>
+const PAGES = __DATA__;
+const byId = Object.fromEntries(PAGES.map(p => [p.id, p]));
+const byBase = {};
+PAGES.forEach(p => { if (p.p) byBase[p.p.split('/').pop()] = p.id; });
+
+// Mermaid (3.5 MB) โหลดเมื่อหน้านั้นมีแผนภาพ Mermaid จริงเท่านั้น ไม่ขวางการแสดงหน้าแรก
+let mermaidP = null;
+function loadMermaid() {
+  if (!mermaidP) mermaidP = new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'vendor/mermaid.min.js';
+    s.onload = () => {
+      mermaid.initialize({
+        startOnLoad: false, theme: 'base', securityLevel: 'loose',
+        themeVariables: { fontFamily: 'Sarabun, "Noto Sans Thai", sans-serif', fontSize: '15px',
+          primaryColor: '#e8f0fb', primaryBorderColor: '#1f5fae', lineColor: '#4b5563', primaryTextColor: '#1f2937' },
+        flowchart: { useMaxWidth: false, htmlLabels: true },
+        er: { useMaxWidth: false, entityPadding: 10, minEntityWidth: 90, diagramPadding: 8 },
+        nodeSpacing: 30, rankSpacing: 30, // ลดระยะห่างระหว่างกล่อง
+        state: { useMaxWidth: false },
+      });
+      res(mermaid);
+    };
+    s.onerror = () => rej(new Error('โหลด mermaid ไม่สำเร็จ'));
+    document.head.appendChild(s);
+  });
+  return mermaidP;
+}
+
+const cur = () => (location.hash.replace(/^#/, '').split('~')[0] || 'dev-readme');
+const mark = () => document.querySelectorAll('#toc a').forEach(a => a.toggleAttribute('aria-current', a.dataset.id === cur()));
+
+function buildToc(filter) {
+  const f = (filter || '').toLowerCase();
+  let g = '', h = '';
+  PAGES.forEach(p => {
+    if (f && !(p.t + p.md).toLowerCase().includes(f)) return;
+    if (p.g !== g) { g = p.g; h += `<h2>${g}</h2>`; }
+    h += `<a href="#${p.id}" data-id="${p.id}">${p.t}</a>`;
+  });
+  const toc = document.getElementById('toc');
+  toc.innerHTML = h || '<p style="padding:8px">ไม่พบ</p>';
+  toc.removeAttribute('aria-busy'); toc.removeAttribute('role');
+  mark();
+}
+
+// ตารางเลื่อนแนวนอนได้บนจอแคบ
+const wrapTables = out => out.querySelectorAll('table').forEach(t => {
+  const d = document.createElement('div'); d.className = 'tbl'; t.replaceWith(d); d.appendChild(t);
+});
+
+function outline(out, id) {
+  const hs = [...out.querySelectorAll('h2,h3')];
+  hs.forEach((h, i) => { h.id = `${id}~${i}`; });
+  document.getElementById('outline').innerHTML = hs.length > 2
+    ? '<b>ในหน้านี้</b>' + hs.map(h => `<a class="${h.tagName === 'H3' ? 'l3' : ''}" href="#${h.id}">${h.textContent}</a>`).join('')
+    : '';
+}
+
+// ไดอะแกรม: ขนาดจริง + ปุ่มซูม + ลากเลื่อน
+function enhance(div) {
+  const svg = div.querySelector('svg'); if (!svg) return;
+  const vb = svg.viewBox.baseVal;
+  const W = vb.width || svg.getBoundingClientRect().width, H = vb.height || svg.getBoundingClientRect().height;
+  svg.removeAttribute('style'); svg.removeAttribute('height');
+  const box = document.createElement('div'); box.className = 'dg';
+  box.innerHTML = '<div class="dg-bar"><button data-z="-" aria-label="ย่อ">−</button><span class="z"></span><button data-z="+" aria-label="ขยาย">+</button><button data-z="fit">พอดีกรอบ</button><button data-z="1">100%</button><button data-z="full">เต็มหน้าจอ</button><span class="hint">ลากเมาส์เพื่อเลื่อน · Ctrl+ลูกกลิ้ง = ซูม · Shift+ลูกกลิ้ง = เลื่อนซ้าย-ขวา</span></div><div class="dg-view"></div>';
+  const view = box.querySelector('.dg-view'), label = box.querySelector('.z');
+  view.appendChild(svg); div.replaceWith(box);
+  let s = 1;
+  const set = v => { s = Math.min(3, Math.max(.08, v)); svg.setAttribute('width', Math.round(W * s)); svg.setAttribute('height', Math.round(H * s)); label.textContent = Math.round(s * 100) + '%'; };
+  const fit = () => { set(Math.min(1, (view.clientWidth - 16) / W, (view.clientHeight - 16) / H)); view.scrollLeft = view.scrollTop = 0; };
+  // เริ่มที่ขนาดจริง ถ้ากว้างเกินจอให้พอดีกว้างแต่ไม่เล็กกว่า 80% (ยังอ่านได้)
+  fit(); // เริ่มที่พอดีกรอบ เห็นทั้งแผนภาพ แล้วซูมเข้าเอง
+  if (!div.classList.contains('er-svg')) { // flow/state/sequence: เริ่มพอดีความกว้าง (ไม่เล็กกว่า 55%) สูงตามภาพแต่ไม่เกิน 80% ของจอ
+    set(Math.max(.55, Math.min(1, (view.clientWidth - 16) / W)));
+    view.style.height = Math.round(Math.min(H * s + 20, innerHeight * .8)) + 'px';
+  }
+  if (div.classList.contains('er-svg')) { set(Math.min(1.15, (view.clientWidth - 16) / W)); view.style.height = Math.round(H * s + 20) + 'px'; }
+  box.querySelector('.dg-bar').onclick = e => {
+    const z = e.target.dataset.z; if (!z) return;
+    if (z === '+') set(s * 1.25); else if (z === '-') set(s / 1.25); else if (z === 'fit') fit();
+    else if (z === '1') set(1);
+    else if (z === 'full') box.requestFullscreen?.();
+  };
+  let d = null;
+  view.onpointerdown = e => { d = [e.clientX, e.clientY, view.scrollLeft, view.scrollTop]; view.classList.add('drag'); view.setPointerCapture(e.pointerId); };
+  view.onpointermove = e => { if (d) { view.scrollLeft = d[2] - (e.clientX - d[0]); view.scrollTop = d[3] - (e.clientY - d[1]); } };
+  view.onpointerup = () => { d = null; view.classList.remove('drag'); };
+  view.addEventListener('wheel', e => {
+    if (e.ctrlKey) { e.preventDefault(); set(s * (e.deltaY < 0 ? 1.1 : .9)); }
+    else if (e.shiftKey) { e.preventDefault(); view.scrollLeft += e.deltaY; }
+    // ลูกกลิ้งปกติ: ปล่อยให้เลื่อนหน้าเอกสารตามเดิม (ไม่ติดอยู่ในกรอบ)
+  }, { passive: false });
+}
+
+async function show(scrollTarget) {
+  const id = byId[cur()] ? cur() : 'dev-readme';
+  const p = byId[id];
+  const out = document.getElementById('out');
+  out.innerHTML = marked.parse(p.md);
+  out.removeAttribute('aria-busy');
+  out.querySelectorAll('a[href]').forEach(a => {
+    const h = a.getAttribute('href');
+    if (/^(https?:|#|mailto:)/.test(h)) return;
+    const base = h.split('#')[0].split('/').pop();
+    if (byBase[base]) a.setAttribute('href', '#' + byBase[base]);
+  });
+  wrapTables(out);
+  outline(out, id);
+  out.querySelectorAll('.er-svg').forEach(enhance); // ER ที่วางผังเอง: ใช้ซูม/ลากเหมือน mermaid
+  const blocks = [...out.querySelectorAll('pre code.language-mermaid')];
+  blocks.forEach(c => {
+    const d = document.createElement('div'); d.className = 'mermaid'; d.textContent = c.textContent;
+    c.closest('pre').replaceWith(d);
+  });
+  if (blocks.length) {
+    try { const m = await loadMermaid(); await m.run({ nodes: out.querySelectorAll('.mermaid') }); }
+    catch (e) { console.error(e); out.querySelectorAll('.mermaid:not([data-processed])').forEach(n => n.classList.add('sk-fail')); }
+    out.querySelectorAll('.mermaid').forEach(enhance);
+  }
+  const i = PAGES.findIndex(x => x.id === id), a = PAGES[i - 1], b = PAGES[i + 1];
+  out.insertAdjacentHTML('beforeend',
+    `<div class="pager"><span>${a ? `<a href="#${a.id}">← ${a.t}</a>` : ''}</span><span>${b ? `<a href="#${b.id}">${b.t} →</a>` : ''}</span></div>`);
+  document.title = p.t + ' · เอกสารระบบตารางเรียน';
+  mark();
+  const t = scrollTarget && document.getElementById(scrollTarget);
+  t ? t.scrollIntoView() : scrollTo(0, 0);
+}
+
+// tooltip ข้อมูลเต็มของแผนภาพ ER (ดึงจาก data-tip)
+const tipEl = document.createElement('div');
+tipEl.className = 'tip';
+document.body.appendChild(tipEl);
+let tipOf = null;
+document.addEventListener('mousemove', e => {
+  const el = e.target.closest && e.target.closest('[data-tip]');
+  if (!el) { tipEl.style.display = 'none'; tipOf = null; return; }
+  if (el !== tipOf) {
+    tipOf = el;
+    const [head, ...rest] = el.dataset.tip.split(String.fromCharCode(10));
+    tipEl.replaceChildren();
+    const b = document.createElement('b'); b.textContent = head; tipEl.appendChild(b);
+    rest.forEach(l => { const d = document.createElement('div'); d.textContent = l; tipEl.appendChild(d); });
+  }
+  tipEl.style.display = 'block';
+  const w = tipEl.offsetWidth, h = tipEl.offsetHeight;
+  tipEl.style.left = Math.min(e.clientX + 16, innerWidth - w - 8) + 'px';
+  tipEl.style.top = (e.clientY + 18 + h > innerHeight ? e.clientY - h - 12 : e.clientY + 18) + 'px';
+});
+document.addEventListener('mouseleave', () => { tipEl.style.display = 'none'; });
+document.getElementById('q').addEventListener('input', e => buildToc(e.target.value));
+let last = cur();
+addEventListener('hashchange', () => {
+  const raw = location.hash.slice(1);
+  // ลิงก์หัวข้อในหน้าเดียวกัน (id~n) ไม่ต้องโหลดหน้าใหม่
+  if (cur() === last && raw.includes('~')) { document.getElementById(raw)?.scrollIntoView(); return; }
+  last = cur(); show(raw.includes('~') ? raw : null);
+});
+buildToc();
+show(location.hash.includes('~') ? location.hash.slice(1) : null);
+</script>
+</body>
+</html>

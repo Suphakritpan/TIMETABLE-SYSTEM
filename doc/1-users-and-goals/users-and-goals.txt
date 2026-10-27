@@ -1,0 +1,117 @@
+USERS AND GOALS - Automatic Class Timetable System
+==================================================
+Version: 2026-10-24 (stage 1 of the web design process: users and goals)
+Related files in this folder:
+  tech-stack-list.txt        full spec (tech stack, flow, decisions) - its USERS AND GOALS section is the source of this file
+  users-goals-map.svg / .png diagram: users -> goals -> tech stack, and the parts that belong to both
+
+--------------------------------------------------
+VISION
+--------------------------------------------------
+One system for every department, versatile enough for institutions across the whole country (FINAL product).
+Build a local demo first. SELF-HOSTED + OPEN SOURCE (2026-10-24): each institution installs its own copy on its own server.
+
+Who uses it: institution personnel only.
+Students NEVER log in - they only receive the finished timetable (print / file).
+
+--------------------------------------------------
+THE PROBLEM TODAY
+--------------------------------------------------
+- Timetables are made by hand in Excel and on paper. Nothing is automated.
+- It takes 3 days to a week per term.
+- Most of that time is teachers talking to each other: who can teach when, and who teaches which subject.
+- Changes keep coming even after the "final" table is made.
+
+--------------------------------------------------
+USERS
+--------------------------------------------------
+Department head (MAIN user)
+  What they do : build the timetable for the chosen years, once per term; run the teacher availability round;
+                 approve changes; publish and print
+  Uses         : every page of the web app
+  Account      : invited by the institution admin
+
+Teacher
+  What they do : give busy times, subjects they can / want to teach, max hours per day;
+                 check their own timetable; send change requests
+  Uses         : my availability | my timetable | my requests (sees ONLY their own timetable)
+  Account      : invited by a department head; one account can belong to several departments
+
+Institution admin
+  What they do : create departments, invite department heads, enter rooms shared by several departments
+                 ALSO runs the institution's own install (self-hosted, 2026-10-24): updates, backups,
+                 mail settings, approving new curriculum formats
+  Uses         : admin pages (departments, heads, shared rooms, formats, system)
+  Account      : created at install (first-run setup page)
+
+(No platform admin: each institution runs its own copy. The open-source maintainers ship the code and the
+ shared curriculum formats, but never see any institution's data.)
+
+Other departments
+  What they do : the same as a department head, in their own profiles
+  Why it matters: they share rooms (and some teachers) - their published timetables book those rooms
+
+Students (NOT a user of the system)
+  What they get: the published timetable of their group (A4 print / file)
+  Account      : none, ever
+
+--------------------------------------------------
+GOALS (of the department head)               -> served by (tech stack)
+--------------------------------------------------
+G1 A clash-free timetable for every group     -> FET solver, pre-check, our own rule checker (core lib)
+G2 Much faster than 3 days - 1 week           -> availability round (web + project service), FET < 1 s,
+                                                 "copy from last term", N candidate timetables
+G3 Stay in control                            -> arrange page (React + dnd-kit), live check (POST /api/check),
+   (move classes, pin agreed ones, electives)    pins + re-run around pins (FET locks), Schedule / Reserve electives
+G4 Trust the data from the PDF                -> import service (pdftotext + curriculum format readers),
+                                                 review page (table + flow chart), every value links to its PDF page
+G5 An official-looking A4 print               -> print preview (web), Thai font (Noto Sans Thai / Sarabun), PDF export
+G6 Reuse work next term                       -> storage (PostgreSQL), profile manager, copy from last term
+
+Goals of the teacher
+T1 Their busy times and wishes are respected  -> availability grid, teacher rules in FET (now CORE, not later)
+T2 Know about changes that affect them        -> review state, change requests, notifications, version history
+
+Goal of the institution admin
+I1 Departments do not double-book shared rooms -> global rooms + room bookings from published timetables
+
+--------------------------------------------------
+SUCCESS MEASURES
+--------------------------------------------------
+- Full term from PDF to print in under 30 minutes of work (first target; aim: as fast as possible)
+- Zero hard clashes in a saved timetable
+- Every class placed, or listed as unplaced with a reason and the nearest fix
+- No hand-editing of files
+- Measured inside the app: time per step, number of manual moves, number of FET runs,
+  quality score (soft rules kept + head's 1-5 rating) -> benchmark later to find the sweet spot of speed vs quality
+
+--------------------------------------------------
+THE SYSTEM MUST NEVER                         -> how the tech stack guarantees it
+--------------------------------------------------
+N1 Change a timetable without the user asking -> only the project service writes; every change logged; versions kept
+N2 Show teachers' data outside the institution -> login + roles; each institution runs its OWN install, so its data
+                                                 never leaves its server (PostgreSQL in Docker); Thailand PDPA rules
+N3 Let students in                            -> no student role exists
+
+--------------------------------------------------
+OUT OF SCOPE (for now)
+--------------------------------------------------
+- Students choosing electives in the system (Reserve keeps the time free for them)
+- Exam timetables
+
+--------------------------------------------------
+PARTS THAT BELONG TO BOTH (users & goals AND tech stack)
+--------------------------------------------------
+These are features a user asked for that also need a specific piece of the tech stack:
+  Login + roles            users: all personnel     tech: built-in accounts (PROPOSED), roles checked by the project service
+  Availability round       users: head + teachers   tech: web pages + project service + teacher rules in FET
+  Live check on drop       users: head              tech: dnd-kit + POST /api/check + core lib checker
+  Print preview (A4)       users: head -> students  tech: web print layout + Thai font
+  Versions + change log    users: head + teachers   tech: project service (single writer) + storage
+  Copy from last term      users: head              tech: profile manager + storage
+
+--------------------------------------------------
+GAPS FOUND WHILE WRITING THIS
+--------------------------------------------------
+- The tech stack has no AUTH (login) component yet - needed for G2/T1/N2. To choose.
+- Notifications (email / in-app) are not in the tech stack yet - needed for T2.

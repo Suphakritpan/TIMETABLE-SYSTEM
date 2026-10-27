@@ -1,0 +1,106 @@
+/* office-silver docs: CSS สกัดตรง ๆ จาก doc/site/template.html ส่วน <style> ทั้งหมด ไม่แก้ค่า
+   ใช้เป็นฐาน แล้วเพิ่มเฉพาะที่หน้าใหม่ต้องการ (บล็อก skeleton ท้ายไฟล์เป็นส่วนเสริมภายหลัง) */
+/* ธีมออฟฟิศ: ขาว + เงิน (สว่างอย่างเดียว) ค่าสีตรงกับ tokens.css ของแอป */
+:root{
+  --page:#eceef1;          /* พื้นหลังเงินอ่อน */
+  --paper:#ffffff;         /* กระดาษเนื้อหา */
+  --silver:#e5e7eb;        /* แถบข้าง / หัวตาราง */
+  --silver-2:#f3f4f6;      /* แถวสลับ / โค้ด */
+  --border:#cfd4db;
+  --text:#1f2937;
+  --text2:#4b5563;         /* 7.5:1 บนขาว */
+  --primary:#1f5fae;
+  --primary-bg:#e8f0fb;
+  --warn-bg:#fff4e0;--warn-bd:#f0b45a;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:16px}
+body{margin:0;background:var(--page);color:var(--text);font:17px/1.8 Sarabun,"Noto Sans Thai",system-ui,sans-serif;display:grid;grid-template-columns:276px minmax(0,1fr)}
+
+/* แถบสารบัญซ้าย */
+nav.side{position:sticky;top:0;height:100vh;overflow:auto;background:linear-gradient(#f4f5f7,#e5e7eb);border-right:1px solid var(--border);padding:16px 12px}
+nav.side h1{font-size:1.05rem;margin:4px 8px 10px;line-height:1.4}
+nav.side input{width:100%;height:36px;padding:0 10px;margin:0 0 6px;border:1px solid #9ca3af;border-radius:4px;background:#fff;color:var(--text);font:inherit;font-size:.95rem}
+nav.side h2{font-size:.78rem;letter-spacing:.02em;color:var(--text2);margin:18px 8px 4px;font-weight:600}
+nav.side a{display:block;padding:5px 10px;border-radius:4px;color:var(--text);text-decoration:none;border-left:3px solid transparent;font-size:.95rem;line-height:1.5}
+nav.side a:hover{background:#fff}
+nav.side a[aria-current]{background:#fff;border-left-color:var(--primary);font-weight:600;color:var(--primary)}
+a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--primary);outline-offset:2px}
+
+/* พื้นที่อ่าน */
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:24px;padding:24px 28px 80px;align-items:start;max-width:1280px}
+article{background:var(--paper);border:1px solid var(--border);border-radius:6px;padding:32px 48px 40px;min-width:0}
+article>*:first-child{margin-top:0}
+article h1{font-size:2rem;line-height:1.35;margin:0 0 1.2rem;padding-bottom:.5rem;border-bottom:2px solid var(--silver)}
+article h2{font-size:1.45rem;line-height:1.4;margin:2.4rem 0 .8rem;padding-bottom:.3rem;border-bottom:1px solid var(--border)}
+article h3{font-size:1.15rem;margin:1.8rem 0 .5rem}
+article h4{font-size:1rem;margin:1.4rem 0 .4rem;color:var(--text2)}
+article p,article li{max-width:75ch}
+article ul,article ol{padding-left:1.5rem}
+article li{margin:.2rem 0}
+article hr{border:0;border-top:1px solid var(--border);margin:2rem 0}
+a{color:var(--primary)}
+article strong{font-weight:600}
+
+/* ตาราง */
+.tbl{overflow:auto;margin:1.2rem 0;border:1px solid var(--border);border-radius:4px}
+table{border-collapse:collapse;width:100%;font-size:.93rem;line-height:1.6}
+th,td{padding:8px 12px;border-bottom:1px solid var(--border);vertical-align:top;text-align:left}
+th{background:var(--silver);font-weight:600;white-space:nowrap;position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+thead:has(th:empty + th:empty){display:none} /* ตารางหัวว่าง (ตารางคู่ ชื่อ-ค่า) ซ่อนแถวหัวสีเทา */
+table td:first-child{font-weight:600}
+tbody tr:nth-child(even){background:#f8f9fb}
+td code{white-space:nowrap}
+
+code{background:var(--silver-2);border:1px solid #e1e4e8;padding:1px 5px;border-radius:3px;font:.86em/1.5 Consolas,"Cascadia Mono",monospace}
+pre{background:#f6f7f9;border:1px solid var(--border);padding:14px 16px;overflow:auto;border-radius:4px;line-height:1.55;font-size:.88rem;margin:1.2rem 0}
+pre code{background:none;border:0;padding:0}
+blockquote{margin:1.2rem 0;padding:10px 16px;border-left:4px solid var(--primary);background:var(--primary-bg);border-radius:0 4px 4px 0}
+blockquote p{margin:.3rem 0}
+img{max-width:100%;border:1px solid var(--border);border-radius:4px;background:#fff}
+
+/* ไดอะแกรม: ขนาดจริง + ซูม + ลากเลื่อน */
+.dg{margin:1.4rem 0;border:1px solid var(--border);border-radius:4px;background:#fff}
+.dg-bar{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--silver);border-bottom:1px solid var(--border);font-size:.9rem}
+.dg-bar button{height:30px;min-width:32px;padding:0 10px;border:1px solid #9ca3af;border-radius:4px;background:#fff;color:var(--text);font:inherit;cursor:pointer}
+.dg-bar button:hover{background:var(--primary-bg)}
+.dg-bar .z{min-width:52px;text-align:center;color:var(--text2)}
+.dg-bar .hint{margin-left:auto;color:var(--text2);font-size:.82rem}
+.dg-view{overflow:hidden;height:min(460px,70vh);cursor:grab;padding:8px;touch-action:none}
+.dg-view.drag{cursor:grabbing;user-select:none}
+.dg-view svg{display:block;max-width:none!important}
+.dg-full .dg-view,.dg:fullscreen .dg-view{height:calc(100vh - 46px)}.dg:fullscreen{background:#fff}
+
+/* สารบัญในหน้า (ขวา) */
+aside.outline{position:sticky;top:16px;font-size:.88rem;line-height:1.5;max-height:calc(100vh - 32px);overflow:auto}
+aside.outline b{display:block;color:var(--text2);margin-bottom:6px;font-weight:600}
+aside.outline a{display:block;padding:3px 0 3px 10px;border-left:2px solid var(--border);color:var(--text2);text-decoration:none}
+aside.outline a:hover{color:var(--primary);border-left-color:var(--primary)}
+aside.outline a.l3{padding-left:22px;font-size:.84rem}
+
+.tip{position:fixed;z-index:50;max-width:380px;padding:8px 12px;background:#fff;color:var(--text);border:1px solid #9ca3af;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.18);font-size:.88rem;line-height:1.55;pointer-events:none;display:none}
+.tip b{display:block;font-size:.95rem;margin-bottom:2px}
+[data-tip]{cursor:help}
+.pager{display:flex;justify-content:space-between;gap:16px;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--border)}
+.pager a{display:inline-block;padding:8px 14px;border:1px solid var(--border);border-radius:4px;text-decoration:none;background:var(--silver-2)}
+.pager a:hover{background:var(--primary-bg);border-color:var(--primary)}
+
+/* Skeleton loading: ส่วนเสริมจากสไตล์เดิม (ต้นฉบับไม่มี animation) เปิดให้ผู้ใช้ที่ตั้ง "ลดการเคลื่อนไหว" ไม่เห็นการวิบวับ */
+.sk,.mermaid:not([data-processed]):not(.sk-fail){background:linear-gradient(90deg,var(--silver) 25%,var(--silver-2) 37%,var(--silver) 63%);background-size:400% 100%;animation:sk-shimmer 1.4s ease infinite;border-radius:4px}
+@keyframes sk-shimmer{0%{background-position:100% 50%}100%{background-position:0 50%}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sk-h1{height:34px;width:55%;margin-bottom:22px}
+.sk-h2{height:24px;width:35%;margin:34px 0 14px}
+.sk-line{height:14px;margin:12px 0}
+.sk-table{height:150px;margin:20px 0}
+.sk-diagram,.mermaid:not([data-processed]):not(.sk-fail){height:260px;margin:22px 0;font-size:0;color:transparent;overflow:hidden}
+.sk-nav{height:12px;margin:14px 8px 8px;width:45%}
+.sk-link{height:16px;margin:10px 10px;width:78%}
+.sk-out{height:12px;margin:12px 0 12px 10px;width:80%}
+.w90{width:90%}.w85{width:85%}.w75{width:75%}.w60{width:60%}
+.mermaid.sk-fail{white-space:pre;font:.86em/1.5 Consolas,monospace;text-align:left;padding:12px;background:var(--silver-2)}
+@media (prefers-reduced-motion:reduce){.sk,.mermaid:not([data-processed]){animation:none}}
+@media (max-width:1180px){.wrap{grid-template-columns:minmax(0,1fr)}aside.outline{display:none}}
+@media (max-width:800px){body{grid-template-columns:1fr}nav.side{position:static;height:auto;max-height:45vh}.wrap{padding:12px}article{padding:20px 18px}}
+@media print{body{display:block;background:#fff}nav.side,aside.outline,.pager,.dg-bar{display:none}.wrap{padding:0;display:block}article{border:0;padding:0}.dg-view{max-height:none;overflow:visible}}

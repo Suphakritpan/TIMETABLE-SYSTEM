@@ -1,0 +1,171 @@
+--------------------------------------------------
+USER FLOWS (draft 2026-10-24) - the click-by-click path for each task, with what happens when it goes wrong
+Built from: 2-user-journeys (stages A/B/C), 3-sitemap (page numbers), tech-stack-list.txt (decisions)
+--------------------------------------------------
+How to read:   [page]   (action)   <question?>  -> yes / no   ==> end   !! = error or problem path
+Roles: ADMIN = institution admin | HEAD = department head | ASSISTANT = assistant (head's pages, cannot publish)
+       TEACHER. One person can hold different roles in different departments (department switcher).
+Decided at the start of this step (2026-10-24): all programs of a department in ONE profile (tabs = program x year);
+availability ONCE PER PERSON; an ASSISTANT role.
+
+==================================================
+F1  SET UP THE INSTITUTION  (ADMIN, once)                                          journey C1-C2
+==================================================
+(server admin runs docker compose up) -> [0.0 First-run setup]
+   (institution name, language, first admin account) -> [3.1 Admin home]
+-> [3.4 Academic calendar] (this year's terms: start / end dates, holidays)
+-> [3.2 Departments & heads] (add a department) -> (invite its head by email)
+     <mail server set in 3.6?>  -> yes: invite email sent
+                                -> no : the page shows an invite LINK to copy and send by hand
+-> [3.3 Shared rooms] (rooms used by several departments: name, type, seats)
+==> institution ready; 3.1 shows each department: invited / joined / has a profile / published
+!!  head never accepts -> 3.2 shows "invited 7 days ago" + (send again)
+
+==================================================
+F2  JOIN BY INVITE  (HEAD, ASSISTANT or TEACHER)                                      journey A1, B1
+==================================================
+(opens the invite link) -> [0.3 Accept invite]
+   <already has an account (another department)?>
+       -> yes: (log in) -> the new department is added to the department switcher
+       -> no : (set name + password) -> account made
+==> lands on the Home of the role it was invited for (2.1 or 4.1); first time: a 3-step intro
+!!  link expired -> "ask your head / admin to send it again" (no account is made)
+
+==================================================
+F3  START THIS TERM'S TIMETABLE  (HEAD or ASSISTANT)                                  journey A1-A3
+==================================================
+[2.1 Home] ("Start this term's timetable")
+   <a profile for the last term exists?>
+       -> yes: [2.2 Profiles] (Copy from last term)  - keeps people, rooms, rules, programs; each program's
+               years move up one; NEW year-1 groups are added
+       -> no : [2.2 Profiles] (New)
+-> [2.4 step 1 Setup] (pick the term from the academic calendar - never from the PDF)
+   (choose the programs taught this term: B.Ed. / transfer / M.Ed. / Ph.D. ...)
+   (for each program: upload its curriculum file(s) - PDF, Word, Excel, scan, photo)
+   -> see F4 (reading the files)
+==> the workspace shows one tab per program x year, every step "not started"
+!!  the term is not in the calendar -> "ask the admin to add it" (3.4); the head cannot type dates here
+
+==================================================
+F4  UPLOAD AND READ A CURRICULUM FILE  (HEAD or ASSISTANT)                            journey A3-A4
+==================================================
+[2.4 step 1] (upload) -> the system stores og_upload (the file as given, never changed)
+   <what is it really? (by content, not by name)>
+       -> PDF with text / Word / Excel -> convert -> normalise -> normalised_upload
+       -> scan / photo / PDF pages without text -> OCR + glyph tool -> normalised_upload
+       -> !! not a document (empty, broken, a zip, a locked PDF) -> "this file cannot be read: <reason>"; nothing saved
+   <is the layout a known format?>
+       -> yes: "What we found" card: format, curriculum version, years, terms, credit pattern - each with its page
+               (confirm) or (this is wrong -> pick another format)
+       -> no : [2.4.1 Format setup] (show which column is code / name / credits on a sample page)
+               -> saved as a format definition, "unverified" -> ADMIN sees it in 3.5 -> F11
+-> [2.4 step 2 Review data]  per program x year tab: Table | Flow chart
+   values the reader is SURE of: plain | values it is NOT sure of: RED, each with its reason + the crop of the page
+   (next red) -> the PDF opens beside the table, the spot highlighted -> (fix the value) or (it is right)
+   <any red left?>  -> yes: "Continue" stays locked ("3 values still need you")
+                    -> no : step 2 done
+==> every plan row has: program, year, term, code (or "slot"), name, credits L-P-S
+!!  the same course reads differently in the plan and in the course list -> red, both values shown, head picks
+!!  a later upload replaces a file -> the steps after it become "out of date" for THAT program only
+
+==================================================
+F5  AVAILABILITY ROUND  (HEAD/ASSISTANT opens, TEACHER answers)                       journey A5, B2
+==================================================
+HEAD: [2.4 step 3] (pick this term's teachers from 2.3) (set a deadline) (open the round)
+   -> each teacher gets a notice (1.1, + email if set)
+TEACHER: [4.1 Home] "availability due in 5 days" -> [4.2 My availability]
+   <filled it in for another department this term already?>
+       -> yes: the SAME grid is shown (once per person) - only the subject ranking is per department
+       -> no : (click busy times on the weekly grid) (rank the subjects this department offers) (max hours / day)
+   (submit) -> receipt: "submitted - your head sees: ..."  (can edit until the deadline)
+HEAD: status board: submitted / not yet / late -> (send reminder)
+   <deadline passed and someone missing?>
+       -> (fill it in for them) or (mark "available any time")
+==> step 3 done when every chosen teacher has an answer
+!!  a teacher's busy times change after the deadline -> they ask the head; the head edits (logged)
+
+==================================================
+F6  RESOLVE TEACHER INPUT  (HEAD/ASSISTANT, TEACHER comments)                         journey A6, B3
+==================================================
+[2.4 step 4] the system lists problems by itself:
+   BLOCKER  a subject nobody can teach | two teachers want the same subject
+   WARNING  a teacher's subjects need more hours than they are free
+(open an item) -> comment thread (the teacher sees it in 4.3 and answers there)
+   -> BLOCKER: (assign the subject to a teacher) or (mark "outside teacher / to hire") or (split groups)
+   -> WARNING: (change it) or (accept with a note)
+<anything undecided?> -> yes: step 4 stays open | no: done
+==> every subject has a teacher (or a marked outside teacher); every decision logged: who, when, why
+
+==================================================
+F7  RULES, CHECK, GENERATE, ARRANGE  (HEAD/ASSISTANT)                                 journey A7-A8
+==================================================
+[2.4 step 5] time grid (from the profile), groups per program x year, room counts, electives:
+   each elective slot -> (Schedule: pick a course) or (Reserve: keep the hours empty)
+   soft rules: on/off + weight; hard rules (from the curriculum) shown, not editable
+(Check) -> pre-check report: OK / problems / risky rules
+   <impossible by counting?>  -> yes: the reason + the nearest fix ("Year 2 needs 38 h, the week has 30")
+                                    -> back to the rules
+                              -> no : (Acknowledge) -> Generate unlocks
+-> [2.4 step 6] (Generate) -> the best candidates + a quality score
+   <everything placed?>
+       -> yes: the timetable grid
+       -> no : the PARTIAL timetable + a tray of unplaced classes, each with its reason + nearest fix
+   (drag a class) -> live check on drop: OK or a red cell + reason
+   (pin agreed classes) (re-run around pins: only this program x year moves)
+   a teacher busy in ANOTHER department shows as a grey "busy elsewhere" slot
+==> every class has a time; no hard rule broken
+!!  FET hangs or crashes -> "the scheduler stopped: <reason>"; the last good result is kept
+
+==================================================
+F8  ROOMS AND TEACHERS  (HEAD/ASSISTANT)                                              journey A9
+==================================================
+[2.4 step 7] times are locked -> rooms are placed automatically (FET rooms only)
+(for each class: confirm the teacher) -> clash check per assignment
+   <a shared room already booked by another department?> -> red on that class + "booked by <department>"
+the A4 preview under it changes live (one table per group; also per teacher, per room)
+==> every class has a room and a teacher; the preview looks like the printed paper
+
+==================================================
+F9  TEACHER REVIEW AND CHANGES  (HEAD/ASSISTANT, TEACHER)                             journey A10, B4
+==================================================
+HEAD: [2.4 step 8] (send to review) -> teachers get a notice
+TEACHER: [4.4 My timetable] (only my classes, marked DRAFT)
+   <happy?> -> yes: nothing to do
+            -> no : (request a change: which class, what, why) -> [4.5 My requests] "waiting"
+HEAD: change-request list: who, what, reason, IMPACT ("this also moves 2 classes")
+   (approve) -> minimal re-run, everything else pinned -> the teacher is told + sees old / new
+   (reject with a note) -> the teacher is told
+   TALKED IN PERSON: (direct edit on the grid) + "agreed with ___" -> live check -> the teacher gets
+                     "changed by <head>: <note>" with old / new
+==> no open requests (or the head decides to publish anyway - the open ones stay visible)
+
+==================================================
+F10 PUBLISH AND CHANGE LATER  (HEAD only)                                          journey A11-A12, B5
+==================================================
+[2.4 step 9] (publish)  <ASSISTANT?> -> "only the head can publish" + (ask the head) -> the head gets a notice
+-> version 1, locked; every teacher notified; (download / print) per group, teacher, room
+LATER: [2.4.2 Versions] (start a change) -> a new draft version, the published one stays valid
+   (change) -> impact check + minimal change -> (publish) -> version 2; only affected teachers notified
+==> students get the new paper from their teachers (no student login, no public link)
+
+==================================================
+F11 APPROVE A NEW FORMAT  (ADMIN)                                                  from F4
+==================================================
+[3.5 Curriculum formats] "1 unverified format from <department>"
+(open) -> the sample page with the columns the head marked, and what it read from 3 other pages
+   <looks right?> -> yes: (approve) -> every department here can use it; (export) to send it to the project
+                  -> no : (send back with a note) -> the head sees it in step 1
+
+==================================================
+F12 GIVE THE WORK TO AN ASSISTANT  (HEAD)                                          new role
+==================================================
+[2.3 People & rooms] (invite someone as ASSISTANT) -> F2 for them
+-> the assistant sees the same Home, Profiles and workspace as the head, can do steps 1-8
+   cannot: publish (F10), remove the head, invite other assistants
+==> every change still logged with WHO did it (head or assistant)
+
+==================================================
+STILL OPEN (decide later, does not block the flows)
+==================================================
+- login method (built-in accounts proposed) and notifications (in-app + optional email proposed)
+- what an assistant may do in 2.3 People & rooms (invite teachers? proposed: yes)

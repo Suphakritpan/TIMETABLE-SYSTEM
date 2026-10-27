@@ -1,0 +1,102 @@
+--------------------------------------------------
+SITEMAP (DONE 2026-10-24; tree diagram: sitemap-tree.png (make-sitemap-tree.py); detailed: sitemap.png (make-sitemap.py)) - every page, who sees it, how pages connect
+Built from 2-user-journeys/user-journeys.txt (A = head, B = teacher, C = institution admin)
+--------------------------------------------------
+Marks:  [A5] = journey stage the page serves   (step) = inside the profile step bar   * = new page, not in the journeys yet
+
+0. PUBLIC (not logged in)
+   0.0 First-run setup *            shown ONCE after install: institution name, first admin account, language;
+                                    then it disappears (self-hosted, 2026-10-24)
+   0.1 Login
+   0.2 Forgot / reset password
+   0.3 Accept invite [A1 B1]        set password, OR "join with my existing account" (already in another department)
+
+1. ON EVERY PAGE AFTER LOGIN (top bar)
+   - Department switcher            one person can be in several departments, and can be head in one, teacher in another
+   - Notifications bell -> 1.1
+   - Account menu -> 1.2, log out
+   1.1 Notifications *              invites, deadlines, reminders, "changed by <head>: <note>", published
+   1.2 My account *                 name, password, language (Thai / English), email settings
+
+2. DEPARTMENT HEAD
+   2.1 Home [A1]                    one big button "Start this term's timetable" (or "Continue <profile>");
+                                    below it: what needs me now (late teachers, open blockers, new requests)
+   2.2 Profiles [A2]                list: name, term, years, status (draft / review / published);
+                                    buttons: New | Copy from last term
+   2.3 Department people & rooms *  teachers of the department (invite, remove, see who joined) and the
+                                    department's own rooms (name, type, seats). Lives OUTSIDE profiles, so it is
+                                    typed once and every term reuses it. Shared rooms come from the admin (3.3).
+   2.4 PROFILE WORKSPACE            opened from 2.2; step bar on top (done / current / out of date / locked);
+                                    YEAR TABS (Year 1 | Year 2 | ...) on every step that works per year
+       (1) Setup [A3]               name, term -> upload PDF(s) -> "What we found" card (each setting + its PDF page)
+            2.4.1 Format setup [A3] only when the layout is unknown: point at a sample page, name the columns,
+                                    saved as a format definition (status: unverified)
+       (2) Review data [A4]         per year tab: Table | Flow chart; PDF side panel opens on any value click;
+                                    "next red row"; nothing continues while red rows remain
+       (3) Availability round [A5]  pick teachers for this term (from 2.3), deadline, status board, reminders
+       (4) Teacher input [A6]       blockers and warnings, each with its comment thread; must be empty to continue
+       (5) Rules + electives [A7]   time grid, groups, room counts, electives (Schedule / Reserve), rule weights;
+                                    "Check" -> pre-check report -> Acknowledge (unlocks Generate)
+       (6) Generate + arrange [A8]  per year tab: grid, tray of unplaced classes, candidates, pins, re-run this year;
+                                    sub-tabs [Arrange] [Print preview]
+       (7) Rooms + teachers [A9]    assign per class, clashes on the class, live A4 preview below
+       (8) Teacher review [A10]     send to REVIEW; change-request list (who, what, reason, impact);
+                                    DIRECT EDIT on the grid with "agreed with ___"
+       (9) Publish + print [A11]    publish -> locked version; downloads per group / teacher / room
+            2.4.2 Versions + change log [A11 A12]  every version, who changed what, why; open any old version;
+                                    "start a change" after publish -> new version (A12)
+
+3. INSTITUTION ADMIN  (also runs this institution's install - there is no platform admin, 2026-10-24)
+   3.1 Admin home [C3]              which departments have published this term, which are late; update available?
+   3.2 Departments + heads [C2 C3]  create department, invite / remove head
+   3.3 Shared rooms [C2]            rooms used by several departments; bookings between departments (spec C5/F2)
+   3.4 Academic calendar *          term dates and holidays; profiles pick their term here (spec: never take term
+                                    dates from the curriculum PDF)
+   3.5 Curriculum formats *         formats shipped with the release (from the open-source project) + formats made here
+                                    in 2.4.1 (unverified -> admin approves for this institution);
+                                    "export" a format file to send it to the project so other institutions get it
+   3.6 System *                     backups (download / restore), mail server (SMTP, optional), version + update notes,
+                                    service status, solver run log
+
+4. TEACHER
+   4.1 Home [B]                     what is due: availability deadline, items about me, review open
+   4.2 My availability [B2]         weekly busy grid, rank subjects, max hours per day; edit until deadline; receipt
+   4.3 My items [B3]                the blocker / warning items about me, with their comment threads
+   4.4 My timetable [B4 B5]         only my classes; draft (in REVIEW) or published; print / download;
+                                    "request a change" -> 4.5
+   4.5 My requests [B4]             waiting / approved / rejected + note; changes the head made for me (with note)
+
+--------------------------------------------------
+HOW PAGES CONNECT (the main paths)
+--------------------------------------------------
+Install:            server admin runs `docker compose up` -> 0.0 first-run setup -> 3.1
+Head, new term:     0.1 -> 2.1 -> 2.2 (Copy from last term) -> 2.4 steps (1) ... (9)
+Head, new teacher:  2.3 invite -> email -> teacher 0.3 -> 4.1
+Round:              head 2.4(3) opens round -> teachers get 1.1 notice -> 4.2 -> head sees status in 2.4(3)
+Problem items:      head 2.4(4)  <->  teacher 4.3   (the SAME comment thread, seen from both sides)
+Review:             head 2.4(8) sends draft -> teacher 4.4 -> 4.5 request -> head 2.4(8) approve/reject -> teacher 1.1
+In-person change:   head 2.4(8) direct edit -> teacher 1.1 "changed by <head>: <note>" -> 4.4
+After publish:      head 2.4.2 "start a change" -> new version -> affected teachers 1.1
+Unknown PDF:        head 2.4(1) -> 2.4.1 -> institution admin 3.5 approves -> (optional) export to the open-source project
+
+Step bar rule: a step unlocks when the one before is done. Going back to a done step and changing it marks the
+later steps "out of date" - for THAT YEAR only when the change is inside one year tab.
+
+--------------------------------------------------
+CHANGES TO THE SPEC THIS IMPLIES (not applied yet)
+--------------------------------------------------
+- Step bar: 9 steps (above) instead of the 7 in tech-stack-list.txt "TOP BAR"; Detect is now part of Setup,
+  and Availability / Teacher input / Teacher review are new steps.
+- Teachers + rooms move out of "Create profile" into a department page (2.3); the profile only picks from it.
+- Institution admin gets calendar (3.4), formats (3.5) and system (3.6) pages; there is no platform admin.
+
+--------------------------------------------------
+OPEN
+--------------------------------------------------
+- Notifications: PROPOSED in-app always + email only when 3.6 has a mail server (self-hosted makes this the natural fit)
+- Login: PROPOSED built-in accounts (no outside service); institution single sign-on = LATER
+DECIDED 2026-10-24 (user, at the start of step 4):
+- ALL programs of a department in ONE profile (B.Ed., transfer, M.Ed., Ph.D.) -> workspace tabs = program x year
+- availability ONCE PER PERSON (shared by every department); heads see "busy in another department"
+- an ASSISTANT role: the same profile pages as the head, but only the head publishes
+DECIDED 2026-10-24: no public student link - teachers share the printed / PDF table with students.

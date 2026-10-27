@@ -1,0 +1,177 @@
+
+--------------------------------------------------
+USER JOURNEYS (draft 2026-10-23; revision 1 2026-10-24 after user feedback) - stage by stage: DOES | SEES (page) | THINKS / FEELS | PAIN RISK | WHAT WE DO
+--------------------------------------------------
+JOURNEY A - DEPARTMENT HEAD (one term)
+
+A1 Get access
+   DOES   opens the invite email from the institution admin, sets a password, logs in
+   SEES   login page -> home
+   FEELS  "Is this hard to learn?"
+   RISK   gives up if the first screen is confusing
+   WE DO  home shows one clear button: "Start this term's timetable"; a 3-step intro the first time
+   STATUS OK (user, 2026-10-24)
+
+A2 Profile manager
+   DOES   opens last term's profile, or creates a new one
+   SEES   list of recent profiles (name, curriculum format, term, status: draft / review / published)
+   FEELS  "I don't want to type everything again"
+   RISK   re-entering teachers and rooms every term
+   WE DO  "Copy from last term" keeps teachers, rooms, rules; only the new PDF/term changes
+   STATUS OK - good enough for now
+
+A3 Create profile + basic settings   (REVISED 2026-10-24: the user no longer picks a format from a preset list)
+   DOES   names it, picks the term; uploads the curriculum PDF(s) straight away;
+          adds teachers and rooms now or later (room COUNTS required before scheduling)
+   SEES   short form (name, term) -> upload -> "what we found" card:
+          format, curriculum version, years + terms found, credit pattern, weeks per term - each with the PDF page it came from
+   FEELS  "Which format is mine?" -> now: "Is what it found right?"
+   RISK   wrong preset chosen = wrong settings everywhere after; a NEW curriculum type the system doesn't know yet
+   WE DO  DETECT FIRST, CONFIRM AFTER: the system reads the PDF and FILLS the settings; the user only confirms or corrects
+          each setting shows its evidence (page + the text it matched), so a wrong value is easy to spot
+          unknown layout -> never guessed silently -> guided setup: user points at a sample page
+            (which column is code / name / credits / hours), saved as a new FORMAT DEFINITION
+          FORMAT DEFINITION = data (a settings file), not code: a curriculum that only changes its layout
+            needs no programmer and no service update; only a truly new credit system needs new code
+          a new format starts as "unverified" until the platform admin checks it, then other institutions can use it
+
+A4 Upload PDF + review data
+   DOES   uploads the curriculum PDF, checks subjects in the table and the flow chart, fixes red rows
+   SEES   review page (table | flow chart), faulty rows in red with the reason
+   FEELS  "Did it read my PDF correctly?"
+   RISK   trusting wrong hours or credits; mismatch with chosen format
+   WE DO  every value links to its PDF page; mismatch warning; nothing continues while red rows remain
+          FAST CHECK (user, 2026-10-24): click any value -> the PDF opens beside the table at that page,
+            with the exact spot highlighted; "next red row" button jumps through the faults one by one
+
+A5 Availability round
+   DOES   invites teachers who are not in yet, opens the round with a deadline, watches who submitted
+   SEES   status board (submitted / not yet / late), reminder button
+   FEELS  "Chasing people is the slow part"
+   RISK   teachers miss the deadline
+   WE DO  automatic reminders; after the deadline the head fills missing ones or marks "available any time"
+   STATUS OK
+
+A6 Resolve teacher input
+   DOES   fixes the flagged items: subject nobody can teach, two teachers want one subject, overloaded teacher
+   SEES   checklist of problems, each with a comment thread
+   FEELS  "This used to be days of talking"
+   RISK   endless discussion
+   WE DO  the system builds the problem list ITSELF from what teachers submitted (nobody has to spot them)
+          two kinds of item:
+            BLOCKER  scheduling cannot work until it is fixed
+                     - a subject no teacher can teach  -> head assigns a teacher (or marks "outside teacher / to hire")
+                     - two teachers want one subject   -> head picks one, or splits groups between them
+            WARNING  it can run, but someone may be unhappy
+                     - a teacher's subjects need more hours than their free time -> head changes it, or ACCEPTS with a note
+          each item has a comment thread; it closes only with a decision, which is logged (who, when, why)
+          to continue: zero blockers open, and every warning fixed or accepted ("the list must be empty" = nothing undecided)
+
+A7 Rules + electives
+   DOES   checks the time grid, groups, room counts, electives (Schedule / Reserve), rule weights
+   SEES   rules page; hard rules shown greyed (from the curriculum), soft rules with weight levels
+   FEELS  "What do these rules mean?"
+   RISK   making everything hard -> nothing fits
+   WE DO  plain-language rule names, profile defaults, pre-check explains impossible cases before running
+          PRE-CHECK REPORT (user, 2026-10-24): after the check, a short report (OK / problems / risky rules)
+            that the head must ACKNOWLEDGE before Generate unlocks; the acknowledgement is logged with the run
+
+A8 Generate + arrange
+   DOES   presses Generate, compares the best candidates, drags classes, pins agreed ones
+   SEES   timetable grid, tray of unplaced classes, red cells with reasons, quality score
+   FEELS  "Can I trust this? Can I fix it myself?"
+   RISK   a partial result feels like failure
+   WE DO  partial result + tray + reason + nearest fix; live check on every drop; re-run around pins
+   STATUS OK
+
+A9 Rooms + teachers + preview
+   DOES   confirms rooms (FET picks), confirms teacher per class, checks the A4 preview
+   SEES   assignment page with live A4 preview below
+   FEELS  "Does it look like the real paper?"
+   RISK   clashes found late
+   WE DO  clash shown on the exact class; preview identical to the print
+   STATUS OK
+
+A10 Review by teachers
+   DOES   sends the draft to REVIEW; reads change requests
+   SEES   change-request list: who, what, reason, IMPACT (what would move)
+   FEELS  "Every change breaks something else"
+   RISK   one change reshuffles the whole table
+   WE DO  minimal-change re-run (everything else pinned); approve / reject with a note
+          TALKED IN PERSON (user, 2026-10-24): heads and teachers often agree small things face to face.
+            The head must NOT have to file a request or walk the whole list for that:
+            DIRECT EDIT - in REVIEW the head can move a class / swap a teacher directly on the grid;
+              same live check + impact preview ("this also moves 2 classes"), one field: "agreed with ___" (optional note)
+            it is logged as a change like any other, and the affected teacher(s) are notified with the note
+            small edits that touch nothing else apply at once; edits that move other classes ask "apply?" first
+            formal requests stay for teachers who did NOT talk to the head, or for big changes
+
+A11 Publish + print
+   DOES   publishes, prints / downloads per group (and per teacher, per room)
+   SEES   finish page: whole result, version number + date
+   FEELS  "Done - and I can prove it is clash-free"
+   WE DO  locked version, change log, students get the print (they never log in)
+   STATUS OK
+
+A12 After publishing (any time in the term)
+   DOES   handles a late change request -> new version
+   WE DO  same impact check + minimal change; affected teachers notified; old versions kept
+          direct edit (see A10) also works here, but always creates a new version
+   STATUS OK
+
+JOURNEY B - TEACHER
+
+B1 Invited    opens invite link, sets password (or joins with an existing account if already in another department)
+B2 Submit     fills the weekly busy grid, ranks subjects they can teach, max hours per day; can edit until the deadline
+              FEELS "Will my wishes be respected?" -> WE DO show "submitted" receipt + what the head will see
+B3 Discuss    gets a comment on a flagged item (e.g. two people want one subject), answers inside the system
+B4 Review     sees ONLY their own timetable in REVIEW; sends a change request with a reason if needed
+              FEELS "Is it worth asking?" -> WE DO show the request status (waiting / approved / rejected + note)
+              if they agreed it in person, they don't file anything: they get a notice "changed by <head>: <note>"
+              and the old/new slot side by side, so they can see it matches what was agreed
+B5 Final      gets notified on publish and on any later change; downloads / prints their own timetable
+B2 also shows the blocker/warning items about THEM (from A6) so they know what the head is deciding
+STATUS all B stages OK (user, 2026-10-24)
+
+JOURNEY C - INSTITUTION ADMIN (once, then rarely)
+C1 receives the institution account from the platform admin
+C2 creates departments, invites department heads, enters SHARED rooms (used by several departments)
+C3 later: adds/removes heads, sees which departments have published
+STATUS all C stages OK
+
+Pages this implies (input for the sitemap, next stage):
+  login | home | profile manager | create profile | upload + detect/confirm | review (table | flow chart | PDF side panel) |
+  format setup (unknown layout) | availability round | teacher input checklist |
+  rules | generate + arrange | rooms + teachers + preview | change requests | finish / publish |
+  teacher: my availability | my timetable | my requests | admin: departments | heads | shared rooms
+
+
+--------------------------------------------------
+PROFILE STRUCTURE - one PDF with many years (DECIDED 2026-10-24, user OK)
+--------------------------------------------------
+Question: a 5-year PDF -> one profile with 5 year sections, or split into 5 separate profiles?
+Proposal: ONE profile per department per term, holding one YEAR PLAN per year being taught.
+
+  PROFILE  "CED Computer Ed - term 1/2027"        <- the thing that is reviewed, published, versioned
+    sources:  PDF 2564 (years 1-3)  |  PDF 2559 (year 4)     <- 1..n PDFs; a year can come from an older curriculum
+    shared:   teachers, rooms, time grid, rules
+    YEAR PLAN 1  (from 2564, term 1 subjects)  state: done
+    YEAR PLAN 2  (from 2564, term 1 subjects)  state: out of date
+    YEAR PLAN 3  ...
+    YEAR PLAN 4  (from 2559)
+    (year 5 = off-site teaching practice -> listed, nothing to schedule)
+
+Why not split into 5 profiles:
+  - the SAME teachers and rooms serve all years at the SAME time. Split profiles would each think teacher X is free,
+    so clashes would only be found by cross-profile checks - the most fragile part.
+  - one review, one publish, one version for the whole department, instead of 5 that can drift apart.
+
+How it keeps changes small and safe:
+  - each year plan has its own tab and its own state (done / out of date); editing year 2's data marks ONLY year 2 out of date
+  - re-run is per year: the other years are pinned, so their classes cannot move
+  - a year plan reads from exactly ONE curriculum version, so subjects are never mixed inside a year
+  - the user can schedule only some years now (Scope) and add the rest later
+  - "Copy from last term" copies the profile; each year plan moves up with its students
+
+This changes an earlier decision in tech-stack-list.txt ("one profile = one curriculum version"):
+  now: one YEAR PLAN = one curriculum version; a profile may hold several versions.

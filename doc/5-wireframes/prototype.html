@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Timetable Wireframes</title>
+<style>
+/* LOW-FIDELITY WIREFRAMES: grey boxes on purpose - layout and flow only, no visual design (that is step 7) */
+:root{--bg:#f4f4f5;--paper:#fff;--ink:#27272a;--mute:#71717a;--line:#a1a1aa;--soft:#e4e4e7;--block:#d4d4d8;--red:#b91c1c;--redbg:#fee2e2;--ok:#15803d;--okbg:#dcfce7;--note:#fef9c3}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#18181b;--paper:#27272a;--ink:#f4f4f5;--mute:#a1a1aa;--line:#52525b;--soft:#3f3f46;--block:#52525b;--redbg:#450a0a;--red:#fca5a5;--okbg:#052e16;--ok:#86efac;--note:#422006}}
+:root[data-theme=dark]{--bg:#18181b;--paper:#27272a;--ink:#f4f4f5;--mute:#a1a1aa;--line:#52525b;--soft:#3f3f46;--block:#52525b;--redbg:#450a0a;--red:#fca5a5;--okbg:#052e16;--ok:#86efac;--note:#422006}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,'Noto Sans Thai',sans-serif}
+a{color:inherit}
+.bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:8px 16px;background:var(--paper);border-bottom:2px solid var(--line)}
+.bar b{margin-right:6px}.bar select{font:inherit;padding:3px 6px}
+.proto{font-size:12px;color:var(--mute);margin-left:auto}
+.wrap{display:flex;min-height:calc(100vh - 50px)}
+nav.pages{width:220px;flex:none;border-right:1px solid var(--line);padding:10px;background:var(--paper);font-size:13px;overflow:auto}
+nav.pages h4{margin:10px 0 4px;font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+nav.pages a{display:block;padding:3px 6px;border-radius:4px;text-decoration:none}
+nav.pages a.on{background:var(--soft);font-weight:600}
+main{flex:1;padding:16px;min-width:0}
+.screen{background:var(--paper);border:2px solid var(--line);border-radius:6px;max-width:1100px;margin:0 auto}
+.top{display:flex;gap:10px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);font-size:13px}
+.top .logo{width:90px;height:22px;background:var(--block);border-radius:3px}
+.top .sp{flex:1}.chip{border:1px solid var(--line);border-radius:12px;padding:1px 9px;font-size:12px}
+.body{padding:16px}
+h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:16px 0 6px}
+.mute{color:var(--mute);font-size:12px}
+.btn{display:inline-block;border:2px solid var(--ink);border-radius:6px;padding:6px 12px;font-weight:600;text-decoration:none;background:var(--paper);cursor:pointer}
+.btn.big{padding:14px 22px;font-size:17px}.btn.ghost{border-style:dashed;font-weight:400}
+.btn.off{opacity:.45;cursor:not-allowed}
+.row{display:flex;flex-wrap:wrap;gap:12px}.col{flex:1;min-width:240px}
+.card{border:1px solid var(--line);border-radius:6px;padding:10px;background:var(--paper)}
+.ph{background:var(--block);border-radius:4px;color:var(--mute);display:flex;align-items:center;justify-content:center;font-size:12px;text-align:center;padding:6px}
+table{border-collapse:collapse;width:100%}td,th{border:1px solid var(--line);padding:5px 7px;text-align:left;font-size:13px;vertical-align:top}
+th{background:var(--soft);font-size:12px}
+.red{background:var(--redbg);color:var(--red);font-weight:600}.ok{background:var(--okbg);color:var(--ok)}
+.note{background:var(--note);border:1px dashed var(--line);border-radius:4px;padding:6px 8px;font-size:12px;margin:8px 0}
+.steps{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 12px}
+.steps a{flex:1;min-width:92px;text-decoration:none;border:1px solid var(--line);border-radius:4px;padding:4px 6px;font-size:11.5px;text-align:center}
+.steps a.done{background:var(--okbg)}.steps a.cur{border:2px solid var(--ink);font-weight:700}.steps a.lock{opacity:.5}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}.tabs span{border:1px solid var(--line);border-bottom:none;border-radius:5px 5px 0 0;padding:4px 10px;font-size:12px}
+.tabs span.on{background:var(--soft);font-weight:700}
+.grid{display:grid;grid-template-columns:64px repeat(5,1fr);gap:2px;font-size:11.5px}
+.grid div{min-height:34px;border:1px solid var(--soft);border-radius:3px;padding:2px 4px}
+.grid .h{background:var(--soft);font-weight:600;text-align:center;min-height:auto}
+.cls{background:var(--block)}.busy{background:repeating-linear-gradient(45deg,var(--soft),var(--soft) 4px,var(--paper) 4px,var(--paper) 8px);color:var(--mute)}
+.bad{outline:2px solid var(--red)}
+.tray{border:2px dashed var(--line);border-radius:6px;padding:8px}
+.tray span{display:inline-block;background:var(--block);border-radius:3px;padding:3px 7px;margin:2px;font-size:12px}
+.flow{font-size:12px;color:var(--mute);margin-top:12px;border-top:1px dashed var(--line);padding-top:8px}
+@media (max-width:760px){nav.pages{display:none}.wrap{display:block}}
+</style>
+</head>
+<body>
+<div class="bar"><b>Wireframes + clickable prototype</b>
+  <label>view as <select id="role"><option value="head">Department head</option><option value="assist">Assistant</option><option value="teacher">Teacher</option><option value="admin">Institution admin</option><option value="public">Not logged in</option></select></label>
+  <span class="proto">low-fidelity: layout and flow only - colours and fonts come in step 7</span></div>
+<div class="wrap"><nav class="pages" id="nav"></nav><main><div class="screen" id="screen"></div></main></div>
+<script>
+const ROLE_PAGES={
+ public:[["login","0.1 Login"],["invite","0.3 Accept invite"],["setup","0.0 First-run setup"]],
+ head:[["home","2.1 Home"],["profiles","2.2 Profiles"],["people","2.3 People & rooms"],["s1","step 1 Setup"],["s2","step 2 Review data"],["s3","step 3 Availability"],["s4","step 4 Teacher input"],["s5","step 5 Rules"],["s6","step 6 Arrange"],["s7","step 7 Rooms + teachers"],["s8","step 8 Teacher review"],["s9","step 9 Publish"],["versions","2.4.2 Versions"],["notif","1.1 Notifications"]],
+ teacher:[["thome","4.1 Home"],["avail","4.2 My availability"],["items","4.3 My items"],["mytt","4.4 My timetable"],["req","4.5 My requests"],["notif","1.1 Notifications"]],
+ admin:[["ahome","3.1 Admin home"],["depts","3.2 Departments & heads"],["rooms","3.3 Shared rooms"],["cal","3.4 Academic calendar"],["formats","3.5 Curriculum formats"],["system","3.6 System"]]};
+ROLE_PAGES.assist=ROLE_PAGES.head;
+const STEPS=["Setup","Review data","Availability","Teacher input","Rules","Arrange","Rooms + teachers","Teacher review","Publish"];
+const ROWS=[["020003101","คอมพิวเตอร์เพื่อการศึกษาเบื้องต้น","1(1-1-2)",""],["020003223","ภาษาและวัฒนธรรมไทย","2(2-0-4)",""],
+ ["020413100","งานไฟฟ้าและเครื่องมือวัด","3(2-2-5)","name repaired: ไฟฟูา -> ไฟฟ้า (check)"],["020413101","อุปกรณ์อิเล็กทรอนิกส์","3(3-0-6)",""],
+ ["04xxxxxxx","วิชาเลือกในกลุ่มวิชาวิทยาศาสตร์และคณิตศาสตร์","3(3-0-6)",""],["08xxxxxxx","วิชาเลือกในกลุ่มวิชาภาษา","3(3-0-6)",""],
+ ["08xxxxxxx","วิชาเลือกในกลุ่มวิชาพลศึกษา","1(0-2-1)","two values printed: 1(0-2-1) / 1(0-2-1)"]];
+let role="head";
+const topbar=(who)=>`<div class="top"><div class="logo"></div><span class="chip">Dept: Computer Education ▾</span><span class="sp"></span><a href="#notif">🔔 3</a><span class="chip">${who} ▾</span></div>`;
+const who=()=>({head:"Head: Dr. A",assist:"Assistant: B",teacher:"Teacher: C",admin:"Admin: D",public:""}[role]);
+const steps=(cur)=>`<div class="steps">${STEPS.map((s,i)=>`<a href="#s${i+1}" class="${i+1<cur?"done":i+1==cur?"cur":"lock"}">${i+1} ${s}</a>`).join("")}</div>`;
+const tabs=`<div class="tabs"><span class="on">B.Ed. Y1</span><span>B.Ed. Y2</span><span>B.Ed. Y3</span><span>B.Ed. Y4</span><span>Transfer Y1</span><span>Transfer Y2</span><span>M.Ed. Y1</span></div>`;
+const ws=(n,title,body,flow)=>topbar(who())+`<div class="body"><div class="mute">2.4 Profile workspace · CED Computer Education · term 1/2570 · draft</div><h1>${title}</h1>${steps(n)}${body}${flow?`<div class="flow">flow: ${flow}</div>`:""}</div>`;
+const flow=(s)=>`<div class="flow">flow: ${s}</div>`;
+const days=["Mon","Tue","Wed","Thu","Fri"],hours=["08:00","09:00","10:00","11:00","13:00","14:00","15:00","16:00"];
+function grid(fill){let h=`<div class="grid"><div class="h"></div>${days.map(d=>`<div class="h">${d}</div>`).join("")}`;
+ hours.forEach((t,r)=>{h+=`<div class="h">${t}</div>`;days.forEach((d,c)=>{const v=fill(r,c);h+=`<div class="${v?v[0]:""}">${v?v[1]:""}</div>`})});return h+"</div>"}
+const P={
+login:()=>`<div class="body" style="max-width:380px;margin:40px auto"><div class="ph" style="height:60px">institution logo</div><h1 style="margin-top:14px">Log in</h1>
+ <div class="ph" style="height:34px;margin:8px 0">email</div><div class="ph" style="height:34px;margin:8px 0">password</div>
+ <a class="btn" href="#home" onclick="setRole('head')">Log in</a> <a href="#login" class="mute">forgot password?</a>
+ <p class="mute">Thai / English ▾</p>${flow("F2: lands on the Home of your role")}</div>`,
+invite:()=>`<div class="body" style="max-width:420px;margin:40px auto"><h1>You are invited</h1><p>Computer Education invites you as <b>Teacher</b>.</p>
+ <div class="card"><b>New here?</b><div class="ph" style="height:30px;margin:6px 0">name</div><div class="ph" style="height:30px;margin:6px 0">new password</div><a class="btn" href="#thome" onclick="setRole('teacher')">Create account</a></div>
+ <p><a class="btn ghost" href="#thome" onclick="setRole('teacher')">I already have an account (another department)</a></p>${flow("F2")}</div>`,
+setup:()=>`<div class="body" style="max-width:520px;margin:30px auto"><h1>Welcome - set up this install</h1><p class="mute">shown once, right after <code>docker compose up</code></p>
+ ${["Institution name","Language","First admin: name","First admin: email","Password"].map(x=>`<div class="ph" style="height:32px;margin:7px 0">${x}</div>`).join("")}
+ <a class="btn" href="#ahome" onclick="setRole('admin')">Finish setup</a>${flow("F1 -> 3.1 Admin home")}</div>`,
+home:()=>topbar(who())+`<div class="body"><h1>Good morning</h1><p class="mute">term 1/2570 starts in 6 weeks</p>
+ <p style="margin:18px 0"><a class="btn big" href="#s1">▶ Start this term's timetable</a></p>
+ <h2>Needs you now</h2><div class="row"><div class="card col">⏰ 4 teachers have not given availability <a href="#s3">open</a></div><div class="card col">❗ 2 blockers in teacher input <a href="#s4">open</a></div><div class="card col">✉ 1 change request <a href="#s8">open</a></div></div>
+ <h2>Your profiles</h2><table><tr><th>profile</th><th>status</th></tr><tr><td><a href="#s6">CED · term 2/2569</a></td><td>published v2</td></tr></table>
+ ${role=="assist"?`<div class="note">You are an ASSISTANT: everything except Publish.</div>`:""}${flow("F3")}</div>`,
+profiles:()=>topbar(who())+`<div class="body"><h1>Profiles</h1><p><a class="btn" href="#s1">+ New</a> <a class="btn" href="#s1">⧉ Copy from last term</a></p>
+ <table><tr><th>name</th><th>term</th><th>programs</th><th>status</th></tr><tr><td><a href="#s6">CED</a></td><td>2/2569</td><td>B.Ed., Transfer, M.Ed.</td><td>published v2</td></tr><tr><td>CED</td><td>1/2569</td><td>B.Ed., Transfer</td><td>published v1</td></tr></table>
+ <div class="note">Copy keeps people, rooms, rules and programs; each program's years move up; new year-1 groups are added.</div>${flow("F3")}</div>`,
+people:()=>topbar(who())+`<div class="body"><h1>People & rooms</h1><p class="mute">typed once; every term reuses them</p><div class="row">
+ <div class="col"><h2>Teachers <a class="btn" href="#people">+ invite</a></h2><table><tr><th>name</th><th>status</th></tr><tr><td>Teacher C</td><td class="ok">joined</td></tr><tr><td>Teacher E</td><td>invited 3 days ago · <a href="#people">send again</a></td></tr></table>
+ <h2>Assistants <a class="btn" href="#people">+ invite</a></h2><table><tr><td>Assistant B</td><td class="ok">joined</td></tr></table></div>
+ <div class="col"><h2>Our rooms <a class="btn" href="#people">+ add</a></h2><table><tr><th>room</th><th>type</th><th>seats</th></tr><tr><td>52-205</td><td>lab</td><td>40</td></tr><tr><td>44-702</td><td>lecture</td><td>60</td></tr></table><p class="mute">shared rooms come from the admin (3.3)</p></div></div>${flow("F12 (assistant)")}</div>`,
+s1:()=>ws(1,"Setup",`<div class="row"><div class="col"><div class="ph" style="height:32px">profile name: CED</div><div class="ph" style="height:32px;margin-top:6px">term: 1/2570 (from the academic calendar) ▾</div>
+ <h2>Programs this term</h2><table><tr><th>program</th><th>curriculum file</th><th></th></tr><tr><td>B.Ed. (5 yr)</td><td>ced.pdf ✓</td><td><a href="#s2">review</a></td></tr><tr><td>Transfer (3 yr)</td><td>bachelor_2564_transfer3yr.pdf ✓</td><td><a href="#s2">review</a></td></tr><tr><td>M.Ed.</td><td><a class="btn" href="#s1">upload</a></td><td></td></tr></table><p><a class="btn ghost" href="#s1">+ add a program</a></p></div>
+ <div class="col card"><b>What we found in ced.pdf</b><table><tr><td>format</td><td>KMUTNB CED <span class="mute">p.20</span></td></tr><tr><td>curriculum</td><td>2559 <span class="mute">p.1</span></td></tr><tr><td>years · terms</td><td>5 · 11 <span class="mute">p.20-27</span></td></tr><tr><td>credits</td><td>3(2-2-5) style <span class="mute">p.20</span></td></tr><tr><td>file</td><td>text + 14 scanned pages</td></tr></table><p><a class="btn" href="#s2">Looks right</a> <a class="btn ghost" href="#s1">Something is wrong</a></p></div></div>`,"F3, F4"),
+s2:()=>ws(2,"Review data",tabs+`<div class="row"><div class="col" style="flex:1.4"><p><b>2 values need you</b> <a class="btn" href="#s2">next red ▸</a> <span class="mute">Table | Flow chart</span></p><table><tr><th>code</th><th>name</th><th>credits</th></tr>
+ ${ROWS.map(r=>`<tr><td>${r[0]}</td><td ${r[3].startsWith("name")?'class="red"':""}>${r[1]}${r[3].startsWith("name")?`<div class="mute">${r[3]}</div>`:""}</td><td ${r[3].startsWith("two")?'class="red"':""}>${r[2]}${r[3].startsWith("two")?`<div class="mute">${r[3]}</div>`:""}</td></tr>`).join("")}</table>
+ <p><a class="btn off">Continue (2 red left)</a></p></div><div class="col"><div class="ph" style="height:330px">ORIGINAL FILE (og_upload)<br>page 20, the spot of the red value highlighted<br><br>[ toggle: original | cleaned text ]</div></div></div>`,"F4: nothing continues while red values remain"),
+s3:()=>ws(3,"Availability round",`<p>deadline <span class="chip">12 May</span> <a class="btn" href="#s3">send reminder</a></p><table><tr><th>teacher</th><th>status</th><th></th></tr>
+ <tr><td>Teacher C</td><td class="ok">submitted</td><td><a href="#avail">see</a></td></tr><tr><td>Teacher E</td><td>not yet</td><td><a href="#s3">fill in for them</a> · <a href="#s3">any time</a></td></tr><tr><td>Teacher F</td><td class="ok">submitted (also in Physics - same grid)</td><td></td></tr></table>`,"F5"),
+s4:()=>ws(4,"Teacher input",`<div class="row"><div class="col"><table><tr><th>problem</th><th>kind</th></tr><tr><td class="red">020413100 - no teacher can teach it</td><td>BLOCKER</td></tr><tr><td class="red">020413101 - wanted by C and E</td><td>BLOCKER</td></tr><tr><td>Teacher C: 22 h of subjects, free 18 h</td><td>warning</td></tr></table></div>
+ <div class="col card"><b>020413101 - wanted by C and E</b><div class="ph" style="height:110px;margin:6px 0">comment thread (teachers answer in 4.3)</div><a class="btn" href="#s4">Give to C</a> <a class="btn" href="#s4">Give to E</a> <a class="btn ghost" href="#s4">Split groups</a></div></div><p><a class="btn off">Continue (2 blockers)</a></p>`,"F6"),
+s5:()=>ws(5,"Rules + electives",tabs+`<div class="row"><div class="col card"><b>Time grid</b><div class="ph" style="height:70px">Mon-Fri · 08:00-17:00 · lunch 12:00</div><b>Rooms</b><div class="ph" style="height:40px">4 lecture · 2 lab</div></div>
+ <div class="col card"><b>Electives (this tab)</b><table><tr><td>04xxxxxxx science/maths</td><td>◉ Schedule <span class="mute">pick ▾</span> ○ Reserve</td></tr><tr><td>08xxxxxxx language</td><td>○ Schedule ◉ Reserve</td></tr></table></div>
+ <div class="col card"><b>Rules</b><div class="mute">hard (from the curriculum): shown, locked</div><div class="ph" style="height:30px;margin:4px 0">no gaps · weight ▮▮▮▯</div><div class="ph" style="height:30px">spread days · weight ▮▮▯▯</div></div></div>
+ <div class="card" style="margin-top:10px"><b>Pre-check:</b> OK for B.Ed. Y1-Y4 · ⚠ Transfer Y1 needs 31 h, the week has 30 → loosen "max hours/day" or add a slot. <a class="btn" href="#s6">Acknowledge & unlock Generate</a></div>`,"F7"),
+s6:()=>ws(6,"Generate + arrange",tabs+`<p><a class="btn" href="#s6">Generate</a> <span class="chip">candidate 1 of 3 · quality 95</span> <a class="btn ghost" href="#s6">re-run this tab around pins</a> <span class="mute">[Arrange] [Print preview]</span></p>
+ <div class="row"><div class="col" style="flex:3">${grid((r,c)=>({"0,0":["cls","020003101 L 📌"],"1,0":["cls","020003101 P"],"0,2":["cls","020413100 L"],"1,2":["cls","020413100 L"],"2,2":["cls bad","020413101 ✕ room taken"],"4,1":["busy","busy elsewhere (Physics)"],"5,3":["cls","04xxxxxxx"],"6,3":["cls","04xxxxxxx"],"4,4":["cls","08xxxxxxx"]})[r+","+c])}</div>
+ <div class="col tray"><b>Tray: not placed (1)</b><br><span>020003223 L 2h</span><div class="mute">reason: Mon-Fri afternoons full for Y1 · fix: allow 17:00</div></div></div>`,"F7: live check on every drop"),
+s7:()=>ws(7,"Rooms + teachers",tabs+`<div class="row"><div class="col"><table><tr><th>class</th><th>room</th><th>teacher</th></tr><tr><td>020003101 L</td><td>44-702</td><td>Teacher C ▾</td></tr><tr><td>020413101 L</td><td class="red">S-301 booked by Physics</td><td>Teacher E ▾</td></tr></table></div>
+ <div class="col"><div class="ph" style="height:260px">A4 PREVIEW (landscape) - one table per group<br>college · group · subject list (ท ป น ช) · weekly grid<br>also per teacher / per room</div></div></div>`,"F8"),
+s8:()=>ws(8,"Teacher review",`<p><a class="btn" href="#s8">Send to review</a> <span class="chip">in REVIEW since 3 May</span></p><table><tr><th>who</th><th>what</th><th>why</th><th>impact</th><th></th></tr>
+ <tr><td>Teacher C</td><td>move 020003101 L from Mon 08:00</td><td>meeting every Monday</td><td>also moves 1 class</td><td><a class="btn" href="#s8">Approve</a> <a class="btn ghost" href="#s8">Reject + note</a></td></tr></table>
+ <div class="note">Talked in person? Drag on the grid (step 6) → "agreed with ___" → the teacher is told old / new.</div>`,"F9"),
+s9:()=>ws(9,"Publish + print",role=="assist"?`<div class="note">Only the head can publish. <a class="btn" href="#s9">Ask the head</a></div>`:`<p><a class="btn big" href="#versions">Publish version 1</a></p><p class="mute">locks this version; every teacher is notified</p><div class="row"><div class="card col">⬇ per group (PDF)</div><div class="card col">⬇ per teacher</div><div class="card col">⬇ per room</div></div>`,"F10"),
+versions:()=>topbar(who())+`<div class="body"><h1>Versions + change log</h1><table><tr><th>version</th><th>when</th><th>who</th><th>what</th></tr><tr><td>v2</td><td>20 Jun</td><td>Head</td><td>moved 1 class (request from Teacher C)</td></tr><tr><td>v1</td><td>1 Jun</td><td>Head</td><td>published</td></tr></table><p><a class="btn" href="#s6">Start a change</a></p>${flow("F10: a new draft; the published version stays valid")}</div>`,
+notif:()=>topbar(who())+`<div class="body"><h1>Notifications</h1><table><tr><td>Availability due 12 May</td><td class="mute">2 h ago</td></tr><tr><td>Changed by Head: "agreed after Monday's meeting" - old Mon 08:00 → new Tue 10:00</td><td class="mute">yesterday</td></tr><tr><td>Timetable published (v1)</td><td class="mute">1 Jun</td></tr></table></div>`,
+thome:()=>topbar(who())+`<div class="body"><h1>Hello, Teacher C</h1><div class="row"><div class="card col">⏰ Availability due in 5 days <a class="btn" href="#avail">fill in</a></div><div class="card col">💬 1 item about you <a href="#items">open</a></div><div class="card col">📄 Draft timetable ready to review <a href="#mytt">open</a></div></div>${flow("F5, F9")}</div>`,
+avail:()=>topbar(who())+`<div class="body"><h1>My availability</h1><p class="mute">one grid for all your departments · click to mark busy · editable until 12 May</p>${grid((r,c)=>(c==0&&r<2)?["busy","busy"]:(c==2&&r>3)?["busy","busy"]:null)}
+ <h2>Subjects I can teach (Computer Education)</h2><table><tr><td>1</td><td>020003101 คอมพิวเตอร์เพื่อการศึกษาเบื้องต้น</td></tr><tr><td>2</td><td>020413101 อุปกรณ์อิเล็กทรอนิกส์</td></tr></table><p>max hours / day <span class="chip">6 ▾</span> <a class="btn" href="#thome">Submit</a></p>${flow("F5: receipt after submit")}</div>`,
+items:()=>topbar(who())+`<div class="body"><h1>My items</h1><div class="card"><b>020413101 - wanted by you and Teacher E</b><div class="ph" style="height:110px;margin:6px 0">comment thread with the head</div><div class="ph" style="height:32px">write a reply</div></div>${flow("F6")}</div>`,
+mytt:()=>topbar(who())+`<div class="body"><h1>My timetable <span class="chip">DRAFT</span></h1>${grid((r,c)=>({"0,0":["cls","020003101 L · 44-702"],"1,0":["cls","020003101 P · 52-205"],"2,2":["cls","020413101 L"]})[r+","+c])}<p><a class="btn" href="#req">Request a change</a> <a class="btn ghost" href="#mytt">⬇ print</a></p>${flow("F9")}</div>`,
+req:()=>topbar(who())+`<div class="body"><h1>My requests</h1><table><tr><th>request</th><th>status</th></tr><tr><td>move 020003101 L from Mon 08:00 - meeting</td><td>waiting</td></tr><tr><td>Changed for you: Tue 10:00 (agreed in person)</td><td class="ok">done</td></tr></table></div>`,
+ahome:()=>topbar(who())+`<div class="body"><h1>Institution</h1><table><tr><th>department</th><th>head</th><th>this term</th></tr><tr><td>Computer Education</td><td class="ok">joined</td><td>published v2</td></tr><tr><td>Physics</td><td>invited</td><td>-</td></tr></table><p class="mute">update available: 1.4 → 1.5 (see 3.6)</p>${flow("F1")}</div>`,
+depts:()=>topbar(who())+`<div class="body"><h1>Departments & heads</h1><p><a class="btn" href="#depts">+ department</a></p><table><tr><td>Computer Education</td><td>Head: Dr. A</td></tr><tr><td>Physics</td><td>invite sent · no mail server: <a href="#depts">copy link</a></td></tr></table></div>`,
+rooms:()=>topbar(who())+`<div class="body"><h1>Shared rooms</h1><table><tr><th>room</th><th>type</th><th>seats</th></tr><tr><td>S-301</td><td>lecture</td><td>120</td></tr></table></div>`,
+cal:()=>topbar(who())+`<div class="body"><h1>Academic calendar</h1><table><tr><th>term</th><th>start</th><th>end</th><th>holidays</th></tr><tr><td>1/2570</td><td>15 Jun</td><td>10 Oct</td><td>3</td></tr><tr><td>2/2570</td><td>2 Nov</td><td>28 Feb</td><td>5</td></tr></table><div class="note">profiles pick their term here - never from the curriculum PDF</div></div>`,
+formats:()=>topbar(who())+`<div class="body"><h1>Curriculum formats</h1><table><tr><td>KMUTNB CED</td><td class="ok">from the release</td></tr><tr><td>Rajabhat X (made by Physics)</td><td class="red">unverified</td><td><a href="#formats">check</a></td></tr></table>${flow("F11")}</div>`,
+system:()=>topbar(who())+`<div class="body"><h1>System</h1><div class="row"><div class="card col">Backups · last: today 03:00 · <a href="#system">download</a></div><div class="card col">Mail server: not set (invites as links)</div><div class="card col">Version 1.4 · update 1.5 available</div></div></div>`};
+const ROLE_OF={login:"public",invite:"public",setup:"public",thome:"teacher",avail:"teacher",items:"teacher",mytt:"teacher",req:"teacher",ahome:"admin",depts:"admin",rooms:"admin",cal:"admin",formats:"admin",system:"admin"};
+function setRole(r){role=r;document.getElementById("role").value=r;try{localStorage.setItem("wf-role",r)}catch(e){}}
+function render(){let id=(location.hash||"#").slice(1);
+ if(!P[id]){id=ROLE_PAGES[role][0][0]}
+ const need=ROLE_OF[id]; if(need&&need!==role&&!(need==="public")) setRole(need); if(!need&&(role==="teacher"||role==="admin"||role==="public")&&id!=="notif") setRole("head");
+ document.getElementById("screen").innerHTML=P[id]();
+ document.getElementById("nav").innerHTML=Object.entries({public:"Not logged in",head:"Head / assistant",teacher:"Teacher",admin:"Institution admin"}).map(([k,n])=>`<h4>${n}</h4>`+ROLE_PAGES[k].map(([p,t])=>`<a href="#${p}" class="${p===id?"on":""}">${t}</a>`).join("")).join("");}
+document.getElementById("role").onchange=e=>{setRole(e.target.value);location.hash="#"+ROLE_PAGES[e.target.value][0][0]};
+try{const r=localStorage.getItem("wf-role");if(r)role=r}catch(e){}
+document.getElementById("role").value=role;
+addEventListener("hashchange",render);render();
+</script>
+</body>
+</html>

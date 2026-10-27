@@ -1,0 +1,79 @@
+/* Design tokens - ระบบตารางเรียน. ใช้ var(--…) เท่านั้น ห้าม hardcode สีในคอมโพเนนต์ */
+:root {
+  color-scheme: light dark;
+  /* สี: พื้น/ผิว/เส้น/ข้อความ */
+  --bg: #e4e7eb;          /* พื้นพื้นที่ทำงาน */
+  --surface: #ffffff;     /* แผง ตาราง เมนู */
+  --surface-2: #f3f4f6;   /* หัวตาราง แถบเครื่องมือ */
+  --border: #c5cad1;
+  --border-strong: #8a929c;
+  --text: #20252b;
+  --text-2: #48505a;      /* คอนทราสต์ 7.5:1 บน surface */
+  --text-disabled: #98a0a9;
+
+  /* สีหลัก */
+  --primary: #3d556f;
+  --primary-hover: #324a63;
+  --primary-active: #283c50;
+  --primary-bg: #d5dfea;  /* แถว/เซลล์ที่เลือก */
+  --on-primary: #ffffff;
+  --focus: #3d556f;
+
+  /* สถานะ: fg / bg / border */
+  --success: #166534; --success-bg: #e7f6ec; --success-bd: #86c99b;
+  --warning: #92400e; --warning-bg: #fff4e0; --warning-bd: #f0b45a;
+  --error:   #b42318; --error-bg:   #fdecea; --error-bd:   #ef9a93;
+  --info:    #0b6a8f; --info-bg:    #e5f4fa; --info-bd:    #86c3dc;
+
+  /* ฟอนต์ */
+  --font: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
+  --fs-title: 26px; --fs-section: 18px; --fs-body: 14px; --fs-table: 13px; --fs-small: 12px;
+  --lh: 1.5;
+  --fw: 400; --fw-strong: 600;
+
+  /* ระยะ (ทีละ 4) */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s6: 24px; --s8: 32px;
+
+  /* ขอบ/มุม/เงา */
+  --bw: 1px;
+  --radius: 4px;          /* ปุ่ม ช่องกรอก เซลล์ */
+  --radius-lg: 6px;       /* dialog เมนู */
+  --shadow-pop: 0 4px 12px rgb(0 0 0 / .15);  /* เฉพาะ dialog/เมนู/toast */
+
+  /* ขนาดตายตัว */
+  --h-topbar: 44px; --h-toolbar: 40px; --h-status: 24px; --w-nav: 220px;
+  --h-control: 32px;      /* ปุ่ม/ช่องกรอก */
+  --h-row: 32px;          /* แถวตาราง (compact: 28px) */
+  --target-min: 24px;     /* WCAG 2.2 target size */
+
+  --t-fast: 100ms;        /* hover/focus เท่านั้น */
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #111827; --surface: #1f2937; --surface-2: #273244;
+    --border: #374151; --border-strong: #6b7280;
+    --text: #f3f4f6; --text-2: #b6bdc9; --text-disabled: #6b7280;
+    --primary: #6aa6ec; --primary-hover: #8bbcf2; --primary-active: #a9cdf6;
+    --primary-bg: #1b2f4d; --on-primary: #0b1a2e; --focus: #8bbcf2;
+    --success: #86efac; --success-bg: #12301d; --success-bd: #2f6b45;
+    --warning: #fcd34d; --warning-bg: #3a2a0c; --warning-bd: #8a6516;
+    --error: #fca5a5;   --error-bg: #3b1613;   --error-bd: #8a3b34;
+    --info: #7dd3fc;    --info-bg: #0f2f3d;    --info-bd: #2c6a85;
+  }
+}
+:root[data-theme="dark"] { /* ค่าเดียวกับบล็อก dark ด้านบน */
+  --bg: #111827; --surface: #1f2937; --surface-2: #273244;
+  --border: #374151; --border-strong: #6b7280;
+  --text: #f3f4f6; --text-2: #b6bdc9; --text-disabled: #6b7280;
+  --primary: #6aa6ec; --primary-hover: #8bbcf2; --primary-active: #a9cdf6;
+  --primary-bg: #1b2f4d; --on-primary: #0b1a2e; --focus: #8bbcf2;
+  --success: #86efac; --success-bg: #12301d; --success-bd: #2f6b45;
+  --warning: #fcd34d; --warning-bg: #3a2a0c; --warning-bd: #8a6516;
+  --error: #fca5a5;   --error-bg: #3b1613;   --error-bd: #8a3b34;
+  --info: #7dd3fc;    --info-bg: #0f2f3d;    --info-bd: #2c6a85;
+}
+
+body { font: var(--fw) var(--fs-body)/var(--lh) var(--font); color: var(--text); background: var(--bg); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }

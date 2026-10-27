@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ER Diagram - ระบบตารางเรียน</title>
+<style>
+  body{margin:0;padding:16px;font-family:'Noto Sans Thai','Sarabun',sans-serif;background:#fff;color:#111}
+  h1{font-size:1.2rem} p{max-width:70ch}
+  .mermaid{overflow:auto;border:1px solid #ccc;padding:8px}
+</style>
+</head>
+<body>
+<h1>แผนภาพ ER - ระบบตารางเรียนอัตโนมัติ</h1>
+<p>ถอดจากเอกสารขั้นที่ 1-4 (ผู้ใช้ เส้นทาง sitemap flows). ต้องต่ออินเทอร์เน็ตเพื่อโหลด Mermaid; ไม่มีเน็ตให้เปิด er-diagram.mmd ที่ mermaid.live แทน</p>
+<pre class="mermaid" id="d">erDiagram
+    INSTITUTION ||--o{ DEPARTMENT : "มี"
+    INSTITUTION ||--o{ ACADEMIC_TERM : "กำหนดปฏิทิน"
+    INSTITUTION ||--o{ ROOM : "ห้องร่วม (department_id ว่าง)"
+    INSTITUTION ||--o{ CURRICULUM_FORMAT : "ใช้ได้ (อนุมัติแล้ว)"
+    ACADEMIC_TERM ||--o{ HOLIDAY : "มีวันหยุด"
+
+    USER ||--o{ MEMBERSHIP : "สังกัด"
+    DEPARTMENT ||--o{ MEMBERSHIP : "มีสมาชิก"
+    DEPARTMENT ||--o{ INVITE : "ส่งคำเชิญ"
+    DEPARTMENT ||--o{ ROOM : "ห้องของภาควิชา"
+    DEPARTMENT ||--o{ PROGRAM : "เปิดหลักสูตร"
+    DEPARTMENT ||--o{ PROFILE : "มีโปรไฟล์"
+
+    USER ||--o{ AVAILABILITY_SLOT : "ไม่ว่าง (ครั้งเดียวต่อคนต่อภาค)"
+    ACADEMIC_TERM ||--o{ AVAILABILITY_SLOT : "ของภาค"
+    USER ||--o{ TEACHER_TERM_SETTING : "ชั่วโมงสอนสูงสุด (ครั้งเดียวต่อคนต่อภาค)"
+    ACADEMIC_TERM ||--o{ TEACHER_TERM_SETTING : "ของภาค"
+    USER ||--o{ PASSWORD_RESET : "ลิงก์รีเซ็ตรหัสผ่าน"
+    ACADEMIC_TERM ||--o{ PROFILE : "ภาคเรียนของโปรไฟล์"
+
+    PROFILE ||--o{ SOURCE_UPLOAD : "มีไฟล์ต้นทาง 1..n"
+    PROGRAM ||--o{ SOURCE_UPLOAD : "ของหลักสูตร"
+    CURRICULUM_FORMAT ||--o{ SOURCE_UPLOAD : "ถูกตรวจจับเป็น"
+    PROFILE ||--o{ YEAR_PLAN : "แบ่งตามชั้นปี"
+    PROGRAM ||--o{ YEAR_PLAN : "หลักสูตร x ชั้นปี"
+    SOURCE_UPLOAD ||--o{ YEAR_PLAN : "อ่านจากเวอร์ชันหลักสูตรเดียว"
+    YEAR_PLAN ||--o{ STUDENT_GROUP : "กลุ่มเรียน"
+    YEAR_PLAN ||--o{ PLAN_ROW : "แถววิชา"
+    COURSE ||--o{ PLAN_ROW : "วิชา"
+    PLAN_ROW ||--o| ELECTIVE_SLOT : "ถ้าเป็นช่องเลือก"
+
+    PROFILE ||--o{ ROUND : "เปิดรอบเวลาว่าง"
+    ROUND ||--o{ ROUND_RESPONSE : "คำตอบ"
+    USER ||--o{ ROUND_RESPONSE : "ส่งโดย"
+    USER ||--o{ SUBJECT_PREFERENCE : "จัดอันดับวิชา"
+    DEPARTMENT ||--o{ SUBJECT_PREFERENCE : "ต่อภาควิชา"
+    COURSE ||--o{ SUBJECT_PREFERENCE : "วิชา"
+
+    PROFILE ||--o{ ISSUE : "blocker / warning"
+    ISSUE ||--o{ COMMENT : "เธรดความเห็น"
+    USER ||--o{ COMMENT : "เขียน"
+    ISSUE ||--o| DECISION : "ปิดด้วยการตัดสินใจ"
+    USER ||--o{ DECISION : "ตัดสินโดย"
+
+    PROFILE ||--o{ RULE_SETTING : "กฎ hard / soft + น้ำหนัก"
+    PROFILE ||--o{ PRECHECK_REPORT : "รายงานตรวจก่อนรัน"
+    PRECHECK_REPORT ||--o{ GENERATION_RUN : "ต้อง acknowledge ก่อนรัน"
+    USER ||--o{ PRECHECK_REPORT : "รับทราบโดย"
+    GENERATION_RUN ||--o{ CANDIDATE : "ตัวเลือก N แบบ"
+
+    PROFILE ||--o{ TIMETABLE_VERSION : "เวอร์ชัน"
+    CANDIDATE ||--o| TIMETABLE_VERSION : "ถูกเลือกเป็น"
+    TIMETABLE_VERSION ||--o{ SCHEDULED_CLASS : "คาบที่จัดแล้ว"
+    PLAN_ROW ||--o{ SCHEDULED_CLASS : "คาบของวิชา"
+    STUDENT_GROUP ||--o{ SCHEDULED_CLASS : "เรียนโดยกลุ่ม"
+    USER ||--o{ SCHEDULED_CLASS : "สอนโดย"
+    ROOM ||--o{ SCHEDULED_CLASS : "ใช้ห้อง"
+    ROOM ||--o{ ROOM_BOOKING : "ถูกจอง"
+    TIMETABLE_VERSION ||--o{ ROOM_BOOKING : "จองเมื่อเผยแพร่"
+    DEPARTMENT ||--o{ ROOM_BOOKING : "จองโดย"
+
+    TIMETABLE_VERSION ||--o{ CHANGE_REQUEST : "ขอเปลี่ยน"
+    USER ||--o{ CHANGE_REQUEST : "ยื่นโดยอาจารย์"
+    TIMETABLE_VERSION ||--o{ CHANGE_LOG : "บันทึกการเปลี่ยนแปลง"
+    USER ||--o{ CHANGE_LOG : "ทำโดย (หัวหน้า/ผู้ช่วย)"
+    CHANGE_REQUEST ||--o{ CHANGE_LOG : "ถ้ามาจากคำขอ"
+    USER ||--o{ NOTIFICATION : "ได้รับแจ้ง"
+
+    INSTITUTION {
+        uuid id PK
+        string name
+        string language
+    }
+    USER {
+        uuid id PK
+        string name
+        string email UK
+        string password_hash
+        string language "th | en"
+        boolean is_admin "ผู้ดูแลสถาบัน (ระดับสถาบัน ไม่ใช่สมาชิกแผนก)"
+    }
+    DEPARTMENT {
+        uuid id PK
+        uuid institution_id FK
+        string name
+    }
+    MEMBERSHIP {
+        uuid user_id FK
+        uuid department_id FK
+        string role "HEAD | ASSISTANT | TEACHER"
+    }
+    INVITE {
+        uuid id PK
+        uuid department_id FK
+        string email
+        string role
+        string token
+        datetime expires_at
+        datetime accepted_at
+    }
+    ACADEMIC_TERM {
+        uuid id PK
+        uuid institution_id FK
+        string label "เช่น 1/2027"
+        date start_date
+        date end_date
+    }
+    HOLIDAY {
+        uuid id PK
+        uuid term_id FK
+        date day
+        string name
+    }
+    ROOM {
+        uuid id PK
+        uuid institution_id FK
+        uuid department_id FK "ว่าง = ห้องร่วม"
+        string name
+        string type
+        int seats
+    }
+    PROGRAM {
+        uuid id PK
+        uuid department_id FK
+        string name "ค.บ. | เทียบโอน | ศษ.ม. | ปร.ด."
+    }
+    CURRICULUM_FORMAT {
+        uuid id PK
+        uuid institution_id FK "ว่าง = มากับระบบ"
+        string name
+        json definition "คอลัมน์ รูปแบบหน่วยกิต"
+        string status "unverified | approved"
+    }
+    PROFILE {
+        uuid id PK
+        uuid department_id FK
+        uuid term_id FK
+        string name
+        string status "draft | review | published"
+        uuid copied_from_profile_id FK
+    }
+    SOURCE_UPLOAD {
+        uuid id PK
+        uuid profile_id FK
+        uuid program_id FK
+        uuid format_id FK
+        string og_file "ไฟล์ตามที่อัปโหลด ไม่แก้"
+        string normalised_file
+        string curriculum_version
+    }
+    YEAR_PLAN {
+        uuid id PK
+        uuid profile_id FK
+        uuid program_id FK
+        uuid source_upload_id FK
+        int year
+        string state "not_started | done | out_of_date"
+    }
+    STUDENT_GROUP {
+        uuid id PK
+        uuid year_plan_id FK
+        string name
+        int size
+    }
+    COURSE {
+        uuid id PK
+        string code
+        string name
+        int credits_l
+        int credits_p
+        int credits_s
+    }
+    PLAN_ROW {
+        uuid id PK
+        uuid year_plan_id FK
+        uuid course_id FK "ว่างได้ถ้าเป็น slot"
+        int term_no
+        boolean is_red
+        int pdf_page "หน้า PDF ที่มา"
+    }
+    ELECTIVE_SLOT {
+        uuid plan_row_id PK
+        string mode "SCHEDULE | RESERVE"
+        uuid chosen_course_id FK
+    }
+    TEACHER_TERM_SETTING {
+        uuid user_id PK, FK
+        uuid term_id PK, FK
+        int max_hours_per_day
+    }
+    PASSWORD_RESET {
+        uuid id PK
+        uuid user_id FK
+        uuid created_by FK "ADMIN | HEAD | ASSISTANT | ตัวเอง"
+        string token
+        datetime expires_at
+        datetime used_at
+    }
+    AVAILABILITY_SLOT {
+        uuid user_id FK
+        uuid term_id FK
+        int weekday
+        int period
+        boolean busy
+    }
+    SUBJECT_PREFERENCE {
+        uuid user_id FK
+        uuid department_id FK
+        uuid course_id FK
+        int rank
+    }
+    ROUND {
+        uuid id PK
+        uuid profile_id FK
+        datetime deadline
+        string state "open | closed"
+    }
+    ROUND_RESPONSE {
+        uuid round_id FK
+        uuid user_id FK
+        string status "submitted | late | filled_by_head | any_time"
+        datetime submitted_at
+    }
+    ISSUE {
+        uuid id PK
+        uuid profile_id FK
+        string severity "BLOCKER | WARNING"
+        string kind
+        uuid about_user_id FK
+        uuid course_id FK
+        string state "open | closed"
+    }
+    COMMENT {
+        uuid id PK
+        uuid issue_id FK
+        uuid author_id FK
+        string body
+        datetime created_at
+    }
+    DECISION {
+        uuid issue_id PK
+        uuid decided_by FK
+        string outcome "assign | outside_teacher | split | accept | change"
+        string note
+        datetime decided_at
+    }
+    RULE_SETTING {
+        uuid id PK
+        uuid profile_id FK
+        string rule_key
+        string kind "hard | soft"
+        int weight
+        boolean enabled
+    }
+    PRECHECK_REPORT {
+        uuid id PK
+        uuid profile_id FK
+        string result "OK | problems | risky"
+        uuid acknowledged_by FK
+        datetime acknowledged_at
+    }
+    GENERATION_RUN {
+        uuid id PK
+        uuid precheck_id FK
+        uuid year_plan_id FK "ว่าง = ทั้งโปรไฟล์"
+        int duration_ms
+        string status
+    }
+    CANDIDATE {
+        uuid id PK
+        uuid run_id FK
+        float quality_score
+        boolean fully_placed
+    }
+    TIMETABLE_VERSION {
+        uuid id PK
+        uuid profile_id FK
+        uuid from_candidate_id FK
+        int version_no
+        string state "draft | review | published"
+        datetime published_at
+        uuid published_by FK "HEAD เท่านั้น"
+    }
+    SCHEDULED_CLASS {
+        uuid id PK
+        uuid version_id FK
+        uuid plan_row_id FK
+        uuid group_id FK
+        uuid teacher_id FK
+        uuid room_id FK
+        int weekday
+        int period
+        boolean pinned
+    }
+    ROOM_BOOKING {
+        uuid room_id FK
+        uuid version_id FK
+        uuid department_id FK
+        int weekday
+        int period
+    }
+    CHANGE_REQUEST {
+        uuid id PK
+        uuid version_id FK
+        uuid requested_by FK
+        uuid class_id FK
+        string reason
+        string impact
+        string status "waiting | approved | rejected"
+        string decision_note
+    }
+    CHANGE_LOG {
+        uuid id PK
+        uuid version_id FK
+        uuid changed_by FK
+        uuid request_id FK "ว่าง = direct edit"
+        json old_value
+        json new_value
+        string agreed_with
+        datetime at
+    }
+    NOTIFICATION {
+        uuid id PK
+        uuid user_id FK
+        string kind
+        string body
+        datetime read_at
+    }
+</pre>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@11.4.0/dist/mermaid.esm.min.mjs';
+  await mermaid.run({ nodes: [document.getElementById('d')] });
+</script>
+</body>
+</html>

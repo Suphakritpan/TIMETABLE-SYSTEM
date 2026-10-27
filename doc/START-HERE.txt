@@ -1,0 +1,27 @@
+TIMETABLE SYSTEM - DESIGN, STEPS 1 TO 5
+=======================================
+An automatic class-timetable system for Thai universities: it reads the curriculum PDF (มคอ.2),
+heads and teachers plan the term together, and it makes a clash-free timetable to print.
+Open source; each institution installs it on its own server. These are the design steps, before any code.
+
+HOW TO LOOK AT IT (no install needed)
+  - pictures: double-click any .png
+  - the prototype: double-click 5-wireframes/prototype.html (opens in your browser, works offline)
+  - text files (.txt): any text editor
+
+READ IN THIS ORDER
+  1-users-and-goals/   who uses it and what they need            -> users-goals-map.png
+  2-user-journeys/     what each user goes through in one term   -> user-journeys.txt
+  3-sitemap/           every page, grouped by who sees it        -> sitemap-tree.png (simple), sitemap.png (detailed)
+  4-user-flows/        the click-by-click path of 12 tasks       -> flows/F1.png ... F12.png (text: user-flows.txt)
+  5-wireframes/        rough layouts of 28 screens, clickable    -> prototype.html  ("view as" switches the user)
+
+GOOD TO KNOW
+  - the wireframes are grey on purpose: they show layout and flow, not the final look
+  - the sample data is a real curriculum (KMUTNB Computer Education); people's names are made up
+  - some files mention tech-stack-list.txt - that is the full technical spec, not included here
+  - the .py files only redraw the pictures; you do not need them
+
+WHAT WOULD HELP MOST
+  try the prototype as a department head and as a teacher, and note anything confusing:
+  a step you could not find, a word you did not understand, or something you expected to work differently
