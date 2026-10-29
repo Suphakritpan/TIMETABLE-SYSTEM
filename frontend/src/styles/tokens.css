@@ -2,22 +2,22 @@
 :root {
   color-scheme: light dark;
   /* สี: พื้น/ผิว/เส้น/ข้อความ */
-  --bg: #e4e7eb;          /* พื้นพื้นที่ทำงาน */
+  --bg: #eceef1;          /* พื้นพื้นที่ทำงาน */
   --surface: #ffffff;     /* แผง ตาราง เมนู */
   --surface-2: #f3f4f6;   /* หัวตาราง แถบเครื่องมือ */
-  --border: #c5cad1;
-  --border-strong: #8a929c;
-  --text: #20252b;
-  --text-2: #48505a;      /* คอนทราสต์ 7.5:1 บน surface */
+  --border: #cfd4db;
+  --border-strong: #8b94a1;
+  --text: #1f2937;
+  --text-2: #4b5563;      /* คอนทราสต์ 7.5:1 บน surface */
   --text-disabled: #98a0a9;
 
   /* สีหลัก */
-  --primary: #3d556f;
-  --primary-hover: #324a63;
-  --primary-active: #283c50;
-  --primary-bg: #d5dfea;  /* แถว/เซลล์ที่เลือก */
+  --primary: #1f5fae;
+  --primary-hover: #1a5096;
+  --primary-active: #144080;
+  --primary-bg: #e8f0fb;  /* แถว/เซลล์ที่เลือก */
   --on-primary: #ffffff;
-  --focus: #3d556f;
+  --focus: #1f5fae;
 
   /* สถานะ: fg / bg / border */
   --success: #166534; --success-bg: #e7f6ec; --success-bd: #86c99b;
@@ -27,8 +27,8 @@
 
   /* ฟอนต์ */
   --font: "Sarabun", "Noto Sans Thai", system-ui, sans-serif;
-  --fs-title: 26px; --fs-section: 18px; --fs-body: 14px; --fs-table: 13px; --fs-small: 12px;
-  --lh: 1.5;
+  --fs-title: 26px; --fs-section: 18px; --fs-body: 15px; --fs-table: 14px; --fs-small: 13px;
+  --lh: 1.6;
   --fw: 400; --fw-strong: 600;
 
   /* ระยะ (ทีละ 4) */
@@ -50,7 +50,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root[data-theme="auto"] {
     --bg: #111827; --surface: #1f2937; --surface-2: #273244;
     --border: #374151; --border-strong: #6b7280;
     --text: #f3f4f6; --text-2: #b6bdc9; --text-disabled: #6b7280;
@@ -77,3 +77,26 @@
 body { font: var(--fw) var(--fs-body)/var(--lh) var(--font); color: var(--text); background: var(--bg); }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+
+/* ปรับแต่งโดยผู้ใช้ (AppearanceMenu) — ตั้งค่าผ่าน data-* บน <html> */
+:root[data-accent="teal"]   { --primary:#0f6b6b; --primary-hover:#0c5757; --primary-active:#094444; --primary-bg:#d3ecec; --focus:#0f6b6b; }
+:root[data-accent="indigo"] { --primary:#4338ca; --primary-hover:#3730a3; --primary-active:#312e81; --primary-bg:#e0e1fa; --focus:#4338ca; }
+:root[data-accent="rose"]   { --primary:#be123c; --primary-hover:#9f1239; --primary-active:#881337; --primary-bg:#fbdfe6; --focus:#be123c; }
+:root[data-accent="green"]  { --primary:#237a3b; --primary-hover:#1c6230; --primary-active:#164d26; --primary-bg:#d9eedf; --focus:#237a3b; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-accent="teal"]   { --primary:#5fd0d0; --primary-hover:#86dede; --primary-active:#a8e8e8; --primary-bg:#0f3333; --focus:#86dede; }
+  :root:not([data-theme="light"])[data-accent="indigo"] { --primary:#a5a8f5; --primary-hover:#bcbef8; --primary-active:#d0d2fa; --primary-bg:#25264f; --focus:#bcbef8; }
+  :root:not([data-theme="light"])[data-accent="rose"]   { --primary:#f58aa5; --primary-hover:#f8a6bb; --primary-active:#fabfcf; --primary-bg:#45121f; --focus:#f8a6bb; }
+  :root:not([data-theme="light"])[data-accent="green"]  { --primary:#7ddc97; --primary-hover:#9ae6af; --primary-active:#b6eec6; --primary-bg:#133421; --focus:#9ae6af; }
+}
+:root[data-theme="dark"][data-accent="teal"]   { --primary:#5fd0d0; --primary-hover:#86dede; --primary-active:#a8e8e8; --primary-bg:#0f3333; --focus:#86dede; }
+:root[data-theme="dark"][data-accent="indigo"] { --primary:#a5a8f5; --primary-hover:#bcbef8; --primary-active:#d0d2fa; --primary-bg:#25264f; --focus:#bcbef8; }
+:root[data-theme="dark"][data-accent="rose"]   { --primary:#f58aa5; --primary-hover:#f8a6bb; --primary-active:#fabfcf; --primary-bg:#45121f; --focus:#f8a6bb; }
+:root[data-theme="dark"][data-accent="green"]  { --primary:#7ddc97; --primary-hover:#9ae6af; --primary-active:#b6eec6; --primary-bg:#133421; --focus:#9ae6af; }
+
+:root[data-size="l"]  { --fs-body:16px; --fs-table:15px; --fs-small:13px; --fs-section:20px; --fs-title:30px; }
+:root[data-size="xl"] { --fs-body:18px; --fs-table:17px; --fs-small:15px; --fs-section:22px; --fs-title:34px; }
+:root[data-density="compact"]     { --h-control:28px; --h-row:28px; }
+:root[data-density="comfortable"] { --h-control:40px; --h-row:40px; --target-min:32px; }
+:root[data-round="none"]  { --radius:0; --radius-lg:0; }
+:root[data-round="round"] { --radius:8px; --radius-lg:12px; }

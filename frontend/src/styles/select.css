@@ -1,0 +1,18 @@
+/* ตัวเลือก/ดรอปดาวน์ทั้งระบบ */
+/* SearchSelect: ตัวเลือกพร้อมช่องค้นหา */
+.ss { position: relative; }
+.ss-btn { width: 100%; text-align: left; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+.ss-btn::after { content: ""; border: 5px solid transparent; border-top-color: currentColor; margin-top: 5px; }
+.ss-pop { position: absolute; left: 0; right: 0; top: calc(100% + var(--s1)); z-index: 20; display: grid; gap: var(--s2); padding: var(--s2); background: var(--surface); border: var(--bw) solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-pop); }
+.ss-pop ul { list-style: none; margin: 0; padding: 0; max-height: 280px; overflow-y: auto; }
+.ss-pop li { padding: var(--s2) var(--s3); cursor: pointer; border-radius: var(--radius); }
+.ss-pop li.active { background: var(--primary); color: var(--on-primary); }
+.ss-pop li[aria-selected="true"]:not(.active) { background: var(--primary-bg); }
+
+/* <select> ทุกหน้า: หน้าตาเดียวกับ SearchSelect (ลูกศรเดียวกัน โฟกัส/ไฮไลต์ใช้โทเคนเดียวกัน) */
+select.input { appearance: none; padding-right: var(--s6); cursor: pointer; text-overflow: ellipsis;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 14px) 55%, calc(100% - 9px) 55%; background-size: 5px 5px; background-repeat: no-repeat; }
+select.input:hover:not(:disabled) { background-color: var(--surface-2); }
+select.input:disabled { color: var(--text-disabled); cursor: not-allowed; }
+select.input option:checked { background: var(--primary); color: var(--on-primary); }

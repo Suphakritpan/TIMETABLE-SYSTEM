@@ -1,6 +1,7 @@
 // ขั้น 5: กฎ + pre-check + Acknowledge (flows F7). Acknowledge ปลดล็อกขั้น 6 และบันทึกกับการรัน (R4)
 import { PRECHECK_RESULT } from '../../profile/status';
 import { useEffect, useState } from 'react';
+import { listRooms } from '../../api/people';
 import { acknowledge, getReport, getRules, putRules, runCheck } from '../../api/rules';
 import { RISKY_WEIGHT, type PrecheckReport, type RulesState } from '../../profile/precheck';
 import Badge from '../ui/Badge';
@@ -16,17 +17,21 @@ export default function RulesStep({ profile, done, locked, onComplete }: StepPro
   const [draft, setDraft] = useState<RulesState | null>(null);
   const [report, setReport] = useState<PrecheckReport | null>(null);
   const [busy, setBusy] = useState(false);
+  const [roomCount, setRoomCount] = useState<number | null>(null);
 
   useEffect(() => {
     let live = true;
-    void Promise.all([getRules(profile.id), getReport(profile.id)]).then(([r, rep]) => {
+    // จำนวนห้องนับจากรายการห้องของแผนก (ไม่ให้กรอกซ้ำ): ถ้าไม่ตรงกับที่เก็บในกฎ ให้ซิงก์ค่ากฎให้ตรง
+    void Promise.all([getRules(profile.id), getReport(profile.id), listRooms(profile.department_id)]).then(async ([r, rep, rooms]) => {
+      const synced = r.rooms === rooms.length ? r : await putRules(profile.id, { ...r, rooms: rooms.length });
       if (!live) return;
-      setSaved(r);
-      setDraft(r);
-      setReport(rep);
+      setRoomCount(rooms.length);
+      setSaved(synced);
+      setDraft(synced);
+      setReport(synced === r ? rep : null);
     });
     return () => { live = false; };
-  }, [profile.id]);
+  }, [profile.id, profile.department_id]);
 
   if (!draft || !saved) return <Skeleton lines={4} label="กำลังโหลดกฎ" />;
 
@@ -69,9 +74,7 @@ export default function RulesStep({ profile, done, locked, onComplete }: StepPro
           <label className="field">คาบต่อวัน
             <input className="input" type="number" min={1} max={12} value={draft.periodsPerDay} onChange={(e) => edit({ periodsPerDay: Number(e.target.value) })} />
           </label>
-          <label className="field">จำนวนห้อง <span className="muted">(ต้องมีก่อนจัดตาราง)</span>
-            <input className="input" type="number" min={0} value={draft.rooms} onChange={(e) => edit({ rooms: Number(e.target.value) })} />
-          </label>
+          <p>จำนวนห้อง: <strong>{roomCount ?? '…'}</strong> <span className="muted">(นับจากรายการห้องของแผนก ต้องมีก่อนจัดตาราง) <a href="#/people">จัดการห้อง</a></span></p>
           <p className="muted">วันเรียนต่อสัปดาห์: {draft.days} วัน</p>
         </fieldset>
 

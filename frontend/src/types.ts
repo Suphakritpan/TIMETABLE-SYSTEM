@@ -39,6 +39,15 @@ export interface User {
   language: 'th' | 'en';
   is_admin: boolean;
   memberships: Membership[];
+  /** ข้อมูลเพิ่มของผู้ดูแลคนแรก (0.0) บัญชีอื่นไม่จำเป็นต้องมี */
+  username?: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  avatar?: string; // data URL
+  created_at?: string; // ISO
+  status?: 'active';
+  email_verified?: boolean;
 }
 
 export type ProfileStatus = 'draft' | 'review' | 'published';

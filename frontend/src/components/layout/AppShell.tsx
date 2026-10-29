@@ -4,7 +4,9 @@ import { canAccess, switcherOptions, type RouteKey } from '../../auth/roles';
 import { hrefFor, type Route } from '../../router/useRoute';
 import { useSession } from '../../context/Session';
 import { term } from '../../utils/terminology';
+import Avatar from '../ui/Avatar';
 import Button from '../ui/Button';
+import AppearanceMenu from './AppearanceMenu';
 
 const NAV: [RouteKey, string][] = [
   ['home', 'หน้าแรก'],
@@ -18,6 +20,7 @@ const NAV: [RouteKey, string][] = [
   ['my-timetable', 'ตารางของฉัน'],
   ['my-requests', 'คำขอของฉัน'],
   ['admin', 'ผู้ดูแลสถาบัน'],
+  ['structure', 'โครงสร้าง'],
   ['notifications', 'การแจ้งเตือน'],
   ['account', 'บัญชีของฉัน'],
 ];
@@ -51,7 +54,8 @@ export default function AppShell({ children, route, onNav, status = '', unread =
             </select>
           </label>
         )}
-        <span className="topbar-user">{user?.name}</span>
+        <AppearanceMenu />
+        <span className="topbar-user">{user && <Avatar name={user.name} />}{user?.name}</span>
         <Button variant="tertiary" onClick={signOut}>ออกจากระบบ</Button>
       </header>
       <nav className="nav" aria-label="เมนูหลัก">

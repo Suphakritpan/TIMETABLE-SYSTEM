@@ -26,7 +26,9 @@ interface Stored { user: User; scope: RoleContext }
 function load(): Stored | null {
   try {
     const s = sessionStorage.getItem(KEY);
-    return s ? (JSON.parse(s) as Stored) : null;
+    const v = s ? (JSON.parse(s) as Stored) : null;
+    // ค่าเก่า/รูปแบบไม่ครบ ทิ้งไปให้ล็อกอินใหม่ ดีกว่าให้หน้าขาวค้าง
+    return v && v.scope && Array.isArray(v.user?.memberships) ? v : null;
   } catch {
     return null;
   }
