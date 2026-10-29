@@ -111,7 +111,7 @@ test('กฎแถบขั้นตอน: แก้ขั้นที่เส
 
   // แท็บแรก (ปวส. ปี 1) เสร็จ 5 ขั้น: เลือกขั้น 1 แล้วแก้
   await userEvent.click(screen.getByRole('button', { name: /^1./ }));
-  await userEvent.click(screen.getByRole('button', { name: /แก้ไขข้อมูลขั้นนี้/ }));
+  await userEvent.click(await screen.findByRole('button', { name: 'บันทึกการแก้ไข' }));
   const dlg = screen.getByRole('dialog');
   expect(within(dlg).getByText(/ขั้น 2: ตรวจข้อมูล/)).toBeInTheDocument();
   expect(within(dlg).getByText(/ขั้น 5: กฎ \+ วิชาเลือก/)).toBeInTheDocument();
@@ -124,7 +124,7 @@ test('กฎแถบขั้นตอน: แก้ขั้นที่เส
   // ล้าสมัยแล้วต้องทำใหม่ตามลำดับ ข้ามไปขั้น 3 ไม่ได้
   expect(screen.getByRole('button', { name: /^3./ })).toHaveAttribute('aria-disabled', 'true');
   await userEvent.click(screen.getByRole('button', { name: /^2./ }));
-  await userEvent.click(screen.getByRole('button', { name: /ทำขั้นนี้เสร็จ/ }));
+  await userEvent.click(await screen.findByRole('button', { name: 'ข้อมูลพร้อม ไปขั้นถัดไป' }));
   expect(await screen.findByText('ขั้น "ตรวจข้อมูล" เสร็จแล้ว')).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /^3./ })).not.toHaveAttribute('aria-disabled');
 });

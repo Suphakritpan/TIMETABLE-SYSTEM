@@ -17,7 +17,7 @@ const head = { id: 'u-head', role: 'HEAD' as const, departmentId: 'd1' };
 
 test('1.2 แก้ชื่อ/ภาษา: ชื่อว่างถูกปฏิเสธ', async () => {
   await expect(updateMe('u-head', { name: ' ', language: 'th' })).rejects.toMatchObject({ code: 'VALIDATION' });
-  expect(await updateMe('u-head', { name: ' อรทัย ', language: 'en' })).toMatchObject({ name: 'อรทัย', language: 'en' });
+  expect(await updateMe('u-head', { name: ' สมหญิง ', language: 'en' })).toMatchObject({ name: 'สมหญิง', language: 'en' });
 });
 
 test('1.2 เปลี่ยนรหัสผ่าน: ต้องรู้รหัสเดิม, ใหม่ >= 8 และต่างจากเดิม; เข้าด้วยรหัสใหม่ได้ รหัสเก่าใช้ไม่ได้', async () => {
@@ -48,7 +48,7 @@ test('0.2 ขอรีเซ็ตเอง: ตอบแบบเดียว�
 test('0.2 หัวหน้าสร้างลิงก์ให้ครูในแผนกตน → ตั้งรหัสใหม่ → ลิงก์ใช้ได้ครั้งเดียว', async () => {
   const { reset_url } = await createResetLink(head, 'u-teacher');
   const tk = reset_url.replace('#/reset/', '');
-  expect(await getReset(tk)).toEqual({ name: 'นายวรากร รักเรียน' });
+  expect(await getReset(tk)).toEqual({ name: 'นายทดลอง รักเรียน' });
   await expect(confirmReset(tk, 'short')).rejects.toMatchObject({ code: 'VALIDATION' });
   await confirmReset(tk, 'brandnew-pass1');
   expect(await tryLogin('teacher@demo.test', 'brandnew-pass1')).toBe('u-teacher');

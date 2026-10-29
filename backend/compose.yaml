@@ -1,0 +1,40 @@
+# The demo: docker compose up --build  ->  http://127.0.0.1:8081   (stop: Ctrl+C, or docker compose down)
+# The sample buttons read ./samples (the test files inside this folder); another place:
+#   SAMPLES=D:\files docker compose up      (Windows: set SAMPLES=D:\files first)
+name: timetable-backend          # its own Docker project name (the old folder used "timetable")
+services:
+  algorithm:
+    build:
+      context: ..
+      dockerfile: algorithm/Dockerfile
+    image: timetable-algorithm
+    tmpfs:
+      - /tmp
+
+  app:
+    build:
+      context: ..
+      dockerfile: backend/Dockerfile
+    image: timetable-backend
+    depends_on:
+      - algorithm
+    ports:
+      - "127.0.0.1:${PORT:-8081}:8000"
+    volumes:
+      - "${SAMPLES:-./samples}:/samples:ro"
+    tmpfs:
+      - /tmp
+
+  # the RUBRIC TEST (docs/timetable_rubric.md): docker compose run --rm rubric   [--fresh]
+  # writes reports/rubric-<date>.md + .json and reports/rubric-latest.md into this folder
+  rubric:
+    image: timetable-backend
+    depends_on:
+      - algorithm
+    profiles: ["test"]
+    entrypoint: ["python3", "tools/rubric.py"]
+    volumes:
+      - "${SAMPLES:-./samples}:/samples:ro"
+      - "./reports:/app/reports"
+    tmpfs:
+      - /tmp

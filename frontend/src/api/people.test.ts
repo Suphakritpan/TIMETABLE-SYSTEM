@@ -80,9 +80,10 @@ test('ลบบุคลากร: เฉพาะหัวหน้า ลบ�
 
 test('ห้องของแผนก: เพิ่ม/ลบ ตรวจชื่อซ้ำและที่นั่ง', async () => {
   expect(await listRooms('d1')).toHaveLength(2);
-  const r = await addRoom('d1', { name: 'COM701', type: 'ห้องเรียน', seats: 25 });
-  await expect(addRoom('d1', { name: 'COM701', type: 'ห้องเรียน', seats: 25 })).rejects.toMatchObject({ code: 'DUPLICATE' });
-  await expect(addRoom('d1', { name: 'X', type: 'ห้องเรียน', seats: 0 })).rejects.toMatchObject({ code: 'VALIDATION' });
+  const r = await addRoom('d1', { name: 'COM701', type: 'ห้องเรียน', seats: 25, location: 'อาคาร 7' });
+  await expect(addRoom('d1', { name: 'COM701', type: 'ห้องเรียน', seats: 25, location: 'อาคาร 7' })).rejects.toMatchObject({ code: 'DUPLICATE' });
+  await expect(addRoom('d1', { name: 'X', type: 'ห้องเรียน', seats: 0, location: 'อาคาร 7' })).rejects.toMatchObject({ code: 'VALIDATION' });
+  await expect(addRoom('d1', { name: 'Y', type: 'ห้องเรียน', seats: 5, location: ' ' })).rejects.toMatchObject({ code: 'VALIDATION' });
   await removeRoom('d1', r.id);
   expect(await listRooms('d1')).toHaveLength(2);
 });

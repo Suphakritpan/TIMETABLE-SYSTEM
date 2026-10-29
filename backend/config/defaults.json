@@ -1,0 +1,19 @@
+{
+ "_about": "Starting values for a NEW institution. First-run setup copies them into the institution's settings; every profile then starts from the institution's copy, and the head changes them per term. Nothing in the code depends on these values.",
+ "days": ["จันทร์", "อังคาร", "พุธ", "พฤหัสบดี", "ศุกร์"],
+ "periods": ["08:00", "09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"],
+ "_periods": "the start time of each period; a jump longer than the usual period length (11:00 -> 13:00) is a break that no block may run across",
+ "room_types": {"L": "lecture", "P": "lab"},
+ "_room_types": "the room type a lecture (L) and a practice / lab (P) block needs, unless a subject says otherwise (room_needs)",
+ "rules": {
+  "no_gaps": true,
+  "start_first_hour": false,
+  "spread_days": true,
+  "spread_slack": 1,
+  "max_hours_daily": 10,
+  "lecture_for": "year",
+  "late_periods": 2,
+  "quality_weights": {"gaps": 3, "balance": 2, "late": 1, "lecture_lab_split": 1}
+ },
+ "_rules": "lecture_for: year = one lecture for the whole year, group = each group has its own lecture (a big year). late_periods: the last N periods of the day count as late in the quality score."
+}

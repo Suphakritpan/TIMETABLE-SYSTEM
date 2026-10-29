@@ -10,11 +10,11 @@ const d2 = { department_id: 'd2', department_name: 'แผนกวิชาไ�
 const base = { language: 'th' as const };
 
 const SEED_USERS: User[] = [
-  { ...base, id: 'u-head', name: 'นางอรทัย ใจดี', email: 'head@demo.test', is_admin: false, memberships: [{ ...d1, role: 'HEAD' }] },
-  { ...base, id: 'u-assist', name: 'นายภูมิพัฒน์ ผู้ช่วย', email: 'assistant@demo.test', is_admin: false, memberships: [{ ...d1, role: 'ASSISTANT' }] },
-  { ...base, id: 'u-teacher', name: 'นายวรากร รักเรียน', email: 'teacher@demo.test', is_admin: false, memberships: [{ ...d1, role: 'TEACHER' }] },
+  { ...base, id: 'u-head', name: 'นางสมหญิง ตัวอย่าง', email: 'head@demo.test', position: 'หัวหน้าแผนก', phone: '081-234-5678', line_id: 'somying.head', office: 'อาคาร 2 ห้อง 201', is_admin: false, memberships: [{ ...d1, role: 'HEAD' }] },
+  { ...base, id: 'u-assist', name: 'นายสมมติ ผู้ช่วย', email: 'assistant@demo.test', position: 'ผู้ช่วยหัวหน้าแผนก', phone: '082-345-6789', line_id: 'sommati.a', office: 'อาคาร 2 ห้อง 202', is_admin: false, memberships: [{ ...d1, role: 'ASSISTANT' }] },
+  { ...base, id: 'u-teacher', name: 'นายทดลอง รักเรียน', email: 'teacher@demo.test', position: 'ครูผู้สอน', phone: '083-456-7890', line_id: 'thodlong.t', office: 'อาคาร 3 ห้อง 305', is_admin: false, memberships: [{ ...d1, role: 'TEACHER' }] },
   { ...base, id: 'u-admin', name: 'ผู้ดูแลสถาบัน', email: 'admin@demo.test', is_admin: true, memberships: [] },
-  { ...base, id: 'u-multi', name: 'นางสาวพิมพ์ชนก (หลายบทบาท)', email: 'multi@demo.test', is_admin: true, memberships: [{ ...d1, role: 'ASSISTANT' }, { ...d2, role: 'TEACHER' }] },
+  { ...base, id: 'u-multi', name: 'นางสาวสมจินต์ (หลายบทบาท)', email: 'multi@demo.test', is_admin: true, memberships: [{ ...d1, role: 'ASSISTANT' }, { ...d2, role: 'TEACHER' }] },
 ];
 
 export const MOCK_USERS: User[] = structuredClone(SEED_USERS);

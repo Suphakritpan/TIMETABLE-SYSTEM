@@ -1,0 +1,9 @@
+**/__pycache__
+backend/work
+**/*.zip
+backend/samples
+frontend
+timetable-light
+DB
+doc
+.git

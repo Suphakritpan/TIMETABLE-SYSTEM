@@ -1,0 +1,57 @@
+{
+ "_about": "The shared base for Thai VOCATIONAL curricula (อาชีวศึกษา, สอศ.: ปวช. / ปวส.). Hours are printed in separate columns ท ป น (theory hours, practice hours, credits a week), not 3(2-2-5). A college's plan template names this in \"extends\" and adds its own layout. Data, not code. Regexes marked (cmp) run on the COMPARABLE form of a line: no spaces, no Thai marks, ำ read as า.",
+ "name": "Thai vocational curriculum (สอศ.) - base",
+ "credit_columns": [
+  "lecture",
+  "lab",
+  "credits"
+ ],
+ "_credit_columns": "the last numbers of a row, in this order: ท (theory hours) ป (practice hours) น (credits)",
+ "practice_per_credit": [
+  2,
+  3
+ ],
+ "_practice_per_credit": "the credit rule: credits = theory + practice / 2 (classroom) or / 3 (workshop, workplace); an activity has 0 credits and only practice hours. A reading that breaks it is red",
+ "activity_code": "^[0-9]0000-20[0-9]{2}$",
+ "_activity_code": "กิจกรรมเสริมหลักสูตร (20000-2001 ปวช., 30000-2001 ปวส.): 2 hours a week, no room, no credit - still placed",
+ "term": "ภาคเรยน(?:ท(?P<t>[0-9Ss])|(?P<w>ฤดรอน))(?:ปการศกษา(?P<acyear>[0-9]{4}))?",
+ "_term": "(cmp) ภาคเรียนที่ 1 ปีการศึกษา 2569: the year of study comes from the academic year (the first one of a plan = year 1)",
+ "term_words": {
+  "ฤดรอน": 3
+ },
+ "year": "(?!)",
+ "_year": "vocational plans name the academic year, not ชั้นปีที่",
+ "total": "^หนวยกตประจาภาค",
+ "_total": "(cmp) หน่วยกิตประจำภาคเรียน 17 | 26 | 27 - the term's sums, checked against the rows (only the start: OCR misspells the rest)",
+ "placeholder": "(?!)",
+ "plan_heading": "^(?:[0-9.]+)?แผนการเรยน",
+ "plan_word": "แผนการเรยน",
+ "course_list_heading": "^(?:[0-9.]+)?คาอธบายรายวชา",
+ "section_end": "^หมวดท[0-9]",
+ "field_credit": "(?!)",
+ "credit": "(?!)",
+ "credit_plain": "(?!)",
+ "heading_max": 250,
+ "list_heading_max": 40,
+ "term_lookahead_lines": 120,
+ "term_lookahead_pages": 3,
+ "code_marks": "*",
+ "border_marks": "|[](){}\"'“”‘’",
+ "_border_marks": "table lines (and the stray quotes OCR makes of them) next to a code: |30000-1202|, 30001-1002], |30102-2020\"",
+ "column_header": "^รหสวชา",
+ "_column_header": "(cmp) the first column header of a plan table: where a second table side by side starts",
+ "glyph_pass": false,
+ "_glyph_pass": "off: the glyph pass learns code / 3(2-2-5) credit shapes (university layout); ruled vocational tables are read by the cell pass (measured on Sattahip: glyph 13 red, cell pass 1)",
+ "term_lookalikes": {
+  "S": 3,
+  "s": 3,
+  "5": 3
+ },
+ "_term_lookalikes": "ภาคเรียนที่ S = summer (term 3). OCR reads the printed S as 5; there is no term 5 in a vocational plan, so 5 there is an S (amber, with the reason)",
+ "credit_dashed": "^(?P<lecture>[0-9]{1,2})-(?P<lab>[0-9]{1,2})-(?P<credits>[0-9]{1,2})$",
+ "_credit_dashed": "a course LIST (no term plan) prints the hours as one word ท-ป-น: 1-4-3 (theory 1, practice 4, credits 3)",
+ "list_group": "กลม|หมวด|ปรบพนฐาน",
+ "list_elective": "เลอก",
+ "list_conditional": "ปรบพนฐาน",
+ "_list_group": "(cmp) a COURSE LIST (no term plan): a line without a code matching this is the heading the next subjects sit under; list_elective in it = elective subjects (กลุ่มสมรรถนะวิชาชีพเลือก, หมวดวิชาเลือกเสรี), list_conditional = only some students take them (รายวิชาปรับพื้นฐานวิชาชีพ: graduates of ม.6, not ปวช.)"
+}

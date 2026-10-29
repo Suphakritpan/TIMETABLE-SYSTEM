@@ -1,8 +1,8 @@
 import { hrefFor, parseHash } from './useRoute';
 
 test('อ่านคีย์เส้นทางจาก hash', () => {
-  expect(parseHash('#/timetable')).toEqual({ key: 'timetable' });
-  expect(parseHash('#timetable')).toEqual({ key: 'timetable' });
+  expect(parseHash('#/people')).toEqual({ key: 'people' });
+  expect(parseHash('#people')).toEqual({ key: 'people' });
   expect(parseHash('#/t-home')).toEqual({ key: 't-home' });
   expect(parseHash('#/setup')).toEqual({ key: 'setup' });
 });

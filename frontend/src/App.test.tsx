@@ -35,7 +35,7 @@ test('HEAD ล็อกอินแล้วไปหน้าแรก 2.1 แ�
   await signIn('head@demo.test');
   expect(await screen.findByRole('heading', { name: 'หน้าแรก' })).toBeInTheDocument();
   const nav = screen.getByRole('navigation', { name: 'เมนูหลัก' });
-  expect(nav).toHaveTextContent('สร้างตาราง');
+  expect(nav).toHaveTextContent('โปรไฟล์');
   expect(nav).not.toHaveTextContent('ผู้ดูแลสถาบัน');
 });
 

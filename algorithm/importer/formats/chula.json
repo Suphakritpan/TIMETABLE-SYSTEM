@@ -1,0 +1,22 @@
+{
+ "_about": "Course-code shapes only; the layout comes from tqf2-th. Made from the benchmark format(s) chula (sample curricula in test_pdf); not yet checked against an answer in the product.",
+ "name": "Chulalongkorn University",
+ "extends": "tqf2-th",
+ "code": "^[0-9]{7}$",
+ "placeholder": "^x{7}$",
+ "placeholder_length": 7,
+ "reread_langs": "eng",
+ "chars": "0123456789xX()-",
+ "slot_words": [
+  "วิชาเลือก",
+  "วิชาศึกษาทั่วไป",
+  "การศึกษาทั่วไป",
+  "วิชาโท"
+ ],
+ "groups": [
+  [
+   "",
+   "xxxxxxx"
+  ]
+ ]
+}

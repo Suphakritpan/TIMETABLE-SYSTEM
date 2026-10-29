@@ -1,15 +1,16 @@
-// ขั้น 6: Generate + จัดตาราง. ต้อง acknowledge pre-check ก่อน (R4) ผลรันล่าสุดเก็บไว้ (R5)
-// ลาก/ปักหมุด/ตรวจสด (T3.6 รอบ 2–3) ยังไม่ทำ: ต้องรอ POST /api/check ของ backend
+// ขั้น 6: สร้าง + จัดตาราง ด้วยตัวจัดตารางจริงของ backend (FET) ต้อง acknowledge pre-check ก่อน (R4)
+// ผลล่าสุดแปลงเป็น UiRun เก็บไว้ให้ขั้น 7–9 ใช้ (R5)
 import { useEffect, useState } from 'react';
-import { generate, loadLastRun, saveLastRun, type UiRun } from '../../api/runs';
-import { assertAcknowledged, getReport } from '../../api/rules';
-import Timetable from '../../pages/Timetable';
+import { loadLastRun, saveLastRun, type UiRun } from '../../api/runs';
+import { viewToUiRun } from '../../api/schedule';
+import { getReport } from '../../api/rules';
+import Schedule from '../../pages/Schedule';
 import Button from '../ui/Button';
 import InlineAlert from '../ui/InlineAlert';
 import Skeleton from '../ui/Skeleton';
 import type { StepProps } from './types';
 
-export default function GenerateStep({ profile, done, locked, onComplete, setStatus }: StepProps) {
+export default function GenerateStep({ profile, yearPlanId, done, locked, onComplete }: StepProps) {
   const [acked, setAcked] = useState<boolean | null>(null);
   const [run, setRun] = useState<UiRun | null>(() => loadLastRun(profile.id));
 
@@ -26,17 +27,12 @@ export default function GenerateStep({ profile, done, locked, onComplete, setSta
 
   const clash = run?.placed.filter((p) => p.status === 'conflict').length ?? 0;
   const unplaced = run?.unplaced.length ?? 0;
-  const block = !run ? 'ยังไม่ได้สร้างตาราง' : clash ? `ยังมี ${clash} คาบที่ชน` : unplaced ? `ยังมี ${unplaced} คาบที่ยังไม่ลง` : null;
+  const block = !run ? 'ยังไม่ได้สร้างตาราง' : clash ? `ยังมี ${clash} คาบที่ผิดกฎ` : unplaced ? `ยังมี ${unplaced} คาบที่ยังไม่ลง` : null;
+  const year = profile.year_plans.find((y) => y.id === yearPlanId)?.year;
 
   return (
     <>
-      <Timetable
-        embedded
-        setStatus={setStatus}
-        initial={run}
-        generate={async () => { assertAcknowledged(profile.id); return generate(); }}
-        onRun={(r) => { saveLastRun(profile.id, r); setRun(r); }}
-      />
+      <Schedule embedded year={year} onView={(v) => { const r = viewToUiRun(v); saveLastRun(profile.id, r); setRun(r); }} />
       {!done && !locked && (
         <div className="actions">
           <Button variant="primary" onClick={() => void onComplete()} disabled={block !== null} title={block ?? undefined}>ยืนยันตารางนี้และไปขั้นถัดไป</Button>

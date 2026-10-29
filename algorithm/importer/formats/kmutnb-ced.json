@@ -1,0 +1,40 @@
+{
+ "_about": "Format facts for the KMUTNB Faculty of Technical Education, Department of Computer Education family (B.Ed. 2559/2564, transfer 2564/2569, M.Ed., Ph.D.). Data, not code. Regexes marked (cmp) run on the COMPARABLE form of a line: no spaces, no Thai marks, ำ read as า.",
+ "name": "KMUTNB Computer Education (มคอ.2)",
+ "extends": "tqf2-th",
+ "code": "^[0-9]{9}$",
+ "placeholder": "^(?:[0-9]{2}x{7}|x{9})$",
+ "code_marks": "*#",
+ "placeholder_length": 9,
+ "slot_words": [
+  "วิชาเลือก"
+ ],
+ "groups": [
+  [
+   "วิทยาศาสตร์และคณิตศาสตร์",
+   "04xxxxxxx"
+  ],
+  [
+   "พลศึกษา",
+   "08xxxxxxx"
+  ],
+  [
+   "สังคมศาสตร์",
+   "08xxxxxxx"
+  ],
+  [
+   "ภาษา",
+   "08xxxxxxx"
+  ],
+  [
+   "วิชาชีพ",
+   "02xxxxxxx"
+  ],
+  [
+   "เสรี",
+   "xxxxxxxxx"
+  ]
+ ],
+ "reread_langs": "eng",
+ "chars": "0123456789xX()-"
+}

@@ -1,0 +1,7 @@
+[
+ {"id": "ced", "label": "CED มจพ. (PDF ข้อความ)", "note": "มีคำตอบที่ตรวจแล้ว", "path": "university/CED KMUTNB ค.อ.บ. (text).pdf"},
+ {"id": "ced-scan", "label": "CED มจพ. (สแกน 300 dpi)", "note": "OCR", "path": "university-scan/ced_scan-300dpi.pdf"},
+ {"id": "sattahip", "label": "แผนการเรียน สัตหีบ ปวส. (สแกน)", "note": "มีคำตอบที่ตรวจแล้ว", "path": "vocational/แผนการเรียน สัตหีบ TATC ปวส. (scan).pdf"},
+ {"id": "aviation", "label": "รายวิชา ธุรกิจการบิน (ไม่มีแผนรายภาค)", "note": "course list", "path": "vocational/รายวิชา ธุรกิจการบิน สัตหีบ (course list).pdf"},
+ {"id": "loan", "label": "ประกาศ กยศ. (ไม่ใช่หลักสูตร)", "note": "ต้องถูกปฏิเสธ", "path": "not-curriculum/กยศ. ประกาศหลักสูตร 2569 ฉบับที่ 2.pdf"}
+]

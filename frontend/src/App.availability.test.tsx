@@ -38,7 +38,7 @@ async function headOpensRound() {
   await screen.findByRole('heading', { name: 'ตารางเรียน ภาค 2/2569' });
   // แท็บ ปวส. ปี 2 เสร็จ 2 ขั้น -> ขั้น 3 เป็นขั้นปัจจุบัน
   await userEvent.click(screen.getByRole('tab', { name: /ปวส\. ปี 2/ }));
-  await userEvent.click(await screen.findByLabelText('นายวรากร รักเรียน'));
+  await userEvent.click(await screen.findByLabelText('นายทดลอง รักเรียน'));
   fireDate(dateInput(7));
   await userEvent.click(screen.getByRole('button', { name: 'เปิดรอบ' }));
 }

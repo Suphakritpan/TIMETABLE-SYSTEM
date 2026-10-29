@@ -2,8 +2,31 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
 import TimetableGrid, { STATUS, neighbor } from './TimetableGrid';
-import { DAYS, ITEMS, PERIODS } from '../../data/sample';
+import { DAYS, PERIODS } from '../../data/sample';
+
+// ข้อมูลทดสอบ (ไม่ใช่ข้อมูลระบบ)
 import type { CellStatus, ClassItem } from '../../types';
+type Row = [day: number, start: number, span: number, code: string, name: string, room: string, teacher: string, status: ClassItem['status'], conf: number];
+const ROWS: Row[] = [
+  [0, 1, 1, 'ท.31901-2007', 'เทคโนโลยีการจัดการฐานข้อมูล', 'COM602', 'ไมตรี', 'ok', 91],
+  [0, 5, 2, 'ท.31901-2007', 'เทคโนโลยีการจัดการฐานข้อมูล', 'COM602', 'ไมตรี', 'ok', 88],
+  [0, 7, 2, 'ป.31901-2001', 'การออกแบบส่วนติดต่อผู้ใช้ขั้นสูง', 'COM603', 'ทดลอง', 'review', 58],
+  [1, 1, 2, 'ท.31901-2004', 'การพัฒนาซอฟต์แวร์ด้วยเทคโนโลยี', 'COM603', 'ทดลอง', 'review', 62],
+  [1, 5, 2, 'ป.31901-2004', 'การพัฒนาซอฟต์แวร์ด้วยเทคโนโลยี', 'COM603', 'ทดลอง', 'confirmed', 90],
+  [1, 9, 2, 'ป.31900-1002', 'การจัดการข้อมูลขนาดใหญ่เบื้องต้น', 'COM404', 'ไมตรี', 'ok', 86],
+  [2, 1, 2, 'ท.31900-1003', 'การสร้างสื่อดิจิทัล', 'COM404', 'ลี', 'review', 66],
+  [2, 5, 3, 'ป.30000-2001', 'กิจกรรมเสริมสร้างสุขจิต', 'สนาม', 'ลี + ธัญญาเรศ', 'edited', 80],
+  [3, 1, 2, 'ท.30000-1101', 'ทักษะภาษาไทยเพื่อ', '621', 'สุธีพร', 'ok', 92],
+  [3, 5, 1, 'ท.31900-1002', 'การจัดการข้อมูลขนาดใหญ่', 'COM602', 'ไมตรี', 'conflict', 78],
+  [4, 1, 2, 'ท.30000-1201', 'ภาษาอังกฤษสำหรับ', '11502', 'ธัญญาเรศ', 'ok', 89],
+  [4, 6, 2, 'ท.30000-1302', 'วิทยาศาสตร์ธรรมชาติ', '11602', 'พงศกร', 'review', 64],
+];
+
+const ITEMS: ClassItem[] = ROWS.map(([day, start, span, code, name, room, teacher, status, conf], i) => ({
+  id: String(i + 1), day, start, span, code, name, room, teacher, status, conf,
+}));
+
+
 
 const base: ClassItem = { id: 'x', day: 1, start: 3, span: 2, code: 'ท.1', name: 'วิชา', room: 'R1', teacher: 'ครู', status: 'ok' };
 const show = (items: ClassItem[], selectedId: string | null = null, onSelect = vi.fn()) =>

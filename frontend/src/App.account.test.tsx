@@ -38,7 +38,7 @@ test('0.2 หัวหน้าสร้างลิงก์รีเซ็ต�
   const first = render(<App />);
   await signIn('head@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
-  const row = (await screen.findByText('นายวรากร รักเรียน', { selector: 'td' })).closest('tr')!;
+  const row = (await screen.findByText('นายทดลอง รักเรียน')).closest('li')!;
   await userEvent.click(within(row).getByRole('button', { name: 'สร้างลิงก์รีเซ็ตรหัสผ่าน' }));
   const url = (await screen.findByText(/#\/reset\/rs/)).textContent!;
   const hash = url.slice(url.indexOf('#'));
@@ -81,7 +81,7 @@ test('1.2 บัญชีของฉัน: แก้ชื่อแล้ว�
 
   const profile = screen.getByRole('form', { name: 'ข้อมูลส่วนตัว' });
   await userEvent.clear(within(profile).getByLabelText('ชื่อ'));
-  await userEvent.type(within(profile).getByLabelText('ชื่อ'), 'อรทัย ใหม่');
+  await userEvent.type(within(profile).getByLabelText('ชื่อ'), 'สมหญิง ใหม่');
   await userEvent.click(within(profile).getByRole('button', { name: 'บันทึก' }));
   expect(await screen.findByText('บันทึกข้อมูลแล้ว')).toBeInTheDocument();
 

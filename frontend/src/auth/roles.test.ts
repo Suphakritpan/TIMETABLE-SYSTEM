@@ -13,9 +13,9 @@ test('TEACHER เข้า admin ไม่ได้ ADMIN เข้าได้'
   expect(canAccess('admin', 'TEACHER')).toBe(false);
   expect(canAccess('admin', 'ADMIN')).toBe(true);
 });
-test('ASSISTANT เข้าหน้าสร้างตารางได้ TEACHER ไม่ได้', () => {
-  expect(canAccess('timetable', 'ASSISTANT')).toBe(true);
-  expect(canAccess('timetable', 'TEACHER')).toBe(false);
+test('ASSISTANT เข้าพื้นที่ทำงานโปรไฟล์ได้ TEACHER ไม่ได้', () => {
+  expect(canAccess('workspace', 'ASSISTANT')).toBe(true);
+  expect(canAccess('workspace', 'TEACHER')).toBe(false);
 });
 test('หน้าล็อกอินเป็นสาธารณะ แต่หน้าอื่นต้องมีบทบาท', () => {
   expect(canAccess('login', null)).toBe(true);

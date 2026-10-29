@@ -1,0 +1,13 @@
+{
+ "_about": "Course-code shapes only; the layout comes from tqf2-th. Made from the benchmark format(s) mahidol-sci (sample curricula in test_pdf); not yet checked against an answer in the product.",
+ "name": "Mahidol University (Science)",
+ "extends": "tqf2-th",
+ "code": "^[0-9]{3}$",
+ "placeholder": "(?!)",
+ "reread_langs": "tha+eng",
+ "chars": "๐๑๒๓๔๕๖๗๘๙0123456789()-",
+ "slot_words": [],
+ "groups": [],
+ "digits": "thai",
+ "paired_code_below": true
+}

@@ -1,0 +1,37 @@
+# The whole system: docker compose up --build   ->  http://127.0.0.1:8080
+#   web      nginx serving the built frontend, proxying /api to backend
+#   backend  FastAPI: jobs, sessions, grading, exports (calls the algorithm service over HTTP)
+#   algorithm  reading engine (OCR) + FET scheduler as a service (algorithm/service.py)
+# Needs frontend/.env (VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY): see frontend/.env.example
+name: timetable
+services:
+  algorithm:
+    build:
+      context: .
+      dockerfile: algorithm/Dockerfile
+    image: timetable-algorithm
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: timetable-backend
+    depends_on:
+      - algorithm
+    volumes:
+      - "${SAMPLES:-./backend/samples}:/samples:ro"
+    tmpfs:
+      - /tmp
+    restart: unless-stopped
+
+  web:
+    build: ./frontend
+    image: timetable-web
+    ports:
+      - "127.0.0.1:${PORT:-8080}:80"
+    depends_on:
+      - backend
+    restart: unless-stopped

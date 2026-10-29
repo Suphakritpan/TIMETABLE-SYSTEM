@@ -1,0 +1,16 @@
+{
+ "_about": "The study-plan template of สถาบันการอาชีวศึกษาภาคตะวันออก (seen at วิทยาลัยเทคนิคชลบุรี and วิทยาลัยเทคนิคสัตหีบ, 2567-2570): one plan per student group, a page per academic year with term 1 | term 2 side by side.",
+ "name": "Vocational plan - สถาบันการอาชีวศึกษาภาคตะวันออก template",
+ "extends": "vocational-th",
+ "code": "^[0-9]{5}-[0-9]{4}$",
+ "side_by_side_terms": true,
+ "plan_heading": "^สาขาวชา.*กลมเรยน",
+ "_plan_heading": "(cmp) สาขาวิชา เทคนิคการผลิต (ในระบบ) กลุ่มเรียน 693010201 ชื่อกลุ่มเรียน ปวส.1/1 ...",
+ "plan_word": "สาขาวชา",
+ "plan_key": "กลมเรยน([0-9]{9})",
+ "_plan_key": "(cmp) the student-group code (9 digits): the same group on a later page continues its plan (year 2)",
+ "reread_langs": "eng",
+ "chars": "0123456789-",
+ "slot_words": [],
+ "groups": []
+}

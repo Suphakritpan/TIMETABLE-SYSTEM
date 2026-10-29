@@ -11,6 +11,8 @@ export interface StepProps {
   role: Role | null;
   /** ทำขั้นนี้เสร็จ (เรียก PUT ผ่านพื้นที่ทำงาน) */
   onComplete: () => Promise<void>;
+  /** ขั้นที่เสร็จแล้วแต่ผู้ใช้แก้ข้อมูล: ขอให้พื้นที่ทำงานยืนยันผลกระทบต่อขั้นหลัง แล้วจึงเรียก commit (บันทึกข้อมูล) */
+  onEdit?: (commit: () => Promise<void>) => void;
   /** โปรไฟล์เปลี่ยน (เช่น เผยแพร่) */
   onProfile: (p: Profile) => void;
   setStatus: (s: string) => void;

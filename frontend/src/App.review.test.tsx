@@ -15,8 +15,8 @@ import type { ClassItem } from './types';
 const T = 40000;
 const item = (id: string, over: Partial<ClassItem>): ClassItem => ({ id, day: 0, start: 1, span: 2, code: `ท.${id}`, name: `วิชา ${id}`, room: `R${id}`, teacher: 'ไมตรี', status: 'ok', ...over });
 
-// ตารางตัวอย่าง: a, c เป็นของครูวรากร (u-teacher), b เป็นของครูอื่น
-const PLACED = [item('a', { teacher: 'วรากร', room: 'RA' }), item('b', { teacher: 'ไมตรี', day: 1 }), item('c', { teacher: 'วรากร', room: 'RC', day: 2, start: 3 })];
+// ตารางตัวอย่าง: a, c เป็นของครูทดลอง (u-teacher), b เป็นของครูอื่น
+const PLACED = [item('a', { teacher: 'ทดลอง', room: 'RA' }), item('b', { teacher: 'ไมตรี', day: 1 }), item('c', { teacher: 'ทดลอง', room: 'RC', day: 2, start: 3 })];
 
 async function putInReview() {
   const p = await getProfile('p1');
@@ -108,15 +108,15 @@ test('ขั้น 8 หัวหน้า: ปฏิเสธต้องมี
   await userEvent.selectOptions(within(fs).getByLabelText('ย้ายไปวัน'), '3');
   await userEvent.click(within(fs).getByRole('button', { name: 'แก้ตรง ๆ' }));
   expect(await screen.findByText('ระบุว่าตกลงกับใคร')).toBeInTheDocument();
-  await userEvent.type(within(fs).getByLabelText('ตกลงกับ'), 'ครูวรากร');
+  await userEvent.type(within(fs).getByLabelText('ตกลงกับ'), 'ครูทดลอง');
   await userEvent.click(within(fs).getByRole('button', { name: 'แก้ตรง ๆ' }));
-  expect(await screen.findByText(/ท\.a: จันทร์ คาบ 1 → พฤหัสบดี คาบ 1 · ตกลงกับ ครูวรากร/)).toBeInTheDocument();
+  expect(await screen.findByText(/ท\.a: จันทร์ คาบ 1 → พฤหัสบดี คาบ 1 · ตกลงกับ ครูทดลอง/)).toBeInTheDocument();
   expect(await listLog('p1')).toHaveLength(1);
   first.unmount();
 
   const notes = (await listNotifications('u-teacher')).map((n) => n.body);
   expect(notes).toContain('คำขอเปลี่ยนของคุณถูกปฏิเสธ: ไม่มีคาบว่างให้ย้าย');
-  expect(notes.some((n) => n.startsWith('แก้โดย') && n.includes('ตกลงกับ ครูวรากร'))).toBe(true);
+  expect(notes.some((n) => n.startsWith('แก้โดย') && n.includes('ตกลงกับ ครูทดลอง'))).toBe(true);
 }, T);
 
 test('ขั้น 8 ฝั่งหัวหน้า ก่อนส่งตรวจทาน: ปุ่มส่งเข้าตรวจทานส่งได้เมื่อขั้น 1–7 ครบ', async () => {

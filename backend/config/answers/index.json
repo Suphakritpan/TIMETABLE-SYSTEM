@@ -1,0 +1,18 @@
+{
+ "_about": "checked answers (by people, against the page images) for known files, found by the file's SHA-256; used by part 1 to show how many values were read right (and by the rubric test)",
+ "96e865f6931a1ad66e5d0741dabf095816c4deae2e48a8b42bbe7e0ed41e623b": {
+  "answer": "ced.csv",
+  "key": "year_term_code",
+  "file": "ced.pdf"
+ },
+ "6cb3a73264de52554309ba79b7cb31a500495db01ac0ef279d0208fbf347c21d": {
+  "answer": "voc-sattahip.csv",
+  "key": "plan_year_term_code",
+  "file": "11030922221424296_26020416165313.pdf"
+ },
+ "31f99ddbb7dd1cecc46df723b871c5ad127271e18ae78aff661617f0679dc5b3": {
+  "answer": "voc-chonburi.csv",
+  "key": "plan_year_term_code",
+  "file": "19090812125728718_2507160881814.pdf"
+ }
+}

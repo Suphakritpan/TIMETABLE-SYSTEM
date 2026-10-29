@@ -71,11 +71,11 @@ test('4.3 (ครู): เห็นเฉพาะรายการของฉ
   render(<App />);
   await signIn('teacher@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'รายการของฉัน' }));
-  expect(await screen.findByRole('heading', { name: /ครูวรากร ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน/ })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: /ครูทดลอง ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน/ })).toBeInTheDocument();
   expect(screen.queryByText(/วิชา ป\.31901-2005 ยังไม่มีผู้สอน/)).toBeNull(); // ไม่ใช่ของฉัน
   expect(screen.queryByRole('button', { name: 'บันทึกการตัดสินใจ' })).toBeNull();
 
-  const panel = screen.getByRole('region', { name: 'ครูวรากร ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน' });
+  const panel = screen.getByRole('region', { name: 'ครูทดลอง ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน' });
   await userEvent.type(within(panel).getByLabelText('เขียนความเห็น'), 'ตั้งไว้ผิด ขอแก้เป็น 8 ชม.');
   await userEvent.click(within(panel).getByRole('button', { name: 'ส่งความเห็น' }));
   expect(await within(panel).findByText('ตั้งไว้ผิด ขอแก้เป็น 8 ชม.')).toBeInTheDocument();

@@ -2,7 +2,7 @@
 // การป้องกันที่นี่เป็นเพียงการซ่อน/เปลี่ยนเส้นทางใน UI ตัวจริงตรวจที่ backend (api.md §1)
 import type { Role, User } from '../types';
 
-export type RouteKey = 'login' | 'setup' | 'invite' | 'reset' | 'notifications' | 'account' | 'home' | 'people' | 'profiles' | 'workspace' | 'timetable' | 'review' | 'admin' | 't-home' | 'availability' | 'my-issues' | 'my-timetable' | 'my-requests' | 'structure';
+export type RouteKey = 'login' | 'setup' | 'invite' | 'reset' | 'notifications' | 'account' | 'home' | 'people' | 'profiles' | 'workspace' | 'admin' | 't-home' | 'availability' | 'my-issues' | 'my-timetable' | 'my-requests' | 'structure' | 'ingest' | 'schedule';
 
 type PublicKey = 'login' | 'setup' | 'invite' | 'reset';
 
@@ -11,12 +11,12 @@ const ROUTES: Record<Exclude<RouteKey, PublicKey>, Role[]> = {
   notifications: ['ADMIN', 'HEAD', 'ASSISTANT', 'TEACHER'],
   account: ['ADMIN', 'HEAD', 'ASSISTANT', 'TEACHER'],
   structure: ['ADMIN', 'HEAD', 'ASSISTANT', 'TEACHER'],
+  ingest: ['HEAD', 'ASSISTANT'],
+  schedule: ['HEAD', 'ASSISTANT'],
   home: ['HEAD', 'ASSISTANT'],
   people: ['HEAD', 'ASSISTANT'],
   profiles: ['HEAD', 'ASSISTANT'],
   workspace: ['HEAD', 'ASSISTANT'],
-  timetable: ['HEAD', 'ASSISTANT'],
-  review: ['HEAD', 'ASSISTANT'],
   admin: ['ADMIN'],
   't-home': ['TEACHER'],
   availability: ['TEACHER'],

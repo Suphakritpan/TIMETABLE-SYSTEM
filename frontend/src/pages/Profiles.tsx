@@ -4,13 +4,15 @@ import { copyProfile, createProfile, listProfiles, listTerms } from '../api/prof
 import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
-import DataTable, { type Column } from '../components/ui/DataTable';
 import Dialog from '../components/ui/Dialog';
 import { SelectField, TextField } from '../components/ui/Field';
 import InlineAlert from '../components/ui/InlineAlert';
+import ProgressBar from '../components/ui/ProgressBar';
 import Skeleton from '../components/ui/Skeleton';
+import StatCard from '../components/ui/StatCard';
 import { useToast } from '../components/ui/Toast';
 import { PROFILE_STATUS } from '../profile/status';
+import { STEP_LABELS } from '../profile/steps';
 import type { Profile, Term } from '../types';
 import { termLabel } from '../utils/buddhistEra';
 
@@ -55,13 +57,9 @@ export default function Profiles({ departmentId, onOpen }: { departmentId: strin
     }
   };
 
-  const columns: Column<Profile>[] = [
-    { key: 'name', header: 'ชื่อ', sortValue: (r) => r.name, render: (r) => <button type="button" className="th-btn link" onClick={() => onOpen(r.id)}>{r.name}</button> },
-    { key: 'term', header: 'ภาคเรียน', sortValue: (r) => r.term_id, render: (r) => { const t = termOf(r.term_id); return t ? termLabel(t) : r.term_id; } },
-    { key: 'years', header: 'หลักสูตร × ชั้นปี', render: (r) => `${r.year_plans.length} แท็บ` },
-    { key: 'stale', header: 'ขั้นล้าสมัย', align: 'right', sortValue: (r) => r.year_plans.reduce((n, y) => n + y.steps.filter((s) => s === 'stale').length, 0), render: (r) => r.year_plans.reduce((n, y) => n + y.steps.filter((s) => s === 'stale').length, 0) },
-    { key: 'status', header: 'สถานะ', render: (r) => <Badge tone={PROFILE_STATUS[r.status].tone}>{PROFILE_STATUS[r.status].label}</Badge> },
-  ];
+  const count = (r: Profile, f: (st: string) => boolean) => r.year_plans.reduce((n, y) => n + y.steps.filter(f).length, 0);
+  const stale = rows?.reduce((n, r) => n + count(r, (st) => st === 'stale'), 0) ?? 0;
+  const by = (st: Profile['status']) => rows?.filter((r) => r.status === st).length ?? 0;
 
   return (
     <>
@@ -69,13 +67,47 @@ export default function Profiles({ departmentId, onOpen }: { departmentId: strin
         title="โปรไฟล์"
         subtitle="ชุดตารางเรียนของแต่ละภาคเรียน"
         actions={<>
-        <Button onClick={() => open('copy')} disabled={!rows?.length} title={rows?.length ? undefined : 'ยังไม่มีโปรไฟล์ให้คัดลอก'}>คัดลอกจากภาคก่อน</Button>
-        <Button variant="primary" onClick={() => open('new')}>สร้างโปรไฟล์ใหม่</Button>
+          <Button onClick={() => open('copy')} disabled={!rows?.length} title={rows?.length ? undefined : 'ยังไม่มีโปรไฟล์ให้คัดลอก'}>คัดลอกจากภาคก่อน</Button>
+          <Button variant="primary" onClick={() => open('new')}>สร้างโปรไฟล์ใหม่</Button>
         </>}
       />
 
-      {rows === null ? <Skeleton variant="table" lines={4} label="กำลังโหลดโปรไฟล์" /> : (
-        <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} caption="โปรไฟล์ตารางเรียน" empty="ยังไม่มีโปรไฟล์ เริ่มด้วย “สร้างโปรไฟล์ใหม่”" />
+      {rows === null ? <Skeleton variant="table" lines={4} label="กำลังโหลดโปรไฟล์" /> : !rows.length ? (
+        <InlineAlert tone="info">ยังไม่มีโปรไฟล์ เริ่มด้วย “สร้างโปรไฟล์ใหม่”</InlineAlert>
+      ) : (
+        <>
+          <div className="stat-row">
+            <StatCard label="โปรไฟล์ทั้งหมด" value={rows.length} />
+            <StatCard label="ร่าง / ตรวจทาน" value={`${by('draft')} / ${by('review')}`} tone="info" />
+            <StatCard label="เผยแพร่แล้ว" value={by('published')} tone="success" />
+            <StatCard label="ขั้นล้าสมัย" value={stale} tone={stale ? 'warning' : 'neutral'} hint={stale ? 'ต้องทำขั้นนั้นซ้ำ' : undefined} />
+          </div>
+          <ul className="profile-grid" aria-label="โปรไฟล์ตารางเรียน">
+            {rows.map((r) => {
+              const total = r.year_plans.length * STEP_LABELS.length;
+              const done = count(r, (st) => st === 'done');
+              const t = termOf(r.term_id);
+              return (
+                <li key={r.id} className="profile-card">
+                  <div className="profile-top">
+                    <h2><button type="button" className="th-btn link" onClick={() => onOpen(r.id)}>{r.name}</button></h2>
+                    <Badge tone={PROFILE_STATUS[r.status].tone}>{PROFILE_STATUS[r.status].label}</Badge>
+                  </div>
+                  <p className="muted">{t ? termLabel(t) : r.term_id} · เวอร์ชัน {r.version_no}</p>
+                  <ProgressBar value={done} max={total} label={`ความคืบหน้า ${r.name}`} />
+                  <p className="muted">ทำแล้ว {done} จาก {total} ขั้น</p>
+                  <ul className="chips" aria-label="หลักสูตร × ชั้นปี">
+                    {r.year_plans.map((y) => {
+                      const d = y.steps.filter((st) => st === 'done').length;
+                      const old = y.steps.some((st) => st === 'stale');
+                      return <li key={y.id}><Badge tone={old ? 'warning' : d === STEP_LABELS.length ? 'success' : 'neutral'}>{y.program} ปี {y.year} · {d}/{STEP_LABELS.length}{old ? ' · มีขั้นล้าสมัย' : ''}</Badge></li>;
+                    })}
+                  </ul>
+                </li>
+              );
+            })}
+          </ul>
+        </>
       )}
 
       <Dialog

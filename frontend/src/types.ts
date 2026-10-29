@@ -44,6 +44,9 @@ export interface User {
   first_name?: string;
   last_name?: string;
   phone?: string;
+  position?: string; // ตำแหน่งหน้าที่
+  line_id?: string;
+  office?: string; // ห้องทำงาน/ที่ติดต่อ
   avatar?: string; // data URL
   created_at?: string; // ISO
   status?: 'active';

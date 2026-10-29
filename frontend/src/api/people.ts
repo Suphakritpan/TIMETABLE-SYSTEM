@@ -11,13 +11,13 @@ import { MIN_PASSWORD, PHONE_RE, USERNAME_RE } from './institution';
 export const INVITE_TTL_MS = 7 * 24 * 3600 * 1000;
 
 export type InviteRole = 'TEACHER' | 'ASSISTANT' | 'HEAD';
-export interface Person { id: string; name: string; email: string; role: Exclude<Role, 'ADMIN'>; status: 'joined' | 'invited'; invite_id?: string }
+export interface Person { id: string; name: string; email: string; role: Exclude<Role, 'ADMIN'>; status: 'joined' | 'invited'; invite_id?: string; avatar?: string; phone?: string; username?: string; position?: string; line_id?: string; office?: string }
 export interface Invite {
   id: string; department_id: string; email: string; role: InviteRole;
   token: string; expires_at: number; accepted_at: number | null;
 }
 export interface InviteInfo { department_name: string; role: InviteRole; email: string; has_account: boolean }
-export interface Room { id: string; name: string; type: string; seats: number }
+export interface Room { id: string; name: string; type: string; seats: number; location: string; photos?: string[]; equipment?: string; note?: string; description?: string }
 
 let seq = 0;
 let invites: Invite[] = [];
@@ -28,7 +28,7 @@ export const setMockClock = (fn: () => number) => { now = fn; };
 export function resetMockPeople() {
   seq = 0;
   invites = [];
-  rooms = { d1: [{ id: 'rm1', name: 'COM602', type: 'ห้องปฏิบัติการ', seats: 30 }, { id: 'rm2', name: '621', type: 'ห้องเรียน', seats: 40 }], d2: [] };
+  rooms = { d1: [{ id: 'rm1', name: 'COM602', type: 'ห้องปฏิบัติการ', seats: 30, location: 'อาคาร 6 ชั้น 2', equipment: 'คอมพิวเตอร์ 30 เครื่อง, โปรเจกเตอร์, แอร์', description: 'ห้องปฏิบัติการคอมพิวเตอร์ เหมาะกับวิชาที่ต้องฝึกปฏิบัติบนเครื่อง' }, { id: 'rm2', name: '621', type: 'ห้องเรียน', seats: 40, location: 'อาคาร 6 ชั้น 1' }], d2: [] };
   now = () => Date.now();
 }
 resetMockPeople();
@@ -38,7 +38,7 @@ const token = () => `tk${++seq}x${Math.random().toString(36).slice(2, 8)}`;
 export async function listPeople(dep: string): Promise<Person[]> {
   await delay();
   const joined: Person[] = allUsers().flatMap((u) =>
-    u.memberships.filter((m) => m.department_id === dep).map((m) => ({ id: u.id, name: u.name, email: u.email, role: m.role, status: 'joined' as const })),
+    u.memberships.filter((m) => m.department_id === dep).map((m) => ({ id: u.id, name: u.name, email: u.email, role: m.role, status: 'joined' as const, avatar: u.avatar, phone: u.phone, username: u.username, position: u.position, line_id: u.line_id, office: u.office })),
   );
   const pending: Person[] = invites
     .filter((i) => i.department_id === dep && !i.accepted_at)
@@ -100,10 +100,26 @@ export async function listRooms(dep: string): Promise<Room[]> { await delay(); r
 export async function addRoom(dep: string, input: Omit<Room, 'id'>): Promise<Room> {
   await delay();
   const name = input.name.trim();
-  if (!name || !(input.seats > 0)) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อห้องและจำนวนที่นั่ง (มากกว่า 0)' });
+  const location = input.location.trim();
+  if (!name || !location || !(input.seats > 0)) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อห้อง สถานที่ และจำนวนที่นั่ง (มากกว่า 0)' });
   if ((rooms[dep] ?? []).some((r) => r.name === name)) throw new ApiException({ code: 'DUPLICATE', message: 'มีห้องชื่อนี้แล้ว' });
-  const r: Room = { id: `room-${++seq}`, name, type: input.type, seats: input.seats };
+  const r: Room = { id: `room-${++seq}`, name, type: input.type, seats: input.seats, location, photos: input.photos, description: input.description?.trim() || undefined };
   rooms[dep] = [...(rooms[dep] ?? []), r];
+  return structuredClone(r);
+}
+
+/** แก้รายละเอียดห้อง (photos เป็น data URL รูปแรกคือรูปปก) */
+export async function updateRoom(dep: string, id: string, patch: Partial<Omit<Room, 'id'>> & { location: string }): Promise<Room> {
+  await delay();
+  const r = (rooms[dep] ?? []).find((x) => x.id === id);
+  if (!r) throw new ApiException({ code: 'NOT_FOUND', message: 'ไม่พบห้องนี้' });
+  const name = (patch.name ?? r.name).trim();
+  const seats = patch.seats ?? r.seats;
+  if (!patch.location.trim()) throw new ApiException({ code: 'VALIDATION', message: 'กรอกสถานที่ของห้อง' });
+  if (!name || !(seats > 0)) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อห้องและจำนวนที่นั่ง (มากกว่า 0)' });
+  if ((rooms[dep] ?? []).some((x) => x.id !== id && x.name === name)) throw new ApiException({ code: 'DUPLICATE', message: 'มีห้องชื่อนี้แล้ว' });
+  Object.assign(r, { name, seats, type: patch.type ?? r.type, location: patch.location.trim(), photos: patch.photos?.length ? patch.photos : undefined,
+    equipment: patch.equipment?.trim() || undefined, note: patch.note?.trim() || undefined, description: patch.description?.trim() || undefined });
   return structuredClone(r);
 }
 

@@ -22,6 +22,9 @@ export default function Account({ onSignOut }: { onSignOut: () => void }) {
   const [name, setName] = useState(user?.name ?? '');
   const [language, setLanguage] = useState<'th' | 'en'>(user?.language ?? 'th');
   const [phone, setPhone] = useState(user?.phone ?? '');
+  const [position, setPosition] = useState(user?.position ?? '');
+  const [lineId, setLineId] = useState(user?.line_id ?? '');
+  const [office, setOffice] = useState(user?.office ?? '');
   const [avatar, setAvatar] = useState(user?.avatar);
   const [imgErr, setImgErr] = useState<string>();
   const [email, setEmail] = useState(user?.email ?? '');
@@ -40,7 +43,7 @@ export default function Account({ onSignOut }: { onSignOut: () => void }) {
     setErrors((e) => ({ ...e, [key]: undefined }));
     try { await fn(); toast.show(ok); } catch (e) { setErrors((x) => ({ ...x, [key]: e instanceof Error ? e.message : 'ไม่สำเร็จ' })); }
   };
-  const saveProfile = (e: FormEvent) => { e.preventDefault(); void run('profile', async () => refreshUser(await updateMe(user.id, { name, language, phone, avatar })), 'บันทึกข้อมูลแล้ว'); };
+  const saveProfile = (e: FormEvent) => { e.preventDefault(); void run('profile', async () => refreshUser(await updateMe(user.id, { name, language, phone, position, line_id: lineId, office, avatar })), 'บันทึกข้อมูลแล้ว'); };
   const saveEmail = (e: FormEvent) => { e.preventDefault(); void run('email', async () => { refreshUser(await updateEmail(user.id, email, emailPw)); setEmailPw(''); }, 'เปลี่ยนอีเมลแล้ว'); };
   const savePassword = (e: FormEvent) => {
     e.preventDefault();
@@ -70,7 +73,8 @@ export default function Account({ onSignOut }: { onSignOut: () => void }) {
         {user.avatar ? <img className="avatar avatar-xl" src={user.avatar} alt="" /> : <span className="avatar avatar-xl"><Avatar name={user.name} /></span>}
         <div>
           <strong className="profile-name">{user.name}</strong>
-          <div className="muted">{user.email}</div>
+          {user.position && <div>{user.position}</div>}
+          <div className="muted">{[user.email, user.phone, user.line_id && `LINE: ${user.line_id}`, user.office].filter(Boolean).join(' · ')}</div>
           <div className="chips-row">
             {user.memberships.map((m) => <Badge key={m.department_id} tone="info">{m.department_name} · {ROLE[m.role]}</Badge>)}
             {user.is_admin && <Badge tone="success">ผู้ดูแลสถาบัน</Badge>}
@@ -82,7 +86,10 @@ export default function Account({ onSignOut }: { onSignOut: () => void }) {
           <h2>ข้อมูลส่วนตัว</h2>
           {errors.profile && <InlineAlert tone="error">{errors.profile}</InlineAlert>}
           <TextField label="ชื่อ" value={name} onChange={(e) => setName(e.target.value)} />
+          <TextField label="ตำแหน่งหน้าที่ (ไม่บังคับ)" autoComplete="organization-title" placeholder="เช่น ครูผู้สอน, หัวหน้างานทะเบียน" value={position} onChange={(e) => setPosition(e.target.value)} />
           <TextField label="เบอร์โทรศัพท์ (ไม่บังคับ)" type="tel" autoComplete="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+          <TextField label="LINE ID (ไม่บังคับ)" value={lineId} onChange={(e) => setLineId(e.target.value)} />
+          <TextField label="ห้องทำงาน / ที่ติดต่อ (ไม่บังคับ)" placeholder="เช่น อาคาร 2 ห้อง 204" value={office} onChange={(e) => setOffice(e.target.value)} />
           <ImagePick label="รูปโปรไฟล์" value={avatar} error={imgErr} onPick={(f) => readImage(f).then((v) => { setAvatar(v); setImgErr(undefined); }, (e: Error) => setImgErr(e.message))} onClear={() => setAvatar(undefined)} />
           <SelectField label="ภาษา" value={language} onChange={(e) => setLanguage(e.target.value as 'th' | 'en')}><option value="th">ไทย</option><option value="en">English</option></SelectField>
           <div className="actions"><Button variant="primary" type="submit">บันทึก</Button></div>

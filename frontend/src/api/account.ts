@@ -28,13 +28,16 @@ const checkPassword = (pw: string) => {
 };
 
 /** แก้ชื่อ/ภาษา (1.2) */
-export async function updateMe(userId: string, input: { name: string; language: 'th' | 'en'; phone?: string; avatar?: string }): Promise<User> {
+export async function updateMe(userId: string, input: { name: string; language: 'th' | 'en'; phone?: string; position?: string; line_id?: string; office?: string; avatar?: string }): Promise<User> {
   await delay();
   const u = userById(userId);
   if (!input.name.trim()) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อ' });
   u.name = input.name.trim();
   u.language = input.language;
   if (input.phone !== undefined) u.phone = input.phone.trim() || undefined;
+  if (input.position !== undefined) u.position = input.position.trim() || undefined;
+  if (input.line_id !== undefined) u.line_id = input.line_id.trim() || undefined;
+  if (input.office !== undefined) u.office = input.office.trim() || undefined;
   if ('avatar' in input) u.avatar = input.avatar;
   return structuredClone(u);
 }

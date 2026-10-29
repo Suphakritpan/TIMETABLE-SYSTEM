@@ -1,0 +1,23 @@
+{
+ "_about": "Course-code shapes only; the layout comes from tqf2-th. Made from the benchmark format(s) tu, tu-econ, tu-polsci (sample curricula in test_pdf); not yet checked against an answer in the product.",
+ "name": "Thammasat University",
+ "extends": "tqf2-th",
+ "code": "^[ก-ฮ]{1,3}\\.[0-9]{3}$",
+ "placeholder": "^(?:xx\\.xxx|[ก-ฮ]{1,3}\\.[0-9]xx)$",
+ "reread_langs": "tha+eng",
+ "chars": "กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรฤลฦวศษสหฬอฮ0123456789xX.()-",
+ "slot_words": [
+  "วิชาเลือก",
+  "วิชาศึกษาทั่วไป"
+ ],
+ "groups": [
+  [
+   "ศึกษาทั่วไป",
+   "xx.xxx"
+  ],
+  [
+   "เลือกเสรี",
+   "xx.xxx"
+  ]
+ ]
+}

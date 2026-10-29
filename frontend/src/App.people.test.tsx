@@ -28,7 +28,7 @@ test('2.3 หัวหน้าเชิญครู -> ได้ลิงก์
   render(<App />);
   await signIn('head@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
-  expect(await screen.findByRole('cell', { name: 'นายวรากร รักเรียน' })).toBeInTheDocument();
+  expect(await screen.findByText('นายทดลอง รักเรียน')).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole('button', { name: /เชิญครู\/ผู้ช่วย/ }));
   const dlg = screen.getByRole('dialog', { name: 'เชิญบุคลากร' });
@@ -44,7 +44,7 @@ test('2.3 ผู้ช่วย: เลือกเชิญผู้ช่ว�
   render(<App />);
   await signIn('assistant@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
-  await screen.findByRole('cell', { name: 'นายวรากร รักเรียน' });
+  await screen.findByText('นายทดลอง รักเรียน');
   const removes = screen.getAllByRole('button', { name: 'ลบ' });
   expect(removes.length).toBeGreaterThan(0);
   expect(removes[0]).toBeDisabled();
@@ -57,12 +57,13 @@ test('2.3 ห้อง: เพิ่มห้องแล้วเห็นใ�
   await signIn('head@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
   await userEvent.click(await screen.findByRole('tab', { name: 'ห้อง' }));
-  expect(await screen.findByRole('cell', { name: 'COM602' })).toBeInTheDocument();
+  expect(await screen.findByText('COM602')).toBeInTheDocument();
   await userEvent.click(screen.getByRole('button', { name: 'เพิ่มห้อง' }));
   const dlg = screen.getByRole('dialog', { name: 'เพิ่มห้อง' });
   await userEvent.type(within(dlg).getByLabelText('ชื่อห้อง'), 'COM701');
+  await userEvent.type(within(dlg).getByLabelText('สถานที่'), 'อาคาร 7 ชั้น 1');
   await userEvent.click(within(dlg).getByRole('button', { name: 'เพิ่ม' }));
-  expect(await screen.findByRole('cell', { name: 'COM701' })).toBeInTheDocument();
+  expect(await screen.findByText('COM701')).toBeInTheDocument();
 });
 
 test('0.3 รับคำเชิญ (ผู้ใช้ใหม่): สร้างบัญชีแล้วเข้าหน้าแรกของอาจารย์ (4.1)', async () => {

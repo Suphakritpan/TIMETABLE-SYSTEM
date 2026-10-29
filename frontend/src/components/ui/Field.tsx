@@ -1,4 +1,4 @@
-import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import { useId, type InputHTMLAttributes, type TextareaHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
 
 interface Shared { label: string; hint?: string; error?: string }
 
@@ -30,6 +30,15 @@ export function SelectField({ label, hint, error, children, ...rest }: Shared & 
       <select id={id} className="input" aria-invalid={error ? true : undefined} aria-describedby={hint || error ? `${id}-d` : undefined} {...rest}>
         {children}
       </select>
+    </Wrap>
+  );
+}
+
+export function TextAreaField({ label, hint, error, ...rest }: Shared & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  const id = useId();
+  return (
+    <Wrap id={id} label={label} hint={hint} error={error}>
+      <textarea id={id} className="input" rows={3} aria-invalid={error ? true : undefined} aria-describedby={hint || error ? `${id}-d` : undefined} {...rest} />
     </Wrap>
   );
 }

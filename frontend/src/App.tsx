@@ -9,6 +9,8 @@ import { SessionProvider, useSession } from './context/Session';
 import Account from './pages/Account';
 import Admin from './pages/Admin';
 import Home from './pages/Home';
+import Ingest from './pages/Ingest';
+import Schedule from './pages/Schedule';
 import Invite from './pages/Invite';
 import MyAvailability from './pages/MyAvailability';
 import MyIssues from './pages/MyIssues';
@@ -20,10 +22,8 @@ import People from './pages/People';
 import Login from './pages/Login';
 import Profiles from './pages/Profiles';
 import Reset from './pages/Reset';
-import ReviewExtract from './pages/ReviewExtract';
 import Structure from './pages/Structure';
 import Setup from './pages/Setup';
-import Timetable from './pages/Timetable';
 import Workspace from './pages/Workspace';
 import { hrefFor, parseHash, useRoute, type Route } from './router/useRoute';
 
@@ -74,8 +74,8 @@ function Routes() {
       {role && target.key === 'people' && dept && <People departmentId={dept} />}
       {role && target.key === 'profiles' && dept && <Profiles departmentId={dept} onOpen={(id) => nav({ key: 'workspace', id })} />}
       {role && target.key === 'workspace' && target.id && <Workspace key={target.id} id={target.id} setStatus={setStatus} onBack={() => nav({ key: 'profiles' })} />}
-      {role && target.key === 'timetable' && <Timetable setStatus={setStatus} />}
-      {role && target.key === 'review' && <ReviewExtract />}
+      {role && target.key === 'ingest' && <Ingest onSchedule={() => nav({ key: 'schedule' })} />}
+      {role && target.key === 'schedule' && <Schedule />}
       {role && target.key === 't-home' && <TeacherHome onAvailability={() => nav({ key: 'availability' })} />}
       {role && target.key === 'availability' && <MyAvailability />}
       {role && target.key === 'my-issues' && <MyIssues />}

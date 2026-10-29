@@ -1,0 +1,19 @@
+{
+ "_about": "Course-code shapes only; the layout comes from tqf2-th. Made from the benchmark format(s) master-edu, master-med (sample curricula in test_pdf); not yet checked against an answer in the product.",
+ "name": "Master's programmes with 3-digit codes (sample files 9, 10; institution unknown)",
+ "extends": "tqf2-th",
+ "code": "^(?:[A-Z]{2})?[0-9]{3}(?:[0-9]{3})?$",
+ "placeholder": "^x{3}$",
+ "placeholder_length": 3,
+ "reread_langs": "eng",
+ "chars": "0123456789xX()-",
+ "slot_words": [
+  "วิชาเลือก"
+ ],
+ "groups": [
+  [
+   "",
+   "xxx"
+  ]
+ ]
+}

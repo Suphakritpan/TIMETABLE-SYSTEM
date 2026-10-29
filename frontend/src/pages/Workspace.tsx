@@ -1,8 +1,10 @@
 // 2.4 พื้นที่ทำงานของโปรไฟล์: Stepper 9 ขั้น + แท็บ หลักสูตร × ชั้นปี (กฎล็อก/ล้าสมัยอยู่ใน profile/steps.ts)
-// เนื้อหาของแต่ละขั้นยังเป็น placeholder (ROADMAP T3.3–T3.8) ปุ่ม "ทำขั้นนี้เสร็จ" เป็นของจำลองเพื่อทดสอบกฎ
+// ทุกขั้น 1–9 มีเนื้อหาจริงแล้ว กฎล็อก/ล้าสมัยอยู่ใน profile/steps.ts
 import { useEffect, useState } from 'react';
 import { getProfile, listTerms, updateStep } from '../api/profiles';
 import Stepper from '../components/profile/Stepper';
+import SetupStep from '../components/steps/SetupStep';
+import DataCheckStep from '../components/steps/DataCheckStep';
 import ReviewStep from '../components/steps/ReviewStep';
 import IssuesStep from '../components/steps/IssuesStep';
 import AvailabilityStep from '../components/steps/AvailabilityStep';
@@ -28,6 +30,8 @@ import { termLabel } from '../utils/buddhistEra';
 
 // ขั้นที่มีเนื้อหาจริง (index ของ STEP_LABELS) ที่เหลือเป็น placeholder + ปุ่มจำลอง
 const REAL_STEPS: Partial<Record<number, (p: StepProps) => React.JSX.Element>> = {
+  0: SetupStep,
+  1: DataCheckStep,
   2: AvailabilityStep,
   3: IssuesStep,
   4: RulesStep,
@@ -46,6 +50,7 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
   const [tab, setTab] = useState('');
   const [selected, setSelected] = useState<Record<string, number>>({});
   const [confirmEdit, setConfirmEdit] = useState(false);
+  const [commit, setCommit] = useState<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
     let live = true;
@@ -72,8 +77,9 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
   const Real = REAL_STEPS[sel];
   const locked = profile.status === 'published';
 
-  const act = async (action: 'complete' | 'edit') => {
+  const act = async (action: 'complete' | 'edit', before?: () => Promise<void>) => {
     try {
+      await before?.();
       const p = await updateStep(profile.id, yp.id, sel, action);
       setProfile(p);
       const next = frontier(p.year_plans.find((y) => y.id === yp.id)?.steps ?? []);
@@ -123,6 +129,7 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
                 locked={locked}
                 role={role}
                 onComplete={() => act('complete')}
+                onEdit={(c) => (impact.length ? (setCommit(() => c), setConfirmEdit(true)) : void act('edit', c))}
                 onProfile={setProfile}
                 setStatus={setStatus}
               />
@@ -133,7 +140,7 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
           {!locked && (!Real || v === 'done') && (
             <div className="actions">
               {v === 'done' ? (
-                <Button onClick={() => (impact.length ? setConfirmEdit(true) : void act('edit'))}>แก้ไขข้อมูลขั้นนี้{Real ? '' : ' (จำลอง)'}</Button>
+                sel === 0 ? null : <Button onClick={() => (impact.length ? (setCommit(null), setConfirmEdit(true)) : void act('edit'))}>แก้ไขข้อมูลขั้นนี้{Real ? '' : ' (จำลอง)'}</Button>
               ) : (
                 <Button variant="primary" onClick={() => void act('complete')}>ทำขั้นนี้เสร็จ (จำลอง)</Button>
               )}
@@ -147,7 +154,7 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
         title={`แก้ไขขั้น "${STEP_LABELS[sel]}"`}
         confirmLabel="แก้ไขและทำให้ขั้นหลังล้าสมัย"
         onCancel={() => setConfirmEdit(false)}
-        onConfirm={() => { setConfirmEdit(false); void act('edit'); }}
+        onConfirm={() => { setConfirmEdit(false); void act('edit', commit ?? undefined); }}
       >
         <p>จะทำให้ขั้นต่อไปนี้ของ {yp.program} ปี {yp.year} ล้าสมัย และต้องทำใหม่ (ปีอื่นไม่ได้รับผลกระทบ):</p>
         <ul>{impact.map((i) => <li key={i}>ขั้น {i + 1}: {STEP_LABELS[i]}</li>)}</ul>

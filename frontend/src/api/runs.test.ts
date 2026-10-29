@@ -1,66 +1,38 @@
-import { adaptRun, generate } from './runs';
-import { ApiException, type ApiRun, type Directory } from './types';
+import { loadLastRun, saveLastRun } from './runs';
+import { viewToUiRun, type SchedClass, type SchedView } from './schedule';
 
-const dir: Directory = {
-  teachers: { u1: 'ไมตรี', u2: 'ลี' },
-  rooms: { rm1: 'COM602' },
-  planRows: { r1: { code: 'ท.1', name: 'วิชา 1' }, r2: { code: 'ท.2', name: 'วิชา 2', span: 2 } },
-};
-const placed = (id: string, extra = {}) => ({
-  class_id: id, plan_row_id: 'r1', group_id: 'g', teacher_ids: ['u1', 'u2'], room_id: 'rm1', day: 1, start_period: 3, span: 2, pinned: false, ...extra,
+const cls = (over: Partial<SchedClass> = {}): SchedClass => ({
+  key: 'k1', code: 'ท.1', name_th: 'วิชา 1', kind: 'L', kind_th: 'บรรยาย', hours: 2, students_set: 'G1', groups: ['G1'], students: 30,
+  day: 'อังคาร', hour: '10:00', room: 'R1', grade: 'pass', reasons: [], pinned: false, moved: false, teachers: ['ลี', 'ไมตรี'], ...over,
 });
-const run = (over: Partial<ApiRun> = {}): ApiRun => ({
-  id: 'run', status: 'partial', progress: { stage: 'done', percent: 100 }, error: null,
-  candidates: [
-    { id: 'low', score: 50, placed: [], unplaced: [] },
-    { id: 'high', score: 90, placed: [placed('k1'), placed('k2', { pinned: true })], unplaced: [{ class_id: 'k3', plan_row_id: 'r2', reason: 'ไม่ว่าง', fix: 'ปลดเวลา' }], conflicts: ['k1'] },
-  ],
-  ...over,
+const view = (classes: SchedClass[], hard = 0): SchedView => ({
+  days: ['จันทร์', 'อังคาร'], hours: ['08:00', '09:00', '10:00'], groups: ['G1'], rooms: [], flag: false, lunch: [], classes, breaks: [],
+  summary: { classes: classes.length, placed: 0, hard_breaks: hard, quality: 88, parts: {}, pass: 0, check: 0, fix: 0, fixed: 0, pinned: 0, moved: 0 },
+  indicators: { rooms: [], groups: [], teachers: [] },
 });
 
-test('เลือกตัวเลือกคะแนนสูงสุด และแปลง id เป็นชื่อ', () => {
-  const r = adaptRun(run(), dir);
-  expect(r.score).toBe(90);
-  expect(r.placed[0]).toMatchObject({ id: 'k1', start: 3, code: 'ท.1', room: 'COM602', teacher: 'ไมตรี + ลี' });
+test('คาบที่จัดแล้ว: วัน/คาบเริ่มเป็นดัชนีของตาราง ครูต่อด้วย +', () => {
+  const r = viewToUiRun(view([cls()]));
+  expect(r.placed[0]).toMatchObject({ id: 'k1', day: 1, start: 3, span: 2, room: 'R1', teacher: 'ลี + ไมตรี', status: 'ok', group: 'G1' });
+  expect(r.status).toBe('ok');
+  expect(r.score).toBe(88);
 });
-test('conflicts -> status conflict, pinned -> pinned, ที่เหลือ ok', () => {
-  const r = adaptRun(run(), dir);
-  expect(r.placed.map((p) => p.status)).toEqual(['conflict', 'pinned']);
+test('สถานะคาบ: ผิดกฎ=conflict ปักหมุด=pinned ย้ายโดยคน=edited', () => {
+  const r = viewToUiRun(view([cls({ key: 'a', grade: 'fix' }), cls({ key: 'b', pinned: true }), cls({ key: 'c', moved: true })]));
+  expect(r.placed.map((p) => p.status)).toEqual(['conflict', 'pinned', 'edited']);
 });
-test('ผลบางส่วนไม่ใช่ความล้มเหลว: unplaced มีเหตุผล+วิธีแก้+span จากแผน', () => {
-  const r = adaptRun(run(), dir);
+test('คาบที่ยังไม่ได้จัดอยู่ใน unplaced พร้อมเหตุผล และผลเป็น partial', () => {
+  const r = viewToUiRun(view([cls({ key: 'u', day: null, hour: null, room: null, reasons: [{ th: 'ไม่มีห้องว่าง', level: 'red' }] })]));
+  expect(r.placed).toHaveLength(0);
+  expect(r.unplaced[0]).toMatchObject({ id: 'u', span: 2, reason: 'ไม่มีห้องว่าง' });
   expect(r.status).toBe('partial');
-  expect(r.unplaced[0]).toMatchObject({ id: 'k3', code: 'ท.2', span: 2, reason: 'ไม่ว่าง', fix: 'ปลดเวลา' });
 });
-test('ระบุตัวเลือกเองได้ และไม่พบ -> error NO_CANDIDATE', () => {
-  expect(adaptRun(run(), dir, 'low').score).toBe(50);
-  expect(() => adaptRun(run(), dir, 'zzz')).toThrow(expect.objectContaining({ code: 'NO_CANDIDATE' }));
+test('ผิดกฎบังคับ -> partial แม้ทุกคาบลงแล้ว', () => {
+  expect(viewToUiRun(view([cls()], 1)).status).toBe('partial');
 });
-test('failed -> throw ApiException SOLVER_FAILED พร้อมข้อความจาก server', () => {
-  const failed = run({ status: 'failed', error: { code: 'SOLVER_FAILED', message: 'ตัวจัดตารางหยุด: หมดเวลา' } });
-  expect(() => adaptRun(failed, dir)).toThrow(ApiException);
-  expect(() => adaptRun(failed, dir)).toThrow('หมดเวลา');
-});
-test('ยังไม่เสร็จ (running) ไม่แปลง', () => {
-  expect(() => adaptRun(run({ status: 'running' }), dir)).toThrow(expect.objectContaining({ code: 'RUN_NOT_FINISHED' }));
-});
-test('mock generate(): รูปที่ UI ใช้ครบ มีทั้งคาบที่ลงและยังไม่ลง', async () => {
-  vi.useFakeTimers();
-  const p = generate();
-  await vi.advanceTimersByTimeAsync(800);
-  const r = await p;
-  vi.useRealTimers();
-  expect(r.status).toBe('partial');
-  expect(r.placed.length).toBeGreaterThan(0);
-  expect(r.placed.some((c) => c.status === 'conflict')).toBe(true);
-  expect(r.unplaced.length).toBe(2);
-  expect(r.placed.every((c) => c.teacher && c.room && c.code)).toBe(true);
-});
-test('mock generate({fail}) -> SOLVER_FAILED', async () => {
-  vi.useFakeTimers();
-  const p = generate({ fail: true });
-  const assertion = expect(p).rejects.toMatchObject({ code: 'SOLVER_FAILED' });
-  await vi.advanceTimersByTimeAsync(800);
-  await assertion;
-  vi.useRealTimers();
+test('เก็บและอ่านผลล่าสุดต่อโปรไฟล์ (รีเฟรชไม่หาย)', () => {
+  const r = viewToUiRun(view([cls()]));
+  saveLastRun('p9', r);
+  expect(loadLastRun('p9')).toEqual(r);
+  expect(loadLastRun('ไม่มี')).toBeNull();
 });

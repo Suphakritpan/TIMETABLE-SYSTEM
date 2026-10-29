@@ -1,5 +1,5 @@
 // เลือกรูป (โปรไฟล์/โลโก้): เก็บเป็น data URL ใน mock จึงจำกัดชนิดและขนาด
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Button from './Button';
 import Icon from './Icon';
 
@@ -39,3 +39,35 @@ export default function ImagePick({ label, value, error, onPick, onClear }: { la
   );
 }
 
+
+const MAX_PHOTOS = 6;
+/** เลือกได้หลายรูป (รูปแรกเป็นรูปปก) เก็บเป็น data URL เหมือน ImagePick */
+export function MultiImagePick({ label, value, onChange }: { label: string; value: string[]; onChange: (v: string[]) => void }) {
+  const ref = useRef<HTMLInputElement>(null);
+  const [error, setError] = useState<string>();
+  const add = async (files: FileList) => {
+    const room = MAX_PHOTOS - value.length;
+    try {
+      const added = await Promise.all([...files].slice(0, room).map(readImage));
+      onChange([...value, ...added]);
+      setError(files.length > room ? `เพิ่มได้สูงสุด ${MAX_PHOTOS} รูป` : undefined);
+    } catch (e) { setError(e instanceof Error ? e.message : 'เพิ่มรูปไม่สำเร็จ'); }
+  };
+  return (
+    <div className="field">
+      <span>{label} <span className="muted">(ไม่บังคับ, สูงสุด {MAX_PHOTOS} รูป)</span></span>
+      <div className="img-pick img-multi">
+        {value.map((src, n) => (
+          <span key={n} className="img-thumb">
+            <img src={src} alt={`${label} ${n + 1}`} />
+            {n === 0 && <span className="img-cover">ปก</span>}
+            <button type="button" aria-label={`ลบ${label} ${n + 1}`} onClick={() => onChange(value.filter((_, k) => k !== n))}>✕</button>
+          </span>
+        ))}
+        <input ref={ref} type="file" accept="image/*" multiple hidden aria-label={label} onChange={(e) => { if (e.target.files) void add(e.target.files); e.target.value = ''; }} />
+        {value.length < MAX_PHOTOS && <Button onClick={() => ref.current?.click()}>เพิ่มรูป</Button>}
+      </div>
+      {error ? <span className="field-error"><span aria-hidden="true">✕ </span>{error}</span> : <span className="muted">PNG/JPG ไม่เกิน 10 MB ต่อรูป (ระบบย่อให้อัตโนมัติ)</span>}
+    </div>
+  );
+}

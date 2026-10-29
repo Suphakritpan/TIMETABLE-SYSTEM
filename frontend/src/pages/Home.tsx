@@ -22,11 +22,11 @@ export default function Home({ departmentId, onOpen, onProfiles }: { departmentI
   const stale = rows.flatMap((p) => p.year_plans.filter((y) => y.steps.includes('stale')).map((y) => ({ p, y })));
   const notStarted = working?.year_plans.filter((y) => frontier(y.steps) === 0) ?? [];
 
-  const shortcuts: { key: 'profiles' | 'people' | 'timetable' | 'review'; label: string; desc: string; icon: IconName }[] = [
+  const shortcuts: { key: 'profiles' | 'people' | 'ingest' | 'schedule'; label: string; desc: string; icon: IconName }[] = [
     { key: 'profiles', label: 'โปรไฟล์ตารางเรียน', desc: 'จัดการตารางแต่ละภาคเรียน', icon: 'calendar' },
     { key: 'people', label: 'บุคลากรและห้อง', desc: 'อาจารย์ ผู้ช่วย และห้องเรียน', icon: 'people' },
-    { key: 'timetable', label: 'สร้างตาราง (ต้นแบบ)', desc: 'ลองจัดตารางแบบรวดเร็ว', icon: 'layers' },
-    { key: 'review', label: 'ตรวจทานตารางที่สกัดได้', desc: 'ตรวจข้อมูลที่อ่านจากไฟล์', icon: 'check' },
+    { key: 'ingest', label: 'อ่านหลักสูตรจากไฟล์', desc: 'อัปโหลด PDF/Word/Excel แล้วตรวจเกรดรายวิชา', icon: 'check' },
+    { key: 'schedule', label: 'จัดตาราง', desc: 'จัดตารางอัตโนมัติ ย้าย ปักหมุด ตรวจกฎ', icon: 'layers' },
   ];
 
   return (
