@@ -1,0 +1,58 @@
+﻿year,term,order,code,kind,name_th,name_en,credits,lecture,lab,self_study,field_hours,page,checked
+1,1,1,020003101,course,คอมพิวเตอร์เพื่อการศึกษาเบื้องต้น,Basic Computer for Education,1,1,1,2,0,20,ok
+1,1,2,020003223,course,ภาษาและวัฒนธรรมไทย,Thai Language and Cultures,2,2,0,4,0,20,ok
+1,1,3,020413100,course,งานไฟฟ้าและเครื่องมือวัด,Electrical Works and Instrument,3,2,2,5,0,20,ok
+1,1,4,020413101,course,อุปกรณ์อิเล็กทรอนิกส์,Electronics Devices,3,3,0,6,0,20,ok
+1,1,5,04xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาวิทยาศาสตร์และคณิตศาสตร์,Science and Mathematics Elective Course,3,3,0,6,0,20,ok
+1,1,6,04xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาวิทยาศาสตร์และคณิตศาสตร์,Science and Mathematics Elective Course,3,3,0,6,0,20,ok
+1,1,7,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาภาษา,Language Elective Course,3,3,0,6,0,20,ok
+1,1,8,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาพลศึกษา,Physical Eduction Elective Course,1,0,2,1,0,20,ok
+1,2,1,020003103,course,คอมพิวเตอร์และการโปรแกรม,Computer and Programming,3,2,2,5,0,21,ok
+1,2,2,020413102,course,วงจรดิจิทัล,Digital Circuits,3,3,0,6,0,21,ok
+1,2,3,020413103,course,คณิตศาสตร์ดิสครีต,Discrete Mathematics,3,3,0,6,0,21,ok
+1,2,4,020413106,course,โครงสร้างระบบคอมพิวเตอร์,Computer System Organization,3,3,0,6,0,21,ok
+1,2,5,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาภาษา,Language Elective Course,3,3,0,6,0,21,ok
+1,2,6,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาสังคมศาสตร์และมนุษยศาสตร์,Social Science and Humanities Elective Course,3,3,0,6,0,21,ok
+1,2,7,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาพลศึกษา,Physical Education Elective Course,1,0,2,1,0,21,ok
+2,1,1,020003221,course,หลักวิชาชีพครู,Teaching Profession,3,3,0,6,0,22,ok
+2,1,2,020003225,course,วิธีการสอนอาชีวะและเทคนิคศึกษา,Teaching Methods in Vocational and Technical Education,3,3,0,6,0,22,ok
+2,1,3,020413105,course,การเขียนโปรแกรมเชิงวัตถุ,Object-oriented Programming,3,2,2,5,0,22,ok
+2,1,4,020413107,course,ระบบปฏิบัติการ,Operating System,3,2,2,5,0,22,ok
+2,1,5,020413108,course,โครงสร้างข้อมูลและอัลกอริทึม,Data Structure and Algorithm,3,2,2,5,0,22,ok
+2,1,6,020413200,course,ระบบและการประยุกต์ใช้ไมโครโปรเซสเซอร์,Microprocessor System and Application,3,2,2,5,0,22,ok
+2,1,7,020413201,course,เทคโนโลยีการสื่อสารข้อมูลและเครือข่ายคอมพิวเตอร์,Data Communications and Computer Networks Technology,3,3,0,6,0,22,ok
+2,2,1,020003224,course,จิตวิทยาการศึกษา,Education Psychology,3,3,0,6,0,23,ok
+2,2,2,020003227,course,นวัตกรรมและสื่อการเรียนการสอน,Innovation and Instructional Media,3,2,2,5,0,23,ok
+2,2,3,020413111,course,ระบบฐานข้อมูล,Database Systems,3,3,0,6,0,23,ok
+2,2,4,020413202,course,ระบบฝังตัวและการเชื่อมต่อระบบคอมพิวเตอร์,Embedded Systems and Computer Interface,3,2,2,5,0,23,ok
+2,2,5,020413203,course,ระบบสารสนเทศเพื่อการจัดการ,Management Information System,3,3,0,6,0,23,ok
+2,2,6,020413204,course,หัวข้อพิเศษทางด้านเทคโนโลยีคอมพิวเตอร์ 1,Special Topics in Computer Technology I,3,3,0,6,0,23,ok
+2,2,7,020413206,course,เทคโนโลยีเว็บ,Web Technology,3,2,2,5,0,23,ok
+3,1,1,020003222,course,ปรัชญาการศึกษาและการพัฒนาหลักสูตรอาชีวศึกษา,Education Philosophy and Vocational Curriculum Development,3,3,0,6,0,24,ok
+3,1,2,020003228,course,การวัดและการประเมินผลการศึกษา,Educational Measurement and Evaluation,3,3,0,6,0,24,ok
+3,1,3,020003230,course,ฝึกปฏิบัติการสอน 1,Teaching Practice I,3,1,4,4,0,24,ok
+3,1,4,020413104,course,วิธีการเชิงตัวเลข,Numerical Methods,3,2,2,5,0,24,ok
+3,1,5,020413209,course,ปัญญาประดิษฐ์,Computational Intelligence,3,3,0,6,0,24,ok
+3,1,6,020413222,course,การพัฒนาโปรแกรมบนอุปกรณ์เคลื่อนที่,Moblie Application Development,3,2,2,5,0,24,ok
+3,1,7,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาสังคมศาสตร์และมนุษยศาสตร์,Social Science and Humanities Elective Course,3,3,0,6,0,24,ok
+3,2,1,020003226,course,การวิจัยทางการศึกษา,Educational Research,3,3,0,6,0,25,ok
+3,2,2,020003231,course,ฝึกปฏิบัติการสอน 2,Teaching Practice II,3,0,6,3,0,25,ok
+3,2,3,020413205,course,การวิเคราะห์และออกแบบระบบ,System Analysis and Design,3,3,0,6,0,25,ok
+3,2,4,020413207,course,คอมพิวเตอร์กราฟิกส์,Computer Graphics,3,2,2,5,0,25,ok
+3,2,5,020413208,course,เหมืองข้อมูล,Data Mining,3,3,0,6,0,25,ok
+3,2,6,02xxxxxxx,elective_slot,วิชาเลือกทางวิชาชีพ,Elective Course,3,,,,0,25,ok
+3,3,1,020413112,course,การฝึกงาน (S/U),Training,1,0,0,0,240,25,ok
+4,1,1,020003229,course,การจัดการคุณภาพการศึกษา,Educational Quality Management,2,2,0,4,0,26,ok
+4,1,2,020003232,course,ฝึกปฏิบัติการสอน 3,Teaching Practice III,3,0,6,3,0,26,ok
+4,1,3,020413109,course,สัมมนา,Seminar,1,0,2,1,0,26,ok
+4,1,4,020413210,course,หัวข้อพิเศษทางด้านเทคโนโลยีคอมพิวเตอร์ 2,Special Topics in ComputerTechnology II,3,3,0,6,0,26,ok
+4,1,5,020413211,course,วิศวกรรมซอฟต์แวร์,Software Engineering,3,3,0,6,0,26,ok
+4,1,6,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาภาษา,Languge Elective Course,3,,,,0,26,ok
+4,1,7,xxxxxxxxx,elective_slot,วิชาเลือกเสรี,Free Elective Course,3,,,,0,26,ok
+4,2,1,020413110,course,โครงงานพิเศษ,Special Project,3,0,6,3,0,26,ok
+4,2,2,020413212,course,คอมพิวเตอร์ช่วยในการออกแบบและผลิต,Computer-aided Design and Manufacturing,3,2,2,5,0,26,ok
+4,2,3,08xxxxxxx,elective_slot,วิชาเลือกในกลุ่มวิชาภาษา,Languge Elective Course,3,,,,0,26,ok
+4,2,4,02xxxxxxx,elective_slot,วิชาเลือกทางวิชาชีพ,Elective Course,3,,,,0,26,ok
+4,2,5,xxxxxxxxx,elective_slot,วิชาเลือกเสรี,Free Elective Course,3,,,,0,26,ok
+5,1,1,020003233,course,ปฏิบัติการสอนด้านเทคโนโลยีคอมพิวเตอร์ 1,Teaching Practice in Computer Technology I,6,0,18,6,0,27,ok
+5,2,1,020003234,course,ปฏิบัติการสอนด้านเทคโนโลยีคอมพิวเตอร์ 2,Teaching Practice in Computer Technology II,6,0,18,6,0,27,ok
