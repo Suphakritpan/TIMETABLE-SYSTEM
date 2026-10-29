@@ -8,7 +8,7 @@ import type { ClassItem } from '../types';
 
 const item = (id: string, over: Partial<ClassItem> = {}): ClassItem => ({ id, day: 0, start: 1, span: 2, code: `ท.${id}`, name: 'วิชา', room: `R${id}`, teacher: `ครู${id}`, status: 'ok', ...over });
 const teacher = MOCK_USERS.find((u) => u.id === 'u-teacher')!;
-const head = { id: 'u-head', name: 'หัวหน้า สายชล' };
+const head = { id: 'u-head', name: 'หัวหน้า อรทัย' };
 
 async function inReview() {
   const p = await getProfile('p1');
@@ -21,8 +21,8 @@ const run = (placed: ClassItem[]): UiRun => ({ status: 'ok', score: 90, placed, 
 beforeEach(() => { resetMockAuth(); resetMockProfiles(); resetMockReview(); sessionStorage.clear(); });
 
 test('isMine: ชื่อสั้นในตารางอยู่ในชื่อเต็มของบัญชี (รวมครูร่วมที่คั่นด้วย +)', () => {
-  expect(isMine(teacher, item('a', { teacher: 'ปฐพนพัทธ์' }))).toBe(true);
-  expect(isMine(teacher, item('a', { teacher: 'ลี + ปฐพนพัทธ์' }))).toBe(true);
+  expect(isMine(teacher, item('a', { teacher: 'วรากร' }))).toBe(true);
+  expect(isMine(teacher, item('a', { teacher: 'ลี + วรากร' }))).toBe(true);
   expect(isMine(teacher, item('a', { teacher: 'ไมตรี' }))).toBe(false);
 });
 
@@ -33,7 +33,7 @@ test('ส่งเข้าตรวจทาน: ต้องทำขั้น
 });
 
 test('ขอเปลี่ยน: ต้องอยู่ใน REVIEW, เป็นคาบของตัวเอง, มีเหตุผล, ไม่ขอซ้ำ; มี impact', async () => {
-  saveLastRun('p1', run([item('a', { teacher: 'ปฐพนพัทธ์', room: 'R' }), item('b', { teacher: 'ลี', room: 'R', start: 5 }), item('c', { teacher: 'ลี', day: 1 })]));
+  saveLastRun('p1', run([item('a', { teacher: 'วรากร', room: 'R' }), item('b', { teacher: 'ลี', room: 'R', start: 5 }), item('c', { teacher: 'ลี', day: 1 })]));
   await expect(createRequest('p1', teacher, { class_id: 'a', reason: 'x' })).rejects.toMatchObject({ code: 'NOT_IN_REVIEW' });
   await inReview();
   await expect(createRequest('p1', teacher, { class_id: 'c', reason: 'x' })).rejects.toMatchObject({ code: 'FORBIDDEN' });
@@ -51,7 +51,7 @@ test('impactFor: ไม่กระทบถ้าไม่มีคาบวั
 });
 
 test('ตัดสินคำขอ: ปฏิเสธต้องมีหมายเหตุ, อนุมัติ/ปฏิเสธแจ้งอาจารย์, ตัดสินซ้ำไม่ได้', async () => {
-  saveLastRun('p1', run([item('a', { teacher: 'ปฐพนพัทธ์' })]));
+  saveLastRun('p1', run([item('a', { teacher: 'วรากร' })]));
   await inReview();
   const r = await createRequest('p1', teacher, { class_id: 'a', reason: 'ติดธุระ' });
   await expect(decideRequest(r.id, 'u-head', { approve: false, note: '' })).rejects.toMatchObject({ code: 'VALIDATION' });
@@ -62,25 +62,25 @@ test('ตัดสินคำขอ: ปฏิเสธต้องมีหม
 });
 
 test('direct edit: ต้องระบุตกลงกับใคร, ห้ามชน, บันทึกเก่า→ใหม่, แจ้งอาจารย์ "แก้โดย …"', async () => {
-  saveLastRun('p1', run([item('a', { teacher: 'ปฐพนพัทธ์', room: 'R1' }), item('b', { teacher: 'ไมตรี', room: 'R2', day: 1, start: 1 })]));
+  saveLastRun('p1', run([item('a', { teacher: 'วรากร', room: 'R1' }), item('b', { teacher: 'ไมตรี', room: 'R2', day: 1, start: 1 })]));
   await inReview();
   await expect(directEdit('p1', head, 'a', { day: 2, start: 3 }, ' ')).rejects.toMatchObject({ code: 'VALIDATION' });
   // ย้ายไปวันอังคารคาบ 1 ชน b? teacher ต่างกัน ห้องต่างกัน -> ไม่ชน จึงสำเร็จ
-  const e = await directEdit('p1', head, 'a', { day: 2, start: 3 }, 'ครูปฐพนพัทธ์');
-  expect(e).toMatchObject({ old_value: { day: 0, start: 1 }, new_value: { day: 2, start: 3 }, agreed_with: 'ครูปฐพนพัทธ์', request_id: null });
+  const e = await directEdit('p1', head, 'a', { day: 2, start: 3 }, 'ครูวรากร');
+  expect(e).toMatchObject({ old_value: { day: 0, start: 1 }, new_value: { day: 2, start: 3 }, agreed_with: 'ครูวรากร', request_id: null });
   expect((await listLog('p1'))).toHaveLength(1);
-  expect((await listNotifications('u-teacher'))[0].body).toBe('แก้โดย หัวหน้า สายชล: ย้าย ท.a (ตกลงกับ ครูปฐพนพัทธ์)');
+  expect((await listNotifications('u-teacher'))[0].body).toBe('แก้โดย หัวหน้า อรทัย: ย้าย ท.a (ตกลงกับ ครูวรากร)');
 });
 
 test('direct edit ที่ทำให้ชนถูกปฏิเสธ (CLASH) และข้อมูลไม่เปลี่ยน', async () => {
-  saveLastRun('p1', run([item('a', { teacher: 'ปฐพนพัทธ์', room: 'R1' }), item('b', { teacher: 'ปฐพนพัทธ์', room: 'R2', day: 1, start: 1 })]));
+  saveLastRun('p1', run([item('a', { teacher: 'วรากร', room: 'R1' }), item('b', { teacher: 'วรากร', room: 'R2', day: 1, start: 1 })]));
   await inReview();
   await expect(directEdit('p1', head, 'a', { day: 1, start: 2 }, 'ใครสักคน')).rejects.toMatchObject({ code: 'CLASH' });
   expect(await listLog('p1')).toHaveLength(0);
 });
 
 test('เผยแพร่แล้ว direct edit ไม่ได้ (VERSION_LOCKED)', async () => {
-  saveLastRun('p1', run([item('a', { teacher: 'ปฐพนพัทธ์' })]));
+  saveLastRun('p1', run([item('a', { teacher: 'วรากร' })]));
   await inReview();
   const { publishProfile } = await import('./profiles');
   const p = await getProfile('p1');

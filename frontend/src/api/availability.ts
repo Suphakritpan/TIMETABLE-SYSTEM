@@ -1,5 +1,6 @@
 // mock ของ api.md §6: เวลาว่างของอาจารย์ (ครั้งเดียวต่อคนต่อภาค — D5) + รอบสอบถามเวลาว่างของหัวหน้า (ขั้น 3)
 // ❓ "ไม่ว่างที่ภาควิชาอื่น" (ช่องเทาที่หัวหน้าเห็น) และการจัดอันดับวิชา (4.2) ยังไม่ทำ: รอสเปกจากอานนท์
+import { persist } from './persist';
 import { notify } from './notifications';
 import { getProfile } from './profiles';
 import { ApiException } from './types';
@@ -131,3 +132,5 @@ export async function myRounds(userId: string): Promise<{ round: Round; status: 
   }
   return out;
 }
+
+persist('availability', () => ({ seq, rounds, avail: [...avail] }), (v) => { seq = v.seq; rounds = v.rounds; avail = new Map(v.avail); });

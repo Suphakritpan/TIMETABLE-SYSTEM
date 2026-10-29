@@ -1,5 +1,6 @@
 // mock ของ api.md §3 (ผู้ดูแลสถาบัน ADMIN): 3.1 ภาพรวม · 3.2 แผนกวิชา + หัวหน้า · 3.3 ห้องร่วม · 3.4 ปฏิทินการศึกษา
 // สิทธิ์ตรวจที่นี่ด้วย (ไม่ใช่แค่ซ่อนปุ่ม): ไม่ใช่ ADMIN -> 403 FORBIDDEN (ตัวจริงตรวจที่ backend ทุก endpoint)
+import { persist } from './persist';
 import { allUsers } from './auth';
 import {
   addDepartmentRaw, departmentName, departmentsSnapshot, removeDepartmentRaw, renameDepartmentRaw, type Department,
@@ -121,3 +122,5 @@ export async function adminOverview(actor: Role | null, termId: string): Promise
   }
   return out;
 }
+
+persist('admin', () => ({ sharedSeq, shared }), (v) => { sharedSeq = v.sharedSeq; shared = v.shared; });

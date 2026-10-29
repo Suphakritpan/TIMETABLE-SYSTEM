@@ -1,6 +1,7 @@
 // mock ของ api.md §8–9 (ขั้น 8 / 4.4 / 4.5): คำขอเปลี่ยนจากอาจารย์, direct edit ของหัวหน้า (ตกลงกับ ___), การแจ้งเตือน
 // หลักการ (flows F9, D8): ใน REVIEW อาจารย์เห็นเฉพาะคาบตัวเอง · ขอเปลี่ยนต้องมีเหตุผล · หัวหน้าเห็นผลกระทบก่อนอนุมัติ ·
 // ปฏิเสธต้องมีหมายเหตุ · direct edit ต้องระบุ "ตกลงกับใคร" และต้องไม่ชน · อาจารย์ที่ได้รับผลกระทบถูกแจ้ง เก่า → ใหม่
+import { persist } from './persist';
 import { findClashes } from '../profile/clashes';
 import type { ClassItem, User } from '../types';
 import { allUsers } from './auth';
@@ -94,3 +95,5 @@ export async function directEdit(profileId: string, head: Pick<User, 'id' | 'nam
 export async function listLog(profileId: string): Promise<ChangeLogEntry[]> { await delay(); return structuredClone(log.filter((l) => l.profile_id === profileId)); }
 export type { Notification };
 export const listNotifications = listNotes;
+
+persist('review', () => ({ seq, requests, log }), (v) => { seq = v.seq; requests = v.requests; log = v.log; });

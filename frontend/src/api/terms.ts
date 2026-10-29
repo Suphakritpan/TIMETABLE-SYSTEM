@@ -1,5 +1,6 @@
 // ปฏิทินการศึกษา (3.4): ต้นทางของภาคเรียนทั้งระบบ — ห้ามเอาวันที่ภาคเรียนจาก PDF หลักสูตร (sitemap 3.4)
 // store ของ mock: profiles.ts อ่านจากที่นี่ (TERM_NOT_IN_CALENDAR) และ admin.ts แก้ไขที่นี่
+import { persist } from './persist';
 import type { Term } from '../types';
 import { ApiException } from './types';
 
@@ -64,3 +65,5 @@ export function setHolidaysRaw(id: string, holidays: Holiday[]): TermDetail {
   t.holidays = holidays.map((h) => ({ day: h.day, name: h.name.trim() })).sort((a, b) => a.day.localeCompare(b.day));
   return structuredClone(t);
 }
+
+persist('terms', () => terms, (v) => { terms = v; });

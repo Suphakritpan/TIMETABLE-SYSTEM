@@ -1,5 +1,6 @@
 // mock ของ POST /api/auth/login และ GET /api/me (api.md §2) ใช้จนกว่าอานนท์ส่ง API จริง
 // บัญชีทดลองทั้งหมดใช้รหัส "demo" ห้ามนำไปใช้นอกเครื่องพัฒนา
+import { persist } from './persist';
 import type { Membership, User } from '../types';
 import { ApiException } from './types';
 
@@ -9,11 +10,11 @@ const d2 = { department_id: 'd2', department_name: 'แผนกวิชาไ�
 const base = { language: 'th' as const };
 
 const SEED_USERS: User[] = [
-  { ...base, id: 'u-head', name: 'นางสายชล สุขนิ่ม', email: 'head@demo.test', is_admin: false, memberships: [{ ...d1, role: 'HEAD' }] },
-  { ...base, id: 'u-assist', name: 'นายธนา ผู้ช่วย', email: 'assistant@demo.test', is_admin: false, memberships: [{ ...d1, role: 'ASSISTANT' }] },
-  { ...base, id: 'u-teacher', name: 'นายปฐพนพัทธ์ ศรีบุญเรือง', email: 'teacher@demo.test', is_admin: false, memberships: [{ ...d1, role: 'TEACHER' }] },
+  { ...base, id: 'u-head', name: 'นางอรทัย ใจดี', email: 'head@demo.test', is_admin: false, memberships: [{ ...d1, role: 'HEAD' }] },
+  { ...base, id: 'u-assist', name: 'นายภูมิพัฒน์ ผู้ช่วย', email: 'assistant@demo.test', is_admin: false, memberships: [{ ...d1, role: 'ASSISTANT' }] },
+  { ...base, id: 'u-teacher', name: 'นายวรากร รักเรียน', email: 'teacher@demo.test', is_admin: false, memberships: [{ ...d1, role: 'TEACHER' }] },
   { ...base, id: 'u-admin', name: 'ผู้ดูแลสถาบัน', email: 'admin@demo.test', is_admin: true, memberships: [] },
-  { ...base, id: 'u-multi', name: 'นางสาวมนัสนันท์ (หลายบทบาท)', email: 'multi@demo.test', is_admin: true, memberships: [{ ...d1, role: 'ASSISTANT' }, { ...d2, role: 'TEACHER' }] },
+  { ...base, id: 'u-multi', name: 'นางสาวพิมพ์ชนก (หลายบทบาท)', email: 'multi@demo.test', is_admin: true, memberships: [{ ...d1, role: 'ASSISTANT' }, { ...d2, role: 'TEACHER' }] },
 ];
 
 export const MOCK_USERS: User[] = structuredClone(SEED_USERS);
@@ -44,8 +45,8 @@ export function changeEmail(user: User, next: string) {
 export async function login(email: string, password: string): Promise<User> {
   await new Promise((r) => setTimeout(r, 300));
   const key = email.trim().toLowerCase();
-  const u = allUsers().find((x) => x.email === key);
-  if (!u || passwordOf(key) !== password) {
+  const u = allUsers().find((x) => x.email === key || x.username?.toLowerCase() === key);
+  if (!u || passwordOf(u.email) !== password) {
     throw new ApiException({ code: 'INVALID_CREDENTIALS', message: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' });
   }
   return u;
@@ -75,3 +76,9 @@ export function addMembership(user: User, m: Membership) {
 export function passwordMatches(email: string, password: string): boolean {
   return passwordOf(email.trim().toLowerCase()) === password;
 }
+
+persist('auth', () => ({ users: MOCK_USERS, registered: [...registered], overrides: [...overrides] }), (v) => {
+  MOCK_USERS.splice(0, MOCK_USERS.length, ...v.users);
+  registered.clear(); v.registered.forEach(([k, x]: [string, { user: User; password: string }]) => registered.set(k, x));
+  overrides.clear(); v.overrides.forEach(([k, x]: [string, string]) => overrides.set(k, x));
+});

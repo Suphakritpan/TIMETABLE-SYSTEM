@@ -86,3 +86,12 @@ test('ห้องของแผนก: เพิ่ม/ลบ ตรวจช�
   await removeRoom('d1', r.id);
   expect(await listRooms('d1')).toHaveLength(2);
 });
+
+test('รับคำเชิญ: เก็บข้อมูลโปรไฟล์ครบ และตรวจชื่อผู้ใช้/เบอร์โทร', async () => {
+  const { invite } = await createInvite('d1', { email: 'full@school.test', role: 'TEACHER' }, 'HEAD');
+  const bad = { first_name: 'ก', last_name: 'ข', password: 'longenough1' };
+  await expect(acceptInvite(invite.token, { ...bad, username: 'x!' })).rejects.toMatchObject({ code: 'VALIDATION' });
+  await expect(acceptInvite(invite.token, { ...bad, phone: 'abc' })).rejects.toMatchObject({ code: 'VALIDATION' });
+  const u = await acceptInvite(invite.token, { ...bad, username: 'full.user', phone: '081-234-5678', language: 'en' });
+  expect(u).toMatchObject({ name: 'ก ข', username: 'full.user', first_name: 'ก', last_name: 'ข', phone: '081-234-5678', language: 'en', status: 'active' });
+});

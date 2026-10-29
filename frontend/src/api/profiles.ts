@@ -1,4 +1,5 @@
 // mock ของ api.md §5 (โปรไฟล์) ใช้จนกว่า backend พร้อม: เก็บในหน่วยความจำ เปลี่ยนไฟล์นี้ไฟล์เดียวเมื่อมี API จริง
+import { persist } from './persist';
 import { complete as completeStep, edit as editStep, initialSteps, type StepStatus } from '../profile/steps';
 import type { Profile, Term, YearPlan } from '../types';
 import { allUsers } from './auth';
@@ -127,3 +128,5 @@ export async function sendToReview(profileId: string): Promise<Profile> {
 export function profileStatusSync(profileId: string): Profile['status'] | null {
   return profiles.find((x) => x.id === profileId)?.status ?? null;
 }
+
+persist('profiles', () => ({ seq, profiles }), (v) => { seq = v.seq; profiles = v.profiles; });

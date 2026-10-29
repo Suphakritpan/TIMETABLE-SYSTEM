@@ -1,4 +1,5 @@
 // ทะเบียนแผนกวิชา (3.2) — store ของ mock ใช้ร่วมกับ people.ts (ชื่อแผนกในคำเชิญ/สมาชิก) และ admin.ts
+import { persist } from './persist';
 import { ApiException } from './types';
 
 export interface Department { id: string; name: string }
@@ -28,3 +29,5 @@ export function renameDepartmentRaw(id: string, name: string): Department {
   return { ...d };
 }
 export function removeDepartmentRaw(id: string) { depts = depts.filter((d) => d.id !== id); }
+
+persist('departments', () => ({ seq, depts }), (v) => { seq = v.seq; depts = v.depts; });

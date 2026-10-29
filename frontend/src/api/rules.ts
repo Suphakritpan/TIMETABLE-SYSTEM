@@ -1,4 +1,5 @@
 // mock ของ api.md §7: rules, prechecks, acknowledge, และตัวกัน Generate (409 PRECHECK_NOT_ACKNOWLEDGED)
+import { persist } from './persist';
 import { runPrecheck, type PrecheckReport, type RulesState } from '../profile/precheck';
 import { getProfile } from './profiles';
 import { ApiException } from './types';
@@ -70,3 +71,9 @@ export function assertAcknowledged(profileId: string) {
     throw new ApiException({ code: 'PRECHECK_NOT_ACKNOWLEDGED', message: 'ต้องรับทราบรายงาน pre-check ก่อนสร้างตาราง' });
   }
 }
+
+persist('rules', () => ({ seq, rules: [...rulesByProfile], reports: [...reports] }), (v) => {
+  seq = v.seq;
+  rulesByProfile.clear(); v.rules.forEach(([k, x]: [string, RulesState]) => rulesByProfile.set(k, x));
+  reports.clear(); v.reports.forEach(([k, x]: [string, PrecheckReport]) => reports.set(k, x));
+});

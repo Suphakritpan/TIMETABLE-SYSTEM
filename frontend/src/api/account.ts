@@ -2,6 +2,7 @@
 //  - ไม่มี SMTP: ผู้ดูแล/หัวหน้าสร้างลิงก์รีเซ็ตให้คัดลอกส่งเอง (ใช้ครั้งเดียว หมดอายุ 24 ชม.)
 //  - ลิงก์รีเซ็ต = ยึดบัญชีได้ทั้งบัญชี: หัวหน้าสร้างได้เฉพาะสมาชิกแผนกตน ที่ไม่ใช่ ADMIN และไม่เป็นหัวหน้าแผนกอื่น
 // ❓ กฎรหัสผ่านและอายุลิงก์ ยังไม่ตกลงกับอานนท์ (ร่าง 8 ตัวอักษร / 24 ชม.)
+import { persist } from './persist';
 import type { Role, User } from '../types';
 import { allUsers, changeEmail, passwordMatches, setPassword } from './auth';
 import { MIN_PASSWORD } from './institution';
@@ -27,12 +28,14 @@ const checkPassword = (pw: string) => {
 };
 
 /** แก้ชื่อ/ภาษา (1.2) */
-export async function updateMe(userId: string, input: { name: string; language: 'th' | 'en' }): Promise<User> {
+export async function updateMe(userId: string, input: { name: string; language: 'th' | 'en'; phone?: string; avatar?: string }): Promise<User> {
   await delay();
   const u = userById(userId);
   if (!input.name.trim()) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อ' });
   u.name = input.name.trim();
   u.language = input.language;
+  if (input.phone !== undefined) u.phone = input.phone.trim() || undefined;
+  if ('avatar' in input) u.avatar = input.avatar;
   return structuredClone(u);
 }
 
@@ -55,6 +58,18 @@ export async function changePassword(userId: string, current: string, next: stri
   checkPassword(next);
   if (next === current) throw new ApiException({ code: 'VALIDATION', message: 'รหัสผ่านใหม่ต้องต่างจากรหัสผ่านเดิม' });
   setPassword(u.email, next);
+}
+
+/** โอนสิทธิ์ผู้ดูแลสถาบันให้บัญชีอื่น (ผู้โอนเสียสิทธิ์): ต้องเป็นผู้ดูแล + ยืนยันด้วยรหัสผ่านปัจจุบัน */
+export async function transferAdmin(userId: string, targetId: string, password: string): Promise<User> {
+  await delay();
+  const me = userById(userId);
+  if (!me.is_admin) throw new ApiException({ code: 'FORBIDDEN', message: 'เฉพาะผู้ดูแลสถาบันเท่านั้น' });
+  if (!passwordMatches(me.email, password)) throw new ApiException({ code: 'INVALID_CREDENTIALS', message: 'รหัสผ่านปัจจุบันไม่ถูกต้อง' });
+  if (targetId === me.id) throw new ApiException({ code: 'VALIDATION', message: 'เลือกบัญชีอื่นที่ไม่ใช่ตัวเอง' });
+  userById(targetId).is_admin = true;
+  me.is_admin = false;
+  return structuredClone(me);
 }
 
 /** 0.2 ผู้ใช้ขอเอง: ตอบสำเร็จเสมอ ไม่บอกว่ามีอีเมลนี้ไหม; ไม่มี SMTP จึงไม่มีอะไรถูกส่ง (ให้ขอลิงก์จากหัวหน้า/ผู้ดูแล) */
@@ -96,3 +111,5 @@ export async function confirmReset(token: string, password: string): Promise<voi
   setPassword(userById(r.user_id).email, password);
   r.used = true;
 }
+
+persist('account', () => ({ seq, resets }), (v) => { seq = v.seq; resets = v.resets; });

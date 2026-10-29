@@ -1,10 +1,12 @@
 // mock ของ api.md §4 (บุคลากร/ห้องของแผนก) และ §2 (คำเชิญ 0.3) — เก็บในหน่วยความจำ
 // หมายเหตุ: ไม่มี SMTP ใน mock จึงคืน invite_url ให้คัดลอก (decisions D12 ข้อ 4–5) และเวลาใช้ "ชั่วโมง" แทนปฏิทินจริง
+import { persist } from './persist';
 import type { Membership, Role, User } from '../types';
 import { departmentName } from './departments';
 import { addMembership, allUsers, findUserByEmail, passwordMatches, registerUser } from './auth';
 import { ApiException } from './types';
 import { delay } from './util';
+import { MIN_PASSWORD, PHONE_RE, USERNAME_RE } from './institution';
 
 export const INVITE_TTL_MS = 7 * 24 * 3600 * 1000;
 
@@ -125,7 +127,9 @@ export async function getInvite(tk: string): Promise<InviteInfo> {
 }
 
 /** ผู้ใช้ใหม่: ส่งชื่อ+รหัสผ่านสร้างบัญชี · ผู้ใช้เดิม: ส่งรหัสผ่านของบัญชีเดิมเพื่อเพิ่มแผนก (ลิงก์หมดอายุ -> ไม่สร้างบัญชี) */
-export async function acceptInvite(tk: string, input: { name?: string; password: string }): Promise<User> {
+export interface AcceptInput { name?: string; first_name?: string; last_name?: string; username?: string; phone?: string; avatar?: string; language?: 'th' | 'en'; password: string }
+
+export async function acceptInvite(tk: string, input: AcceptInput): Promise<User> {
   await delay();
   const i = findInvite(tk);
   const membership: Membership = { department_id: i.department_id, department_name: departmentName(i.department_id), role: i.role };
@@ -136,11 +140,25 @@ export async function acceptInvite(tk: string, input: { name?: string; password:
     addMembership(existing, membership);
     user = existing;
   } else {
-    if (!input.name?.trim()) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อ' });
-    if (input.password.length < 8) throw new ApiException({ code: 'VALIDATION', message: 'รหัสผ่านอย่างน้อย 8 ตัวอักษร' });
-    user = { id: `u-${i.id}`, name: input.name.trim(), email: i.email, language: 'th', is_admin: false, memberships: [membership] };
+    const first = input.first_name?.trim() ?? '';
+    const last = input.last_name?.trim() ?? '';
+    const name = input.name?.trim() || `${first} ${last}`.trim();
+    if (!name) throw new ApiException({ code: 'VALIDATION', message: 'กรอกชื่อ' });
+    if (input.password.length < MIN_PASSWORD) throw new ApiException({ code: 'VALIDATION', message: `รหัสผ่านอย่างน้อย ${MIN_PASSWORD} ตัวอักษร` });
+    const username = input.username?.trim();
+    if (username && !USERNAME_RE.test(username)) throw new ApiException({ code: 'VALIDATION', message: 'ชื่อผู้ใช้ 3–30 ตัว ใช้ a-z 0-9 . _ - เท่านั้น' });
+    if (username && allUsers().some((u) => u.username?.toLowerCase() === username.toLowerCase())) throw new ApiException({ code: 'DUPLICATE_USERNAME', message: 'มีบัญชีใช้ชื่อผู้ใช้นี้แล้ว' });
+    const phone = input.phone?.trim();
+    if (phone && !PHONE_RE.test(phone)) throw new ApiException({ code: 'VALIDATION', message: 'เบอร์โทรศัพท์ไม่ถูกต้อง' });
+    user = {
+      id: `u-${i.id}`, name, email: i.email, language: input.language ?? 'th', is_admin: false, memberships: [membership],
+      username: username || undefined, first_name: first || undefined, last_name: last || undefined, phone: phone || undefined, avatar: input.avatar,
+      created_at: new Date().toISOString(), status: 'active', email_verified: false,
+    };
     registerUser(user, input.password);
   }
   i.accepted_at = now();
   return structuredClone(user);
 }
+
+persist('people', () => ({ seq, invites, rooms }), (v) => { seq = v.seq; invites = v.invites; rooms = v.rooms; });

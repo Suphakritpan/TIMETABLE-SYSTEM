@@ -1,6 +1,7 @@
 // mock ของ api.md §6 (ขั้น 4 / 4.3): รายการ BLOCKER / WARNING ที่ระบบสร้างเอง + เธรดความเห็นเดียวกันสองฝั่ง + การตัดสินใจ
 // กฎ R3: BLOCKER ต้องแก้ (ยอมรับเฉยๆ ไม่ได้) · WARNING ยอมรับพร้อมหมายเหตุได้ · ปิดด้วยการตัดสินใจที่บันทึก ใคร/เมื่อไหร่/ทำไม
 // รายการจริงถูกสร้างที่ backend จากข้อมูลหลักสูตร + เวลาว่าง; mock นี้ seed ตัวอย่างให้ UI ใช้ทดสอบ
+import { persist } from './persist';
 import { ApiException } from './types';
 import { delay } from './util';
 
@@ -35,8 +36,8 @@ let store = new Map<string, Issue[]>();
 
 const seed = (profileId: string): Issue[] => [
   { id: `is${++seq}`, profile_id: profileId, severity: 'BLOCKER', kind: 'NO_TEACHER', title: 'วิชา ป.31901-2005 ยังไม่มีผู้สอน', detail: 'ไม่มีครูคนใดจัดอันดับวิชานี้ไว้ และไม่มีครูที่ถูกมอบหมาย', about_user_id: null, state: 'open', comments: [], decision: null },
-  { id: `is${++seq}`, profile_id: profileId, severity: 'BLOCKER', kind: 'OVER_LIMIT', title: 'ครูปฐพนพัทธ์ ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน', detail: 'วันพฤหัสบดีต้องสอน 8 ชม. แต่ตั้งไว้สูงสุด 6 ชม./วัน', about_user_id: 'u-teacher', state: 'open', comments: [], decision: null },
-  { id: `is${++seq}`, profile_id: profileId, severity: 'WARNING', kind: 'LOW_RANK', title: 'ครูปฐพนพัทธ์ ได้วิชาที่จัดอันดับต่ำ', detail: 'วิชา ท.31901-2004 อยู่ลำดับที่ 5 ในความต้องการของครู', about_user_id: 'u-teacher', state: 'open', comments: [], decision: null },
+  { id: `is${++seq}`, profile_id: profileId, severity: 'BLOCKER', kind: 'OVER_LIMIT', title: 'ครูวรากร ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน', detail: 'วันพฤหัสบดีต้องสอน 8 ชม. แต่ตั้งไว้สูงสุด 6 ชม./วัน', about_user_id: 'u-teacher', state: 'open', comments: [], decision: null },
+  { id: `is${++seq}`, profile_id: profileId, severity: 'WARNING', kind: 'LOW_RANK', title: 'ครูวรากร ได้วิชาที่จัดอันดับต่ำ', detail: 'วิชา ท.31901-2004 อยู่ลำดับที่ 5 ในความต้องการของครู', about_user_id: 'u-teacher', state: 'open', comments: [], decision: null },
 ];
 
 export function resetMockIssues() { seq = 0; store = new Map(); now = () => Date.now(); }
@@ -88,3 +89,5 @@ export async function assertIssuesComplete(profileId: string): Promise<void> {
   const open = forProfile(profileId).filter((i) => i.state === 'open').length;
   if (open) throw new ApiException({ code: 'ISSUES_UNDECIDED', message: `ยังมี ${open} รายการที่ยังไม่ตัดสินใจ`, details: { open } });
 }
+
+persist('issues', () => ({ seq, store: [...store] }), (v) => { seq = v.seq; store = new Map(v.store); });

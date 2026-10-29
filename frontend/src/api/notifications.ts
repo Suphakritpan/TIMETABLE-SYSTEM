@@ -1,3 +1,4 @@
+import { persist } from './persist';
 import { delay } from './util';
 // การแจ้งเตือนในแอป (1.1): ศูนย์กลางของ mock — API อื่นเรียก notify() เมื่อมีเหตุการณ์ (เปิดรอบ ขอเปลี่ยน แก้โดยหัวหน้า เผยแพร่ ฯลฯ)
 // ในแอปเสมอ + อีเมลเมื่อมี SMTP (D12) mock นี้ไม่มี SMTP จึงมีแต่ในแอป
@@ -24,3 +25,5 @@ export async function markRead(userId: string, id?: string): Promise<void> {
   await delay();
   notes.forEach((n) => { if (n.user_id === userId && (!id || n.id === id)) n.read = true; });
 }
+
+persist('notifications', () => ({ seq, notes }), (v) => { seq = v.seq; notes = v.notes; });
