@@ -18,8 +18,10 @@ beforeEach(() => {
 });
 
 async function signIn(email: string) {
-  await userEvent.type(screen.getByLabelText('อีเมล'), email);
+  await userEvent.type(screen.getByLabelText('อีเมลหรือชื่อผู้ใช้'), email);
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'demo');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
 }
 const step = (n: number) => screen.getByRole('button', { name: new RegExp(`^${n}\\.`) });

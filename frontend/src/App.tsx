@@ -21,6 +21,7 @@ import Login from './pages/Login';
 import Profiles from './pages/Profiles';
 import Reset from './pages/Reset';
 import ReviewExtract from './pages/ReviewExtract';
+import Structure from './pages/Structure';
 import Setup from './pages/Setup';
 import Timetable from './pages/Timetable';
 import Workspace from './pages/Workspace';
@@ -80,6 +81,7 @@ function Routes() {
       {role && target.key === 'my-issues' && <MyIssues />}
       {role && target.key === 'my-timetable' && <MyTimetable />}
       {role && target.key === 'my-requests' && <MyRequests />}
+      {role && target.key === 'structure' && <Structure />}
       {role && target.key === 'admin' && <Admin />}
     </AppShell>
   );

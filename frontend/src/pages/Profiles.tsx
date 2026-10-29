@@ -1,6 +1,7 @@
 // 2.2 โปรไฟล์: รายการ + สร้างใหม่ + คัดลอกจากภาคก่อน
 import { useEffect, useState } from 'react';
 import { copyProfile, createProfile, listProfiles, listTerms } from '../api/profiles';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import DataTable, { type Column } from '../components/ui/DataTable';
@@ -64,14 +65,16 @@ export default function Profiles({ departmentId, onOpen }: { departmentId: strin
 
   return (
     <>
-      <div className="toolbar">
-        <h1>โปรไฟล์</h1>
-        <span className="spacer" />
+      <PageHeader
+        title="โปรไฟล์"
+        subtitle="ชุดตารางเรียนของแต่ละภาคเรียน"
+        actions={<>
         <Button onClick={() => open('copy')} disabled={!rows?.length} title={rows?.length ? undefined : 'ยังไม่มีโปรไฟล์ให้คัดลอก'}>คัดลอกจากภาคก่อน</Button>
         <Button variant="primary" onClick={() => open('new')}>สร้างโปรไฟล์ใหม่</Button>
-      </div>
+        </>}
+      />
 
-      {rows === null ? <Skeleton lines={4} label="กำลังโหลดโปรไฟล์" /> : (
+      {rows === null ? <Skeleton variant="table" lines={4} label="กำลังโหลดโปรไฟล์" /> : (
         <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} caption="โปรไฟล์ตารางเรียน" empty="ยังไม่มีโปรไฟล์ เริ่มด้วย “สร้างโปรไฟล์ใหม่”" />
       )}
 

@@ -20,8 +20,10 @@ beforeEach(() => {
 });
 
 async function adminLogin() {
-  await userEvent.type(await screen.findByLabelText('อีเมล'), 'admin@demo.test');
+  await userEvent.type(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้'), 'admin@demo.test');
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'demo');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
   await screen.findByRole('heading', { name: 'ผู้ดูแลสถาบัน', level: 1 });
 }
@@ -34,7 +36,7 @@ test('3.1 ภาพรวม: เห็นแผนกทั้งหมดข�
   expect(within(table).getByText('แผนกวิชาคอมพิวเตอร์')).toBeInTheDocument();
   expect(within(table).getByText('กำลังทำ')).toBeInTheDocument();
   expect(within(table).getByText('ยังไม่มีหัวหน้า')).toBeInTheDocument();
-  expect(screen.getByText('เผยแพร่แล้ว 0 จาก 2 แผนกวิชา')).toBeInTheDocument();
+  expect(screen.getByText('แผนกวิชาทั้งหมด').nextElementSibling).toHaveTextContent('2');
   expect(await axe(container)).toHaveNoViolations();
 }, T);
 

@@ -2,6 +2,8 @@
 import { useEffect, useState } from 'react';
 import { createResetLink } from '../api/account';
 import { addRoom, createInvite, listPeople, listRooms, removePerson, removeRoom, resendInvite, type InviteRole, type Person, type Room } from '../api/people';
+import SearchInput from '../components/ui/SearchInput';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
@@ -12,11 +14,11 @@ import InlineAlert from '../components/ui/InlineAlert';
 import Skeleton from '../components/ui/Skeleton';
 import Tabs from '../components/ui/Tabs';
 import { useToast } from '../components/ui/Toast';
+import { ROOM_TYPES } from '../data/rooms';
 import { useSession } from '../context/Session';
 import { term } from '../utils/terminology';
 
 const ROLE = { HEAD: 'หัวหน้า', ASSISTANT: 'ผู้ช่วย', TEACHER: 'อาจารย์', ADMIN: 'ผู้ดูแล' } as const;
-const ROOM_TYPES = ['ห้องเรียน', 'ห้องปฏิบัติการ', 'อื่น ๆ'];
 
 export default function People({ departmentId }: { departmentId: string }) {
   const toast = useToast();
@@ -28,6 +30,7 @@ export default function People({ departmentId }: { departmentId: string }) {
   const [link, setLink] = useState<{ title: string; url: string } | null>(null);
   const [del, setDel] = useState<Person | null>(null);
   const [err, setErr] = useState('');
+  const [q, setQ] = useState('');
   const [invite, setInvite] = useState<{ email: string; role: InviteRole }>({ email: '', role: 'TEACHER' });
   const [room, setRoom] = useState({ name: '', type: ROOM_TYPES[0], seats: 30 });
   const isHead = role === 'HEAD';
@@ -95,6 +98,8 @@ export default function People({ departmentId }: { departmentId: string }) {
     } catch (e) { setErr(e instanceof Error ? e.message : 'เพิ่มห้องไม่สำเร็จ'); }
   };
 
+  const needle = q.trim().toLowerCase();
+  const shownPeople = (people ?? []).filter((p) => `${p.name} ${p.email}`.toLowerCase().includes(needle));
   const peopleCols: Column<Person>[] = [
     { key: 'name', header: 'ชื่อ', sortValue: (r) => r.name, render: (r) => r.name },
     { key: 'email', header: 'อีเมล', sortValue: (r) => r.email, render: (r) => r.email },
@@ -126,11 +131,11 @@ export default function People({ departmentId }: { departmentId: string }) {
 
   return (
     <>
-      <div className="toolbar">
-        <h1>บุคลากรและห้อง</h1>
-        <span className="spacer" />
-        <Button variant="primary" onClick={() => { setErr(''); setDlg(tab === 'people' ? 'invite' : 'room'); }}>{tab === 'people' ? `เชิญ${teacher}/ผู้ช่วย` : 'เพิ่มห้อง'}</Button>
-      </div>
+      <PageHeader
+        title="บุคลากรและห้อง"
+        subtitle="เชิญอาจารย์ ผู้ช่วย และจัดการห้องของแผนก"
+        actions={<Button variant="primary" onClick={() => { setErr(''); setDlg(tab === 'people' ? 'invite' : 'room'); }}>{tab === 'people' ? `เชิญ${teacher}/ผู้ช่วย` : 'เพิ่มห้อง'}</Button>}
+      />
 
       {link && (
         <InlineAlert tone="success">
@@ -140,10 +145,11 @@ export default function People({ departmentId }: { departmentId: string }) {
         </InlineAlert>
       )}
 
+      {tab === 'people' && <SearchInput label="ค้นหาชื่อหรืออีเมล" value={q} onChange={setQ} />}
       <Tabs label="ส่วนของหน้า" value={tab} onChange={setTab} tabs={[{ key: 'people', label: 'บุคลากร' }, { key: 'rooms', label: 'ห้อง' }]}>
         {tab === 'people'
-          ? people === null ? <Skeleton lines={4} label="กำลังโหลดบุคลากร" /> : <DataTable columns={peopleCols} rows={people} rowKey={(r) => `${r.status}-${r.id}`} caption="บุคลากรของแผนก" empty="ยังไม่มีบุคลากร เริ่มด้วยการเชิญ" />
-          : rooms === null ? <Skeleton lines={3} label="กำลังโหลดห้อง" /> : <DataTable columns={roomCols} rows={rooms} rowKey={(r) => r.id} caption="ห้องของแผนก" empty="ยังไม่มีห้องของแผนก (ห้องร่วมมาจากผู้ดูแลสถาบัน)" />}
+          ? people === null ? <Skeleton variant="table" lines={4} label="กำลังโหลดบุคลากร" /> : <DataTable columns={peopleCols} rows={shownPeople} rowKey={(r) => `${r.status}-${r.id}`} caption="บุคลากรของแผนก" empty="ยังไม่มีบุคลากร เริ่มด้วยการเชิญ" />
+          : rooms === null ? <Skeleton variant="table" lines={3} label="กำลังโหลดห้อง" /> : <DataTable columns={roomCols} rows={rooms} rowKey={(r) => r.id} caption="ห้องของแผนก" empty="ยังไม่มีห้องของแผนก (ห้องร่วมมาจากผู้ดูแลสถาบัน)" />}
       </Tabs>
 
       <Dialog open={dlg === 'invite'} title="เชิญบุคลากร" onClose={() => setDlg(null)} footer={<><Button onClick={() => setDlg(null)}>ยกเลิก</Button><Button variant="primary" onClick={() => void sendInvite()}>สร้างลิงก์เชิญ</Button></>}>

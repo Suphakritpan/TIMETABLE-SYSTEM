@@ -17,8 +17,10 @@ beforeEach(() => {
 });
 
 async function signIn(email: string) {
-  await userEvent.type(screen.getByLabelText('อีเมล'), email);
+  await userEvent.type(screen.getByLabelText('อีเมลหรือชื่อผู้ใช้'), email);
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'demo');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
 }
 
@@ -26,7 +28,7 @@ test('2.3 หัวหน้าเชิญครู -> ได้ลิงก์
   render(<App />);
   await signIn('head@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
-  expect(await screen.findByRole('cell', { name: 'นายปฐพนพัทธ์ ศรีบุญเรือง' })).toBeInTheDocument();
+  expect(await screen.findByRole('cell', { name: 'นายวรากร รักเรียน' })).toBeInTheDocument();
 
   await userEvent.click(screen.getByRole('button', { name: /เชิญครู\/ผู้ช่วย/ }));
   const dlg = screen.getByRole('dialog', { name: 'เชิญบุคลากร' });
@@ -42,7 +44,7 @@ test('2.3 ผู้ช่วย: เลือกเชิญผู้ช่ว�
   render(<App />);
   await signIn('assistant@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
-  await screen.findByRole('cell', { name: 'นายปฐพนพัทธ์ ศรีบุญเรือง' });
+  await screen.findByRole('cell', { name: 'นายวรากร รักเรียน' });
   const removes = screen.getAllByRole('button', { name: 'ลบ' });
   expect(removes.length).toBeGreaterThan(0);
   expect(removes[0]).toBeDisabled();
@@ -68,11 +70,18 @@ test('0.3 รับคำเชิญ (ผู้ใช้ใหม่): สร�
   window.location.hash = invite_url;
   render(<App />);
   expect(await screen.findByText(/แผนกวิชาคอมพิวเตอร์/)).toBeInTheDocument();
-  await userEvent.type(screen.getByLabelText('ชื่อ'), 'สมศรี ใจดี');
+  expect(screen.getByLabelText('อีเมล')).toHaveValue('new@school.test');
+  expect(screen.getByLabelText('ชื่อผู้ใช้ (Username)')).toHaveValue('new');
+  await userEvent.click(screen.getByRole('button', { name: 'สร้างบัญชีและเข้าร่วม' }));
+  expect(await screen.findByText('กรอกชื่อจริง')).toBeInTheDocument();
+  expect(screen.getByText('ต้องยอมรับข้อกำหนดก่อนสร้างบัญชี')).toBeInTheDocument();
+  await userEvent.type(screen.getByLabelText('ชื่อจริง'), 'สมศรี');
+  await userEvent.type(screen.getByLabelText('นามสกุล'), 'ใจดี');
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'longenough1');
   await userEvent.type(screen.getByLabelText('ยืนยันรหัสผ่าน'), 'different1');
+  await userEvent.click(screen.getByRole('checkbox', { name: /ยอมรับข้อกำหนด/ }));
   await userEvent.click(screen.getByRole('button', { name: 'สร้างบัญชีและเข้าร่วม' }));
-  expect(await screen.findByRole('alert')).toHaveTextContent('รหัสผ่านไม่ตรงกัน');
+  expect(await screen.findByText('รหัสผ่านไม่ตรงกัน')).toBeInTheDocument();
   await userEvent.clear(screen.getByLabelText('ยืนยันรหัสผ่าน'));
   await userEvent.type(screen.getByLabelText('ยืนยันรหัสผ่าน'), 'longenough1');
   await userEvent.click(screen.getByRole('button', { name: 'สร้างบัญชีและเข้าร่วม' }));
@@ -83,9 +92,9 @@ test('0.3 ลิงก์ไม่มีอยู่: แจ้งข้อผ�
   window.location.hash = '#/invite/ไม่มี';
   render(<App />);
   // ตัวอักษรไทยไม่ผ่านรูปโทเค็น -> เส้นทางไม่รู้จัก -> หน้าล็อกอิน
-  expect(await screen.findByLabelText('อีเมล')).toBeInTheDocument();
+  expect(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้')).toBeInTheDocument();
   window.location.hash = '#/invite/zzz-not-real';
   expect(await screen.findByText(/ไม่พบคำเชิญนี้/)).toBeInTheDocument();
   await userEvent.click(screen.getByRole('button', { name: 'ไปหน้าเข้าสู่ระบบ' }));
-  expect(await screen.findByLabelText('อีเมล')).toBeInTheDocument();
+  expect(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้')).toBeInTheDocument();
 });

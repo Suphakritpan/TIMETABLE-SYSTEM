@@ -4,6 +4,7 @@ import { listProfiles } from '../api/profiles';
 import { createRequest, isMine } from '../api/review';
 import { loadLastRun } from '../api/runs';
 import TimetableGrid from '../components/timetable/TimetableGrid';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
@@ -32,8 +33,8 @@ export default function MyTimetable() {
     return () => { live = false; };
   }, [departmentId]);
 
-  if (profile === undefined) return <><div className="toolbar"><h1>ตารางของฉัน</h1></div><Skeleton lines={4} label="กำลังโหลด" /></>;
-  if (profile === null || !user) return <><div className="toolbar"><h1>ตารางของฉัน</h1></div><EmptyState>ยังไม่มีตารางที่เปิดให้ดู หัวหน้ายังไม่ได้ส่งเข้าตรวจทาน</EmptyState></>;
+  if (profile === undefined) return <><PageHeader title="ตารางของฉัน" /><Skeleton lines={4} label="กำลังโหลด" /></>;
+  if (profile === null || !user) return <><PageHeader title="ตารางของฉัน" /><EmptyState>ยังไม่มีตารางที่เปิดให้ดู หัวหน้ายังไม่ได้ส่งเข้าตรวจทาน</EmptyState></>;
 
   const mine: ClassItem[] = (loadLastRun(profile.id)?.placed ?? []).filter((c) => isMine(user, c));
   const sel = mine.find((c) => c.id === selected);
@@ -52,11 +53,11 @@ export default function MyTimetable() {
 
   return (
     <>
-      <div className="toolbar">
-        <h1>ตารางของฉัน</h1>
-        <Badge tone={published ? 'success' : 'warning'}>{published ? 'เผยแพร่แล้ว' : 'DRAFT (กำลังตรวจทาน)'}</Badge>
-        <span className="muted">{profile.name}</span>
-      </div>
+      <PageHeader
+        title="ตารางของฉัน"
+        subtitle={profile.name}
+        actions={<Badge tone={published ? 'success' : 'warning'}>{published ? 'เผยแพร่แล้ว' : 'DRAFT (กำลังตรวจทาน)'}</Badge>}
+      />
       {mine.length === 0 ? <EmptyState>ไม่มีคาบของคุณในตารางนี้</EmptyState> : (
         <div className="tt-wrap"><TimetableGrid days={DAYS} periods={PERIODS} items={mine} selectedId={selected} onSelect={setSelected} /></div>
       )}

@@ -3,6 +3,7 @@ import { useEffect, useState, type FormEvent } from 'react';
 import { confirmReset, getReset, requestReset } from '../api/account';
 import { MIN_PASSWORD } from '../api/institution';
 import { ApiException } from '../api/types';
+import Icon from '../components/ui/Icon';
 import Button from '../components/ui/Button';
 import { TextField } from '../components/ui/Field';
 import InlineAlert from '../components/ui/InlineAlert';
@@ -41,7 +42,8 @@ export default function Reset({ token, onLogin }: { token?: string; onLogin: () 
 
   return (
     <main className="login">
-      <form className="panel" onSubmit={token ? save : request} aria-labelledby="rs-h">
+      <form className="panel auth-panel" onSubmit={token ? save : request} aria-labelledby="rs-h">
+        <span className="brand-mark"><Icon name="calendar" size={30} /></span>
         <h1 id="rs-h">{token ? 'ตั้งรหัสผ่านใหม่' : 'ลืมรหัสผ่าน'}</h1>
         {!token && (
           <>

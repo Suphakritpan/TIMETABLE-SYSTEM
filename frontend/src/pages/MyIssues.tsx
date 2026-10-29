@@ -4,6 +4,7 @@ import { myIssues, type Issue } from '../api/issues';
 import { listProfiles } from '../api/profiles';
 import IssueThread from '../components/issues/IssueThread';
 import { SEVERITY_VIEW } from '../profile/status';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import EmptyState from '../components/ui/EmptyState';
 import Skeleton from '../components/ui/Skeleton';
@@ -27,7 +28,7 @@ export default function MyIssues() {
 
   return (
     <>
-      <div className="toolbar"><h1>รายการของฉัน</h1></div>
+      <PageHeader title="รายการของฉัน" subtitle="ปัญหาและเรื่องที่ต้องการให้คุณตรวจ" />
       {issues === null ? <Skeleton lines={4} label="กำลังโหลดรายการ" /> : issues.length === 0 ? (
         <EmptyState>ไม่มีรายการที่เกี่ยวกับคุณ</EmptyState>
       ) : issues.map((i) => (

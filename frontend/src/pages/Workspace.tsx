@@ -12,6 +12,8 @@ import PublishStep from '../components/steps/PublishStep';
 import RulesStep from '../components/steps/RulesStep';
 import type { StepProps } from '../components/steps/types';
 import { useSession } from '../context/Session';
+import Icon from '../components/ui/Icon';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
@@ -84,12 +86,14 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
 
   return (
     <>
-      <div className="toolbar">
-        <Button variant="tertiary" onClick={onBack}>← โปรไฟล์</Button>
-        <h1>{profile.name}</h1>
-        <Badge tone={PROFILE_STATUS[profile.status].tone}>{PROFILE_STATUS[profile.status].label}</Badge>
-        <span className="muted">{term ? `ภาคเรียน ${termLabel(term)}` : ''}</span>
-      </div>
+      <PageHeader
+        title={profile.name}
+        subtitle={term ? `ภาคเรียน ${termLabel(term)}` : undefined}
+        actions={<>
+          <Badge tone={PROFILE_STATUS[profile.status].tone}>{PROFILE_STATUS[profile.status].label}</Badge>
+          <Button onClick={onBack}>← โปรไฟล์</Button>
+        </>}
+      />
 
       <Tabs
         label="หลักสูตรและชั้นปี"
@@ -98,7 +102,7 @@ export default function Workspace({ id, onBack, setStatus = () => {} }: { id: st
         tabs={profile.year_plans.map((y) => ({
           key: y.id,
           label: `${y.program} ปี ${y.year}`,
-          badge: y.steps.includes('stale') ? <span title="มีขั้นล้าสมัย"> ⚠<span className="sr-only"> มีขั้นล้าสมัย</span></span> : undefined,
+          badge: y.steps.includes('stale') ? <span title="มีขั้นล้าสมัย"> <Icon name="alert" size={14} /><span className="sr-only"> มีขั้นล้าสมัย</span></span> : undefined,
         }))}
       >
         <Stepper steps={yp.steps} selected={sel} onSelect={(i) => setSelected((s) => ({ ...s, [yp.id]: i }))} />

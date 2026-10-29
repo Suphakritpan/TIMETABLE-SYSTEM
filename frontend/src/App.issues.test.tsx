@@ -31,8 +31,10 @@ beforeEach(() => {
 });
 
 async function signIn(email: string) {
-  await userEvent.type(await screen.findByLabelText('อีเมล'), email);
+  await userEvent.type(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้'), email);
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'demo');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
 }
 
@@ -69,11 +71,11 @@ test('4.3 (ครู): เห็นเฉพาะรายการของฉ
   render(<App />);
   await signIn('teacher@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'รายการของฉัน' }));
-  expect(await screen.findByRole('heading', { name: /ครูปฐพนพัทธ์ ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน/ })).toBeInTheDocument();
+  expect(await screen.findByRole('heading', { name: /ครูวรากร ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน/ })).toBeInTheDocument();
   expect(screen.queryByText(/วิชา ป\.31901-2005 ยังไม่มีผู้สอน/)).toBeNull(); // ไม่ใช่ของฉัน
   expect(screen.queryByRole('button', { name: 'บันทึกการตัดสินใจ' })).toBeNull();
 
-  const panel = screen.getByRole('region', { name: 'ครูปฐพนพัทธ์ ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน' });
+  const panel = screen.getByRole('region', { name: 'ครูวรากร ถูกมอบหมายเกินชั่วโมงสูงสุดต่อวัน' });
   await userEvent.type(within(panel).getByLabelText('เขียนความเห็น'), 'ตั้งไว้ผิด ขอแก้เป็น 8 ชม.');
   await userEvent.click(within(panel).getByRole('button', { name: 'ส่งความเห็น' }));
   expect(await within(panel).findByText('ตั้งไว้ผิด ขอแก้เป็น 8 ชม.')).toBeInTheDocument();

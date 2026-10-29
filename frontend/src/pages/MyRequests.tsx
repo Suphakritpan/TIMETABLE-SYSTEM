@@ -2,6 +2,7 @@
 import { REQUEST_STATUS } from '../profile/status';
 import { useEffect, useState } from 'react';
 import { listNotifications, myRequests, type ChangeRequest, type Notification } from '../api/review';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import DataTable, { type Column } from '../components/ui/DataTable';
 import EmptyState from '../components/ui/EmptyState';
@@ -32,8 +33,8 @@ export default function MyRequests() {
 
   return (
     <>
-      <div className="toolbar"><h1>คำขอของฉัน</h1></div>
-      {reqs === null ? <Skeleton lines={3} label="กำลังโหลด" /> : <DataTable columns={columns} rows={reqs} rowKey={(r) => r.id} caption="คำขอเปลี่ยนของฉัน" empty="ยังไม่มีคำขอ" />}
+      <PageHeader title="คำขอของฉัน" subtitle="คำขอเปลี่ยนคาบที่คุณส่งและสถานะ" />
+      {reqs === null ? <Skeleton variant="table" lines={3} label="กำลังโหลด" /> : <DataTable columns={columns} rows={reqs} rowKey={(r) => r.id} caption="คำขอเปลี่ยนของฉัน" empty="ยังไม่มีคำขอ" />}
       <section className="panel" aria-label="การเปลี่ยนแปลงถึงฉัน">
         <h2>การเปลี่ยนแปลงที่เกี่ยวกับฉัน</h2>
         {notes.length === 0 ? <EmptyState>ยังไม่มีการเปลี่ยนแปลง</EmptyState> : <ul>{notes.map((n) => <li key={n.id}>{n.body}</li>)}</ul>}

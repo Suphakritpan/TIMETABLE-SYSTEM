@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import TimetableGrid, { STATUS } from '../components/timetable/TimetableGrid';
@@ -21,8 +22,8 @@ export default function ReviewExtract() {
 
   return (
     <>
+      <PageHeader title="ตรวจทานตารางที่สกัดได้" subtitle="ตรวจช่องที่ระบบอ่านไม่มั่นใจก่อนบันทึก" />
       <div className="toolbar">
-        <h1>ตรวจทานตารางที่สกัดได้</h1>
         <span className="spacer" />
         <span>ต้องตรวจ <b>{todo.length}</b> / {items.length} ช่อง</span>
         <Button onClick={next} disabled={!todo.length}>ช่องถัดไปที่ต้องตรวจ</Button>

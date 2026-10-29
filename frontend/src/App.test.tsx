@@ -5,8 +5,10 @@ import { seedDemoInstitution } from './api/institution';
 import { resetMockProfiles } from './api/profiles';
 
 async function signIn(email: string) {
-  await userEvent.type(screen.getByLabelText('อีเมล'), email);
+  await userEvent.type(screen.getByLabelText('อีเมลหรือชื่อผู้ใช้'), email);
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'demo');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
 }
 
@@ -20,8 +22,10 @@ beforeEach(() => {
 test('ยังไม่ล็อกอินเห็นหน้าล็อกอิน และรหัสผิดแสดงข้อความ', async () => {
   render(<App />);
   expect(screen.getByRole('heading', { name: 'ระบบตารางเรียน' })).toBeInTheDocument();
-  await userEvent.type(screen.getByLabelText('อีเมล'), 'head@demo.test');
+  await userEvent.type(screen.getByLabelText('อีเมลหรือชื่อผู้ใช้'), 'head@demo.test');
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'ผิด');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
   expect(await screen.findByRole('alert')).toHaveTextContent('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
 });
@@ -64,6 +68,6 @@ test('ออกจากระบบกลับหน้าล็อกอิ�
   render(<App />);
   await signIn('head@demo.test');
   await userEvent.click(await screen.findByRole('button', { name: 'ออกจากระบบ' }));
-  expect(await screen.findByLabelText('อีเมล')).toBeInTheDocument();
+  expect(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้')).toBeInTheDocument();
   expect(sessionStorage.getItem('timetable.session')).toBeNull();
 });

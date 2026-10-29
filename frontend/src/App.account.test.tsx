@@ -18,8 +18,10 @@ beforeEach(() => {
 });
 
 async function signIn(email: string, password = 'demo') {
-  await userEvent.type(await screen.findByLabelText('อีเมล'), email);
+  await userEvent.type(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้'), email);
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), password);
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
 }
 
@@ -36,7 +38,7 @@ test('0.2 หัวหน้าสร้างลิงก์รีเซ็ต�
   const first = render(<App />);
   await signIn('head@demo.test');
   await userEvent.click(await screen.findByRole('link', { name: 'บุคลากรและห้อง' }));
-  const row = (await screen.findByText('นายปฐพนพัทธ์ ศรีบุญเรือง', { selector: 'td' })).closest('tr')!;
+  const row = (await screen.findByText('นายวรากร รักเรียน', { selector: 'td' })).closest('tr')!;
   await userEvent.click(within(row).getByRole('button', { name: 'สร้างลิงก์รีเซ็ตรหัสผ่าน' }));
   const url = (await screen.findByText(/#\/reset\/rs/)).textContent!;
   const hash = url.slice(url.indexOf('#'));
@@ -79,7 +81,7 @@ test('1.2 บัญชีของฉัน: แก้ชื่อแล้ว�
 
   const profile = screen.getByRole('form', { name: 'ข้อมูลส่วนตัว' });
   await userEvent.clear(within(profile).getByLabelText('ชื่อ'));
-  await userEvent.type(within(profile).getByLabelText('ชื่อ'), 'สายชล ใหม่');
+  await userEvent.type(within(profile).getByLabelText('ชื่อ'), 'อรทัย ใหม่');
   await userEvent.click(within(profile).getByRole('button', { name: 'บันทึก' }));
   expect(await screen.findByText('บันทึกข้อมูลแล้ว')).toBeInTheDocument();
 
@@ -104,4 +106,22 @@ test('1.1 การแจ้งเตือน: จำนวนที่ยั�
   await userEvent.click(screen.getByRole('button', { name: 'อ่านทั้งหมดแล้ว' }));
   expect(await screen.findByRole('link', { name: 'การแจ้งเตือน' })).toBeInTheDocument();
   expect(screen.getByRole('button', { name: 'อ่านทั้งหมดแล้ว' })).toBeDisabled();
+}, T);
+
+test('1.2 ผู้ดูแลโอนสิทธิ์: กรอกไม่ครบแจ้งทีละช่อง แล้วโอนได้ และผู้โอนไม่เป็นผู้ดูแลอีก', async () => {
+  window.location.hash = '#/account';
+  render(<App />);
+  await signIn('admin@demo.test');
+  const form = await screen.findByRole('form', { name: 'โอนสิทธิ์ผู้ดูแล' }, { timeout: T });
+  await userEvent.click(within(form).getByRole('button', { name: 'โอนสิทธิ์ผู้ดูแล' }));
+  expect(within(form).getByText('เลือกผู้รับสิทธิ์จากรายการ')).toBeInTheDocument();
+  expect(within(form).getByText(/กรอกรหัสผ่านปัจจุบัน/)).toBeInTheDocument();
+  expect(within(form).getByText('ติ๊กยืนยันว่ารับทราบก่อนโอน')).toBeInTheDocument();
+  await userEvent.click(within(form).getByRole('combobox', { name: 'ผู้รับสิทธิ์' }));
+  await userEvent.click(await screen.findByRole('option', { name: /head@demo.test/ }));
+  await userEvent.type(within(form).getByLabelText(/รหัสผ่านปัจจุบัน/), 'demo');
+  await userEvent.click(within(form).getByRole('checkbox'));
+  await userEvent.click(within(form).getByRole('button', { name: 'โอนสิทธิ์ผู้ดูแล' }));
+  expect(await screen.findByText(/โอนสิทธิ์ผู้ดูแลให้/, undefined, { timeout: T })).toBeInTheDocument();
+  expect(screen.queryByRole('form', { name: 'โอนสิทธิ์ผู้ดูแล' })).toBeNull();
 }, T);

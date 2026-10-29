@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { getAvailability, myRounds, saveAvailability, statusOf, submitRound, type Receipt, type Round } from '../api/availability';
 import { listTerms } from '../api/profiles';
 import AvailabilityGrid from '../components/timetable/AvailabilityGrid';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
@@ -42,8 +43,8 @@ export default function MyAvailability() {
     return () => { live = false; };
   }, [uid]);
 
-  if (ctx === undefined) return <><div className="toolbar"><h1>เวลาว่างของฉัน</h1></div><Skeleton lines={5} label="กำลังโหลด" /></>;
-  if (ctx === null) return <><div className="toolbar"><h1>เวลาว่างของฉัน</h1></div><EmptyState>ยังไม่มีรอบสอบถามเวลาว่างที่ต้องตอบ</EmptyState></>;
+  if (ctx === undefined) return <><PageHeader title="เวลาว่างของฉัน" /><Skeleton lines={5} label="กำลังโหลด" /></>;
+  if (ctx === null) return <><PageHeader title="เวลาว่างของฉัน" /><EmptyState>ยังไม่มีรอบสอบถามเวลาว่างที่ต้องตอบ</EmptyState></>;
 
   const { round } = ctx;
   const responded = Boolean(round.responses[uid]) || sent;
@@ -68,14 +69,13 @@ export default function MyAvailability() {
 
   return (
     <>
-      <div className="toolbar">
-        <h1>เวลาว่างของฉัน</h1>
-        <span className="muted">ภาคเรียน {ctx.termText} · {ctx.profileName}</span>
-        <span className="spacer" />
-        <Badge tone={status === 'submitted' || status === 'any_time' || status === 'filled_by_head' ? 'success' : status === 'late' ? 'error' : 'neutral'}>
+      <PageHeader
+        title="เวลาว่างของฉัน"
+        subtitle={`ภาคเรียน ${ctx.termText} · ${ctx.profileName}`}
+        actions={<Badge tone={status === 'submitted' || status === 'any_time' || status === 'filled_by_head' ? 'success' : status === 'late' ? 'error' : 'neutral'}>
           {status === 'late' ? 'ล่าช้า' : responded ? 'ส่งแล้ว' : 'ยังไม่ส่ง'}
-        </Badge>
-      </div>
+        </Badge>}
+      />
       {error && <InlineAlert tone="error">{error}</InlineAlert>}
       {afterDeadline && <InlineAlert tone="warning">เลยกำหนดส่งแล้ว แก้ไขเองไม่ได้ ขอให้หัวหน้าแก้ให้</InlineAlert>}
       {receipt && <InlineAlert tone="success">{receipt.message}</InlineAlert>}

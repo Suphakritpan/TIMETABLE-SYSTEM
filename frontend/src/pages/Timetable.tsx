@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { generate, type UiRun } from '../api/runs';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import EmptyState from '../components/ui/EmptyState';
@@ -59,8 +60,9 @@ export default function Timetable({ setStatus, generate: gen = generate, initial
 
   return (
     <>
+      {!embedded && <PageHeader title="สร้างตาราง" subtitle="ลองจัดตารางแบบรวดเร็วและดูผลตามอาจารย์หรือห้อง" />}
       <div className="toolbar">
-        {embedded ? <h3>ผลการจัดตาราง</h3> : <h1>สร้างตาราง</h1>}
+        {embedded && <h3>ผลการจัดตาราง</h3>}
         <span className="spacer" />
         <select className="input" value={by} onChange={(e) => { setBy(e.target.value as typeof by); setVal(''); }} aria-label="มุมมอง">
           <option value="all">ทุกคาบ</option>

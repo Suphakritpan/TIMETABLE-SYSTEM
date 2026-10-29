@@ -25,8 +25,10 @@ beforeEach(() => {
 });
 
 async function signIn(email: string) {
-  await userEvent.type(await screen.findByLabelText('อีเมล'), email);
+  await userEvent.type(await screen.findByLabelText('อีเมลหรือชื่อผู้ใช้'), email);
   await userEvent.type(screen.getByLabelText('รหัสผ่าน'), 'demo');
+  await userEvent.click(screen.getByRole('combobox', { name: 'สถานศึกษา' }));
+  await userEvent.click(await screen.findByRole('option', { name: 'วิทยาลัยตัวอย่าง' }));
   await userEvent.click(screen.getByRole('button', { name: 'เข้าสู่ระบบ' }));
 }
 
@@ -36,7 +38,7 @@ async function headOpensRound() {
   await screen.findByRole('heading', { name: 'ตารางเรียน ภาค 2/2569' });
   // แท็บ ปวส. ปี 2 เสร็จ 2 ขั้น -> ขั้น 3 เป็นขั้นปัจจุบัน
   await userEvent.click(screen.getByRole('tab', { name: /ปวส\. ปี 2/ }));
-  await userEvent.click(await screen.findByLabelText('นายปฐพนพัทธ์ ศรีบุญเรือง'));
+  await userEvent.click(await screen.findByLabelText('นายวรากร รักเรียน'));
   fireDate(dateInput(7));
   await userEvent.click(screen.getByRole('button', { name: 'เปิดรอบ' }));
 }

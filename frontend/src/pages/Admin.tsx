@@ -6,6 +6,8 @@ import {
   type DepartmentRow, type OverviewRow, type SharedRoom,
 } from '../api/admin';
 import type { TermDetail } from '../api/terms';
+import StatCard from '../components/ui/StatCard';
+import PageHeader from '../components/ui/PageHeader';
 import Badge from '../components/ui/Badge';
 import Button from '../components/ui/Button';
 import ConfirmDialog from '../components/ui/ConfirmDialog';
@@ -16,6 +18,7 @@ import InlineAlert from '../components/ui/InlineAlert';
 import Skeleton from '../components/ui/Skeleton';
 import Tabs from '../components/ui/Tabs';
 import { useToast } from '../components/ui/Toast';
+import { ROOM_TYPES } from '../data/rooms';
 import { useSession } from '../context/Session';
 import { termLabel } from '../utils/buddhistEra';
 import { term } from '../utils/terminology';
@@ -29,7 +32,7 @@ export default function Admin() {
   const [tab, setTab] = useState('overview');
   return (
     <>
-      <div className="toolbar"><h1>ผู้ดูแลสถาบัน</h1></div>
+      <PageHeader title="ผู้ดูแลสถาบัน" subtitle="ปฏิทินการศึกษา หน่วยงาน และห้องร่วมของสถาบัน" />
       <Tabs label="ส่วนของผู้ดูแล" value={tab} onChange={setTab} tabs={[
         { key: 'overview', label: 'ภาพรวม' }, { key: 'calendar', label: 'ปฏิทินการศึกษา' },
         { key: 'departments', label: dep }, { key: 'rooms', label: 'ห้องร่วม' },
@@ -77,7 +80,12 @@ function Overview({ role, depLabel }: P & { depLabel: string }) {
       </SelectField>
       {rows === null ? <Skeleton lines={3} label="กำลังโหลด" /> : (
         <>
-          <p><b>{`เผยแพร่แล้ว ${rows.length - late.length} จาก ${rows.length} ${depLabel}`}</b></p>
+          <div className="stats">
+            <StatCard label={`${depLabel}ทั้งหมด`} value={rows.length} />
+            <StatCard label="เผยแพร่แล้ว" value={rows.length - late.length} tone="success" />
+            <StatCard label="ยังไม่เผยแพร่" value={late.length} tone={late.length ? 'warning' : 'success'} />
+            <StatCard label="ยังไม่มีหัวหน้า" value={rows.filter((r) => !r.has_head).length} tone={rows.some((r) => !r.has_head) ? 'error' : 'success'} />
+          </div>
           <DataTable columns={columns} rows={rows} rowKey={(r) => r.department_id} caption={`สถานะ${depLabel}ในภาคเรียน`} rowProblem={(r) => (!r.has_head ? 'ยังไม่มีหัวหน้า' : null)} />
         </>
       )}
@@ -138,13 +146,13 @@ function Calendar({ role }: P) {
   return (
     <>
       <div className="toolbar"><span className="muted">ภาคเรียนของโปรไฟล์เลือกจากที่นี่ ไม่ใช้วันที่จากไฟล์หลักสูตร</span><span className="spacer" /><Button variant="primary" onClick={() => { setErr(''); setDlg('term'); }}>เพิ่มภาคเรียน</Button></div>
-      {terms === null ? <Skeleton lines={3} label="กำลังโหลดปฏิทิน" /> : <DataTable columns={columns} rows={terms} rowKey={(r) => r.id} caption="ปฏิทินการศึกษา" empty="ยังไม่มีภาคเรียน" />}
+      {terms === null ? <Skeleton variant="table" lines={3} label="กำลังโหลดปฏิทิน" /> : <DataTable columns={columns} rows={terms} rowKey={(r) => r.id} caption="ปฏิทินการศึกษา" empty="ยังไม่มีภาคเรียน" />}
 
       <Dialog open={dlg === 'term'} title="เพิ่มภาคเรียน" onClose={() => setDlg(null)} footer={<><Button onClick={() => setDlg(null)}>ยกเลิก</Button><Button variant="primary" onClick={() => void addTerm()}>เพิ่ม</Button></>}>
         {err && <InlineAlert tone="error">{err}</InlineAlert>}
         <SelectField label="ภาคที่" value={f.no} onChange={(e) => setF({ ...f, no: Number(e.target.value) })}>{[1, 2, 3].map((n) => <option key={n} value={n}>{n}</option>)}</SelectField>
         <TextField label="ปีการศึกษา (พ.ศ.)" type="number" value={f.year_be} onChange={(e) => setF({ ...f, year_be: Number(e.target.value) })} />
-        <TextField label="วันเริ่ม" type="date" value={f.start} onChange={(e) => setF({ ...f, start: e.target.value })} />
+        <TextField label="วันเริ่ม" type="date" value={f.start} onChange={(e) => setF({ ...f, start: e.target.value, ...(f.no === 1 && e.target.value ? { year_be: Number(e.target.value.slice(0, 4)) + 543 } : {}) })} hint={f.no === 1 ? 'ปีการศึกษาเติมจากวันเริ่มให้ แก้ได้' : undefined} />
         <TextField label="วันสิ้นสุด" type="date" value={f.end} onChange={(e) => setF({ ...f, end: e.target.value })} />
       </Dialog>
 
@@ -213,8 +221,8 @@ function Departments({ role, depLabel }: P & { depLabel: string }) {
   return (
     <>
       <div className="toolbar"><span className="spacer" /><Button variant="primary" onClick={() => { setErr(''); setDlg('new'); }}>สร้าง{depLabel}</Button></div>
-      {link && <InlineAlert tone="success">ลิงก์เชิญหัวหน้า (ยังไม่ได้ตั้งค่าอีเมล ให้คัดลอกส่งเอง): <code>{link}</code>{' '}<Button variant="tertiary" onClick={() => void navigator.clipboard?.writeText(link).then(() => toast.show('คัดลอกลิงก์แล้ว'))}>คัดลอก</Button></InlineAlert>}
-      {rows === null ? <Skeleton lines={3} label="กำลังโหลด" /> : <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} caption={`${depLabel}และหัวหน้า`} rowProblem={(r) => (!r.head && !r.head_invited ? 'ยังไม่มีหัวหน้า' : null)} empty={`ยังไม่มี${depLabel}`} />}
+      {link && <InlineAlert tone="success">ลิงก์เชิญหัวหน้า (ยังไม่ได้ตั้งค่าอีเมล ให้คัดลอกส่งเอง): <code>{link}</code>{' '}<Button variant="tertiary" onClick={() => void (navigator.clipboard?.writeText(link).then(() => toast.show('คัดลอกลิงก์แล้ว')) ?? Promise.reject()).catch(() => toast.show('คัดลอกไม่ได้ ให้เลือกลิงก์แล้วคัดลอกเอง', { tone: 'error' }))}>คัดลอก</Button></InlineAlert>}
+      {rows === null ? <Skeleton variant="table" lines={3} label="กำลังโหลด" /> : <DataTable columns={columns} rows={rows} rowKey={(r) => r.id} caption={`${depLabel}และหัวหน้า`} rowProblem={(r) => (!r.head && !r.head_invited ? 'ยังไม่มีหัวหน้า' : null)} empty={`ยังไม่มี${depLabel}`} />}
 
       <Dialog open={dlg === 'new'} title={`สร้าง${depLabel}`} onClose={() => setDlg(null)} footer={<><Button onClick={() => setDlg(null)}>ยกเลิก</Button><Button variant="primary" onClick={() => void create()}>สร้าง</Button></>}>
         {err && <InlineAlert tone="error">{err}</InlineAlert>}
@@ -252,16 +260,16 @@ function SharedRooms({ role }: P) {
     { key: 'name', header: 'ชื่อห้อง', sortValue: (r) => r.name, render: (r) => r.name },
     { key: 'type', header: 'ประเภท', render: (r) => r.type },
     { key: 'seats', header: 'ที่นั่ง', align: 'right', sortValue: (r) => r.seats, render: (r) => r.seats },
-    { key: 'act', header: 'คำสั่ง', render: (r) => <Button variant="tertiary" onClick={() => void adminRemoveSharedRoom(role, r.id).then(reload)}>ลบ</Button> },
+    { key: 'act', header: 'คำสั่ง', render: (r) => <Button variant="tertiary" onClick={() => void adminRemoveSharedRoom(role, r.id).then(reload).catch((e) => toast.show(e instanceof Error ? e.message : 'ทำรายการไม่สำเร็จ', { tone: 'error' }))}>ลบ</Button> },
   ];
   return (
     <>
       <div className="toolbar"><span className="muted">ห้องที่หลายแผนกใช้ร่วมกัน การจองระหว่างแผนกจะทำตอนเผยแพร่</span><span className="spacer" /><Button variant="primary" onClick={() => { setErr(''); setOpen(true); }}>เพิ่มห้องร่วม</Button></div>
-      {rooms === null ? <Skeleton lines={3} label="กำลังโหลดห้องร่วม" /> : <DataTable columns={columns} rows={rooms} rowKey={(r) => r.id} caption="ห้องร่วม" empty="ยังไม่มีห้องร่วม" />}
+      {rooms === null ? <Skeleton variant="table" lines={3} label="กำลังโหลดห้องร่วม" /> : <DataTable columns={columns} rows={rooms} rowKey={(r) => r.id} caption="ห้องร่วม" empty="ยังไม่มีห้องร่วม" />}
       <Dialog open={open} title="เพิ่มห้องร่วม" onClose={() => setOpen(false)} footer={<><Button onClick={() => setOpen(false)}>ยกเลิก</Button><Button variant="primary" onClick={() => void save()}>เพิ่ม</Button></>}>
         {err && <InlineAlert tone="error">{err}</InlineAlert>}
         <TextField label="ชื่อห้อง" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} />
-        <TextField label="ประเภท" value={f.type} onChange={(e) => setF({ ...f, type: e.target.value })} />
+        <SelectField label="ประเภท" value={f.type} onChange={(e) => setF({ ...f, type: e.target.value })}>{ROOM_TYPES.map((t) => <option key={t}>{t}</option>)}</SelectField>
         <TextField label="ที่นั่ง" type="number" min={1} value={f.seats} onChange={(e) => setF({ ...f, seats: Number(e.target.value) })} />
       </Dialog>
     </>
